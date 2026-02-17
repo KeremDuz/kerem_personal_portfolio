@@ -1,0 +1,67 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local env files
+.env*.local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Agent / Tooling (These clutter the source control view)
+.agent/
+.gemini/
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+.env/
+# Exclude large media files to prevent GitHub upload errors
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.raw
+*.CR2
+*.NEF
+*.psd
+*.ai
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Backup Folder (Stores large media folders moved from root)
+_YEDEKLER/
