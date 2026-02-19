@@ -78,9 +78,9 @@ export default function TravelGlobeSection() {
                     transition={{ duration: 0.6, delay: 0.4 }}
                     className="mt-10 flex flex-wrap justify-center gap-4"
                 >
-                    {travelData.map((pin) => (
+                    {travelData.map((pin, index) => (
                         <button
-                            key={pin.label}
+                            key={`${pin.label}-${index}`}
                             onClick={() => setSelectedPin(pin)}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark-surface/50 border border-gray-800/50 hover:border-gray-600 hover:bg-dark-surface transition-all duration-200 cursor-pointer group"
                         >
