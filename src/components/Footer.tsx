@@ -6,6 +6,7 @@ import { Github, Linkedin, Instagram, Mail, Heart, Terminal } from "lucide-react
 const socialLinks = [
     { icon: Github, href: "https://github.com/KeremDuz", label: "GitHub" },
     { icon: Linkedin, href: "https://www.linkedin.com/in/kerem-d%C3%BCz-687741236/", label: "LinkedIn" },
+    { icon: Instagram, href: "https://www.instagram.com/kerem_plain?igsh=MWs4bzJwYXJoYWc3eg==", label: "Instagram" },
     { icon: Mail, href: "mailto:keremduz0304@gmail.com", label: "Email" },
 ];
 

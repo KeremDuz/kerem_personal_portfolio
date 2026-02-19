@@ -7,6 +7,7 @@ import { Github, Linkedin, Instagram, Menu, X } from "lucide-react";
 const socialLinks = [
     { icon: Github, href: "https://github.com/KeremDuz", label: "GitHub" },
     { icon: Linkedin, href: "https://www.linkedin.com/in/kerem-d%C3%BCz-687741236/", label: "LinkedIn" },
+    { icon: Instagram, href: "https://www.instagram.com/kerem_plain?igsh=MWs4bzJwYXJoYWc3eg==", label: "Instagram" },
 ];
 
 export default function Header() {
