@@ -223,7 +223,7 @@ const travelData: TravelPin[] = [
         lng: 49.8671,
         label: "Bakü",
         country: "Azerbaycan",
-        description: "Kasım 2025 - Rüzgarlar şehri ve modern mimari.",
+        description: "Kasım 2025",
         image: "/travel/baku/IMG-20251123-WA0050.webp",
         color: "#06b6d4",
         media: [
@@ -265,7 +265,7 @@ const travelData: TravelPin[] = [
         lng: 16.6068,
         label: "Brno",
         country: "Çek Cumhuriyeti",
-        description: "Eylül 2025 - Moravia'nın kalbi.",
+        description: "Eylül 2025",
         image: "/travel/brno/IMG-20250915-WA0005.webp",
         color: "#f97316",
         media: [
@@ -287,7 +287,7 @@ const travelData: TravelPin[] = [
         lng: 49.3892,
         label: "Gobustan",
         country: "Azerbaycan",
-        description: "Kasım 2025 - Kaya sanatları ve çamur volkanları.",
+        description: "Kasım 2025",
         image: "/travel/gobustan/IMG-20251125-WA0086.webp",
         color: "#a8a29e",
         media: [
@@ -303,7 +303,7 @@ const travelData: TravelPin[] = [
         lng: 14.4378,
         label: "Prag",
         country: "Çek Cumhuriyeti",
-        description: "Eylül 2025 - Tarihin ve mimarinin başkenti.",
+        description: "Eylül 2025",
         image: "/travel/prag/IMG_20250910_114906.webp",
         color: "#8b5cf6",
         media: [
@@ -335,7 +335,7 @@ const travelData: TravelPin[] = [
         lng: 16.3934,
         label: "Ústí nad Orlicí",
         country: "Çek Cumhuriyeti",
-        description: "Eylül 2025 - Yeşil doğa ve huzur.",
+        description: "Eylül 2025",
         image: "/travel/usti_nad_orlici/IMG-20250911-WA0005.webp",
         color: "#22c55e",
         media: [
