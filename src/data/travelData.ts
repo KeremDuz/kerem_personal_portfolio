@@ -76,7 +76,7 @@ const travelData: TravelPin[] = [
     {
         lat: 47.5,
         lng: 19.04,
-        label: "Budapeşte '24",
+        label: "Budapeşte",
         country: "Macaristan",
         description: "Ağustos 2024",
         image: "/travel/budapest/IMG20240806201952.webp",
@@ -106,7 +106,7 @@ const travelData: TravelPin[] = [
     {
         lat: 47.52,
         lng: 19.08,
-        label: "Budapeşte '25",
+        label: "Budapeşte",
         country: "Macaristan",
         description: "Şubat 2025",
         image: "/travel/budapest2/IMG20250226201047.webp",
