@@ -21,7 +21,7 @@ const travelData: TravelPin[] = [
         lng: 16.37,
         label: "Viyana",
         country: "Avusturya",
-        description: "Sanatın, müziğin ve tarihin başkenti.",
+        description: "Mart 2025",
         image: "/travel/viyana/IMG-20250304-WA0057.webp",
         color: "#ef4444",
         media: [
