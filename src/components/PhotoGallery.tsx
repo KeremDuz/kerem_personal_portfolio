@@ -94,7 +94,7 @@ export default function PhotoGallery() {
                                 src={photo.src}
                                 alt={photo.caption}
                                 className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-                                loading="lazy"
+                                loading="eager"
                             />
 
                             {/* Hover overlay */}
