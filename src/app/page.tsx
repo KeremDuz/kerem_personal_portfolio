@@ -13,7 +13,6 @@ import Footer from "@/components/Footer";
 import BootSequence from "@/components/BootSequence";
 import ScrollProgress from "@/components/ScrollProgress";
 import CustomCursor from "@/components/CustomCursor";
-import AmbientMusic from "@/components/AmbientMusic";
 
 export default function Home() {
     return (
@@ -21,7 +20,6 @@ export default function Home() {
             <BootSequence />
             <CustomCursor />
             <ScrollProgress />
-            <AmbientMusic />
             <Header />
             <Hero />
             <About />
@@ -33,6 +31,6 @@ export default function Home() {
             <PhotoGallery />
             <TravelGlobeSection />
             <Footer />
-        </main>
+        </main >
     );
 }
