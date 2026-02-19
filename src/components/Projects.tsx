@@ -158,52 +158,7 @@ export default function Projects() {
                     ))}
                 </motion.div>
 
-                {/* Skills Bar */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="mt-16"
-                >
-                    <div className="glass-card p-6 md:p-8">
-                        <h3 className="font-mono text-sm text-cyber-green/60 mb-6 tracking-wider uppercase">
-                            {"// tech_stack.list()"}
-                        </h3>
-                        <div className="flex flex-wrap gap-3">
-                            {[
-                                "Python",
-                                "Java",
-                                "JavaScript",
-                                "TypeScript",
-                                "C/C++",
-                                "Bash",
-                                "Linux",
-                                "Docker",
-                                "Wireshark",
-                                "Burp Suite",
-                                "Metasploit",
-                                "Nmap",
-                                "Git",
-                                "React",
-                                "Node.js",
-                                "SQL",
-                                "Network Security",
-                                "Penetration Testing",
-                                "OWASP",
-                                "Cryptography",
-                            ].map((skill) => (
-                                <motion.span
-                                    key={skill}
-                                    className="px-4 py-2 rounded-lg text-sm font-mono bg-dark-surface/80 border border-gray-800 text-gray-300 hover:border-cyber-green/30 hover:text-cyber-green hover:bg-cyber-green/5 transition-all duration-300 cursor-default"
-                                    whileHover={{ scale: 1.05, y: -2 }}
-                                >
-                                    {skill}
-                                </motion.span>
-                            ))}
-                        </div>
-                    </div>
-                </motion.div>
+
             </div>
         </section>
     );
