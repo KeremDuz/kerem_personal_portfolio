@@ -5,16 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const bootLines = [
     { text: "> BIOS v4.2.0 — System Check...", delay: 0 },
-    { text: "> CPU: Neural Engine x86_64 ✓", delay: 200 },
-    { text: "> RAM: 32GB Quantum Memory ✓", delay: 400 },
-    { text: "> GPU: RTX Holographic ✓", delay: 550 },
-    { text: "> Firewall: Active ✓", delay: 700 },
-    { text: "> VPN: Encrypted Tunnel ✓", delay: 850 },
-    { text: "> Loading portfolio.exe...", delay: 1050 },
-    { text: "> Decrypting user data...", delay: 1250 },
-    { text: "> Establishing secure connection...", delay: 1500 },
-    { text: "> ACCESS GRANTED", delay: 1800, highlight: true },
-    { text: "> Welcome, Kerem_Duz.", delay: 2100, highlight: true },
+    { text: "> CPU: Neural Engine x86_64 ✓", delay: 100 },
+    { text: "> RAM: 32GB Quantum Memory ✓", delay: 200 },
+    { text: "> GPU: RTX Holographic ✓", delay: 300 },
+    { text: "> Firewall: Active ✓", delay: 400 },
+    { text: "> VPN: Encrypted Tunnel ✓", delay: 500 },
+    { text: "> Loading portfolio.exe...", delay: 650 },
+    { text: "> Decrypting user data...", delay: 800 },
+    { text: "> Establishing secure connection...", delay: 950 },
+    { text: "> ACCESS GRANTED", delay: 1100, highlight: true },
+    { text: "> Welcome, Kerem_Duz.", delay: 1300, highlight: true },
 ];
 
 export default function BootSequence() {
@@ -32,23 +32,36 @@ export default function BootSequence() {
             }
         }
 
+        const timeouts: NodeJS.Timeout[] = [];
+
         bootLines.forEach((line, index) => {
-            setTimeout(() => {
+            const t = setTimeout(() => {
                 setVisibleLines((prev) => [...prev, index]);
             }, line.delay);
+            timeouts.push(t);
         });
 
         // Start exit after last line
-        setTimeout(() => {
+        const exitTimer = setTimeout(() => {
             setExiting(true);
             sessionStorage.setItem("portfolio-booted", "true");
-        }, 3000);
+        }, 1800);
+        timeouts.push(exitTimer);
 
         // Complete boot
-        setTimeout(() => {
+        const bootTimer = setTimeout(() => {
             setBooted(true);
-        }, 3800);
+        }, 2400); // Allow exit animation to play
+        timeouts.push(bootTimer);
+
+        return () => timeouts.forEach((t) => clearTimeout(t));
     }, []);
+
+    const skipBoot = () => {
+        setExiting(true);
+        sessionStorage.setItem("portfolio-booted", "true");
+        setTimeout(() => setBooted(true), 500);
+    };
 
     if (booted) return null;
 
@@ -58,8 +71,10 @@ export default function BootSequence() {
                 <motion.div
                     initial={{ opacity: 1 }}
                     animate={{ opacity: exiting ? 0 : 1 }}
-                    transition={{ duration: 0.8 }}
-                    className="fixed inset-0 z-[200] bg-[#0a0a0a] flex items-center justify-center"
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="fixed inset-0 z-[200] bg-[#0a0a0a] flex items-center justify-center cursor-pointer"
+                    onClick={skipBoot}
                 >
                     {/* Scanline effect */}
                     <div
@@ -101,8 +116,8 @@ export default function BootSequence() {
                                     }
                                     transition={{ duration: 0.2, ease: "easeOut" }}
                                     className={`font-mono text-sm ${line.highlight
-                                            ? "text-cyber-green font-semibold neon-text"
-                                            : "text-gray-500"
+                                        ? "text-cyber-green font-semibold neon-text"
+                                        : "text-gray-500"
                                         }`}
                                 >
                                     {line.text}

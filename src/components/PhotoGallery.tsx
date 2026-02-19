@@ -97,7 +97,6 @@ export default function PhotoGallery() {
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                priority={index < 6} // Prioritize the first 6 images
                             />
 
                             {/* Hover overlay */}

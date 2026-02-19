@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { motion } from "framer-motion";
 import { Award, ExternalLink, Shield, Code, Globe } from "lucide-react";
 
@@ -141,10 +143,12 @@ export default function Certificates() {
                                 {/* Certificate Image (if available) */}
                                 {cert.image && (
                                     <div className="relative w-full h-40 mb-4 rounded-lg overflow-hidden border border-white/10 group-hover:border-white/20 transition-colors">
-                                        <img
+                                        <Image
                                             src={cert.image}
                                             alt={cert.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                                     </div>

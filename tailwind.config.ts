@@ -18,8 +18,8 @@ const config: Config = {
                 "dark-card": "#1a1a2e",
             },
             fontFamily: {
-                mono: ['"JetBrains Mono"', "Fira Code", "monospace"],
-                sans: ["Inter", "system-ui", "sans-serif"],
+                mono: ["var(--font-mono)", "Fira Code", "monospace"],
+                sans: ["var(--font-inter)", "system-ui", "sans-serif"],
             },
             animation: {
                 blink: "blink 1s step-end infinite",
