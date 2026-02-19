@@ -42,6 +42,21 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
         }
     }, [currentIndex, current.type]);
 
+    // Preload next images for smoother navigation (Buffer strategy)
+    useEffect(() => {
+        const PRELOAD_COUNT = 5; // How many future images to preload
+
+        for (let i = 1; i <= PRELOAD_COUNT; i++) {
+            const nextIndex = (currentIndex + i) % media.length;
+            const item = media[nextIndex];
+
+            if (item.type === "image") {
+                const img = new Image();
+                img.src = item.src;
+            }
+        }
+    }, [currentIndex, media]);
+
     // Auto-play slideshow — only for images
     useEffect(() => {
         if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
