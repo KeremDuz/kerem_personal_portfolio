@@ -11,6 +11,7 @@ interface GalleryPhoto {
     aspect: "portrait" | "landscape" | "square";
 }
 
+import Image from "next/image";
 import travelData from "@/data/travelData";
 
 export default function PhotoGallery() {
@@ -78,8 +79,8 @@ export default function PhotoGallery() {
                     </p>
                 </motion.div>
 
-                {/* Masonry Grid */}
-                <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+                {/* Optimized Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {galleryPhotos.map((photo, index) => (
                         <motion.div
                             key={index}
@@ -87,18 +88,20 @@ export default function PhotoGallery() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: index * 0.08 }}
-                            className="break-inside-avoid cursor-pointer group relative overflow-hidden rounded-xl"
+                            className="cursor-pointer group relative overflow-hidden rounded-xl aspect-[4/3] bg-white/5"
                             onClick={() => openLightbox(index)}
                         >
-                            <img
+                            <Image
                                 src={photo.src}
                                 alt={photo.caption}
-                                className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-                                loading="eager"
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                priority={index < 6} // Prioritize the first 6 images
                             />
 
                             {/* Hover overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                                 <div className="absolute bottom-0 left-0 right-0 p-4">
                                     <div className="flex items-center gap-1.5 mb-1">
                                         <MapPin size={12} className="text-travel-amber" />
@@ -106,12 +109,12 @@ export default function PhotoGallery() {
                                             {photo.location}
                                         </span>
                                     </div>
-                                    <p className="text-white text-sm">{photo.caption}</p>
+                                    <p className="text-white text-sm line-clamp-1">{photo.caption}</p>
                                 </div>
                             </div>
 
                             {/* Neon border on hover */}
-                            <div className="absolute inset-0 border border-transparent group-hover:border-travel-amber/30 rounded-xl transition-all duration-300 pointer-events-none" />
+                            <div className="absolute inset-0 border border-transparent group-hover:border-travel-amber/30 rounded-xl transition-all duration-300 pointer-events-none z-20" />
                         </motion.div>
                     ))}
                 </div>
