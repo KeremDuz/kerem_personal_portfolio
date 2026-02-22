@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, MapPin, Play, Pause } from "lucide-react";
 import type { TravelPin, MediaItem } from "@/data/travelData";
+import { useTranslations } from "next-intl";
 
 interface MemoryViewerProps {
     pin: TravelPin;
@@ -13,6 +14,9 @@ interface MemoryViewerProps {
 const IMAGE_DURATION = 4.5; // seconds per image
 
 export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
+    const t = useTranslations("MemoryViewer");
+    const tCities = useTranslations("Cities");
+    const tCountries = useTranslations("Countries");
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [direction, setDirection] = useState(1);
@@ -223,14 +227,15 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                         <div className="flex items-center gap-2 mb-1">
                             <MapPin size={16} style={{ color: pin.color }} />
                             <span
+                                lang="en"
                                 className="font-mono text-sm tracking-wider uppercase"
                                 style={{ color: pin.color }}
                             >
-                                {pin.country}
+                                {tCountries(pin.country)}
                             </span>
                         </div>
                         <h2 className="text-3xl md:text-4xl font-bold text-white">
-                            {pin.label}
+                            {tCities(pin.label)}
                         </h2>
 
                     </motion.div>
@@ -333,11 +338,11 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                         >
                             {isAutoPlaying ? (
                                 <>
-                                    <Pause size={14} /> Durdur
+                                    <Pause size={14} /> {t("pause")}
                                 </>
                             ) : (
                                 <>
-                                    <Play size={14} /> Oynat
+                                    <Play size={14} /> {t("play")}
                                 </>
                             )}
                         </button>

@@ -1,0 +1,244 @@
+{
+    "Navigation": {
+        "home": "Ana Sayfa",
+        "about": "Hakkımda",
+        "experience": "Deneyim",
+        "projects": "Projeler",
+        "blog": "Blog"
+    },
+    "Hero": {
+        "title": "// portfolyo başlatılıyor...",
+        "greeting": "Merhaba, Ben ",
+        "name": "Kerem.",
+        "subtitle": "Kod satırları arasında güvenlik açıkları arıyor, dünya haritasında yeni rotalar çiziyorum.",
+        "roles": {
+            "0": "Bilgisayar Mühendisliği Öğrencisi",
+            "1": "Siber Güvenlik Meraklısı",
+            "2": "Dünya Gezgini",
+            "3": "Yazılım Geliştirici"
+        }
+    },
+    "About": {
+        "tag": "// whoami",
+        "title": "Hakkımda",
+        "terminal_title": "kerem@portfolio ~ $ cat about.txt",
+        "p1_1": "Merhaba! Ben ",
+        "p1_2": "Kerem Düz",
+        "p1_3": ", Bilgisayar Mühendisliği öğrencisi ve siber güvenlik tutkunu.",
+        "p2": "Kod satırları arasında güvenlik açıkları ararken, boş zamanlarımda dünyayı keşfetmeyi, farklı kültürleri deneyimlemeyi ve anı biriktirmeyi seviyorum. Her yeni şehir bana farklı bir bakış açısı kazandırıyor.",
+        "p3": "Savunma odaklı siber güvenlik, ağ güvenliği, penetrasyon testi ve zararlı yazılım analizi alanlarında kendimi geliştiriyorum. Amacım dijital dünyayı daha güvenli bir yer yapmak.",
+        "focusLabel": "Odak Alanı",
+        "focusValue": "Siber Güvenlik & Yazılım",
+        "expertiseLabel": "Uzmanlık",
+        "locationLabel": "Konum",
+        "locationValue": "Ankara & Antalya, Türkiye",
+        "fuelLabel": "Yakıt",
+        "fuelValue": "Kahve & Merak"
+    },
+    "Stats": {
+        "tag": "// stats.render()",
+        "countries": "Ülke Gezildi",
+        "projects": "Proje Tamamlandı",
+        "security": "Güvenlik Analizi",
+        "memories": "Anı Biriktirdi"
+    },
+    "Timeline": {
+        "tag": "// journey.timeline()",
+        "title1": "Deneyim",
+        "title2": "&",
+        "title3": "Eğitim",
+        "education": "Eğitim",
+        "work": "Deneyim",
+        "certification": "Sertifika",
+        "items": {
+            "0": {
+                "title": "Stajyer",
+                "subtitle": "S4E",
+                "desc": "Şirket bünyesinde staj deneyimi.",
+                "tags": [
+                    "Staj",
+                    "Siber Güvenlik"
+                ]
+            },
+            "1": {
+                "title": "Bilgisayar Mühendisliği",
+                "subtitle": "Akdeniz Üniversitesi",
+                "desc": "Bilgisayar Mühendisliği lisans programı. Ağ güvenliği, yazılım geliştirme ve sistem yönetimi üzerine odaklanma."
+            },
+            "2": {
+                "title": "12. Sınıf (2. Dönem)",
+                "subtitle": "Açık Öğretim Lisesi",
+                "desc": "Lise eğitimimin son dönemini Açık Öğretim Lisesi'nde tamamladım."
+            },
+            "3": {
+                "title": "12. Sınıf (1. Dönem)",
+                "subtitle": "Gelibolu Amerikan Kültür Koleji",
+                "desc": "Lise son sınıf eğitiminin ilk dönemi."
+            },
+            "4": {
+                "title": "10. ve 11. Sınıf",
+                "subtitle": "Hayat Koleji",
+                "desc": "Lise eğitimimin orta dönemi."
+            },
+            "5": {
+                "title": "9. Sınıf",
+                "subtitle": "Kars Harakani Anadolu Lisesi",
+                "desc": "Lise eğitimime Kars'ta başladım."
+            }
+        }
+    },
+    "Projects": {
+        "tag": "// career.mode()",
+        "title1": "Siber Güvenlik",
+        "title2": "&",
+        "title3": "Yazılım",
+        "desc": "Güvenlik odaklı projeler ve yazılım geliştirme çalışmalarım",
+        "items": {
+            "0": {
+                "title": "WiFi & Bluetooth Jammer",
+                "desc": "ESP32 mikrodenetleyicisi ile 2.4GHz WiFi ve Bluetooth frekanslarını analiz eden çift modlu cihaz. Arduino IDE ve C++ ile geliştirildi."
+            },
+            "1": {
+                "title": "WiFi Deauthenticator",
+                "desc": "ESP8266 ile WiFi trafiğini izleyen ve güvenlik açıklarını test eden (Packet Monitoring/Deauth) sistem."
+            },
+            "2": {
+                "title": "E-Ticaret Sitesi",
+                "desc": "Angular ve Spring Boot tabanlı kapsamlı alışveriş sitesi. JWT ile güvenli giriş, ürün ve sepet yönetimi özellikleri."
+            },
+            "3": {
+                "title": "Kitap Envanter Sistemi",
+                "desc": "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları (Design Patterns) kullanılarak geliştirildi."
+            },
+            "4": {
+                "title": "File Upload Detector",
+                "desc": "Web sitelerinde file upload noktalarını tespit eden ve potansiyel güvenlik açıklarını analiz eden Python aracı."
+            },
+            "5": {
+                "title": "Portfolio Website",
+                "desc": "Bu web sitesi! Next.js, Tailwind CSS ve Three.js ile geliştirilmiş, siber güvenlik temalı kişisel portfolyo."
+            }
+        }
+    },
+    "Certificates": {
+        "tag": "// certificates.list()",
+        "title1": "Sertifikalar",
+        "title2": "&",
+        "title3": "Rozetler",
+        "items": {
+            "0": {
+                "title": "Cyber Heroes 2.0 Czechia",
+                "issuer": "Cyber Heroes"
+            },
+            "1": {
+                "title": "Cyber Heroes 2.0 Azerbaijan",
+                "issuer": "Cyber Heroes"
+            },
+            "2": {
+                "title": "Red Hat System Administration",
+                "issuer": "Red Hat"
+            },
+            "3": {
+                "title": "Sızma Testi Eğitimi",
+                "issuer": "BG-Tek"
+            },
+            "4": {
+                "title": "Beyaz Şapkalı Hacker ve Temel Linux Eğitimi",
+                "issuer": "BTK Akademi"
+            },
+            "5": {
+                "title": "Zararlı Yazılım Analizi ve Tersine Mühendislik",
+                "issuer": "Siber Güvenlik"
+            },
+            "6": {
+                "title": "Algorithm Of Social Entrepreneurship",
+                "issuer": "Erasmus+"
+            },
+            "7": {
+                "title": "Speak Up,Make a Difference, Stop The Bullying",
+                "issuer": "Erasmus+"
+            },
+            "8": {
+                "title": "Liderlik Eğitimi",
+                "issuer": "Kişisel Gelişim"
+            }
+        }
+    },
+    "Blog": {
+        "tag": "// blog.latest()",
+        "title1": "Yazılar",
+        "title2": "&",
+        "title3": "Writeup'lar",
+        "desc": "Siber güvenlik analizleri, CTF çözümleri ve seyahat notları",
+        "cat_ctf": "CTF Writeup",
+        "cat_security": "Güvenlik",
+        "cat_travel": "Seyahat",
+        "cat_dev": "Geliştirme"
+    },
+    "GitHub": {
+        "tag": "// github.activity()",
+        "title1": "GitHub",
+        "title2": "Aktivitesi",
+        "graphLabel": "Contribution Graph",
+        "less": "Az",
+        "more": "Çok",
+        "fallbackDesc1": "Python ile yazılmış ağ güvenlik tarayıcısı",
+        "fallbackDesc2": "CTF yarışma çözümleri ve writeup koleksiyonu",
+        "fallbackDesc3": "Next.js ile oluşturulmuş kişisel portföy sitesi"
+    },
+    "Gallery": {
+        "tag": "// gallery.render()",
+        "title1": "Fotoğraf",
+        "title2": "Galerisi",
+        "desc": "Dünya üzerindeki yolculuklardan kareler"
+    },
+    "Travel": {
+        "tag": "// explorer.mode()",
+        "title1": "World",
+        "title2": ".execute",
+        "title3": "(",
+        "title4": "Travel_Memories",
+        "title5": ")",
+        "desc": "Dünyayı döndür, anılarıma dokun. Her pin bir hikaye barındırır.",
+        "loading": "> Initializing 3D engine...",
+        "globeOverlay": "Döndürmek için tıkla..."
+    },
+    "MemoryViewer": {
+        "play": "Oynat",
+        "pause": "Durdur"
+    },
+    "Footer": {
+        "tag": "// connect.init()",
+        "title1": "Let's",
+        "title2": "Connect",
+        "desc": "Yeni projeler, iş birlikleri veya sadece bir merhaba için bana ulaşabilirsiniz.",
+        "builtWith": "Built with",
+        "by": "by Kerem Düz",
+        "rights": "All rights reserved."
+    },
+    "Cities": {
+        "Viyana": "Viyana",
+        "Budapeşte": "Budapeşte",
+        "Mezőkövesd": "Mezőkövesd",
+        "Bratislava": "Bratislava",
+        "Bakü": "Bakü",
+        "Brno": "Brno",
+        "Gobustan": "Gobustan",
+        "Prag": "Prag",
+        "Ústí nad Orlicí": "Ústí nad Orlicí"
+    },
+    "Dates": {
+        "Mart 2025": "Mart 2025",
+        "Ağustos 2024": "Ağustos 2024",
+        "Şubat 2025": "Şubat 2025",
+        "Kasım 2025": "Kasım 2025",
+        "Eylül 2025": "Eylül 2025"
+    },
+    "Countries": {
+        "Avusturya": "Avusturya",
+        "Macaristan": "Macaristan",
+        "Slovakya": "Slovakya",
+        "Azerbaycan": "Azerbaycan",
+        "Çek Cumhuriyeti": "Çek Cumhuriyeti"
+    }
+}

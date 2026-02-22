@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Globe, Code, Shield, MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const stats = [
     {
@@ -72,8 +73,17 @@ function AnimatedCounter({
 }
 
 export default function Stats() {
+    const t = useTranslations("Stats");
     const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+    const localizedStats = stats.map((stat, i) => {
+        const keyMap = ["countries", "projects", "security", "memories"];
+        return {
+            ...stat,
+            label: t(keyMap[i])
+        };
+    });
 
     return (
         <section className="relative py-20">
@@ -88,13 +98,13 @@ export default function Stats() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-12"
                 >
-                    <span className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
-                        {"// stats.render()"}
+                    <span lang="en" className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                 </motion.div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {stats.map((stat, index) => (
+                    {localizedStats.map((stat, index) => (
                         <motion.div
                             key={stat.label}
                             initial={{ opacity: 0, y: 30 }}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Github, Linkedin, Instagram, Menu, X } from "lucide-react";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const socialLinks = [
     { icon: Github, href: "https://github.com/KeremDuz", label: "GitHub" },
@@ -62,6 +63,9 @@ export default function Header() {
                             <link.icon size={20} strokeWidth={1.5} />
                         </motion.a>
                     ))}
+                    <div className="ml-4 pl-4 border-l border-cyber-green/20">
+                        <LanguageSwitcher />
+                    </div>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -95,6 +99,9 @@ export default function Header() {
                                 <link.icon size={22} strokeWidth={1.5} />
                             </a>
                         ))}
+                    </div>
+                    <div className="flex justify-center mt-6 pt-6 border-t border-cyber-green/10">
+                        <LanguageSwitcher />
                     </div>
                 </motion.div>
             )}

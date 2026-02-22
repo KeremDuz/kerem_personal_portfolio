@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ExternalLink, Shield, Code, Terminal, Wifi, Lock, Database, Globe } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const projects = [
     {
@@ -74,6 +75,14 @@ const cardVariants = {
 };
 
 export default function Projects() {
+    const t = useTranslations("Projects");
+
+    const localizedProjects = projects.map((project, index) => ({
+        ...project,
+        title: t(`items.${index}.title`),
+        description: t(`items.${index}.desc`),
+    }));
+
     return (
         <section id="projects" className="relative py-24 md:py-32">
             {/* Section divider gradient */}
@@ -88,16 +97,16 @@ export default function Projects() {
                     transition={{ duration: 0.6 }}
                     className="mb-16 text-center"
                 >
-                    <span className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
-                        {"// career.mode()"}
+                    <span lang="en" className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                     <h2 className="section-title">
-                        <span className="text-gray-100">Siber Güvenlik</span>{" "}
-                        <span className="text-gradient-cyber">&</span>{" "}
-                        <span className="text-gray-100">Yazılım</span>
+                        <span className="text-gray-100">{t("title1")}</span>{" "}
+                        <span className="text-gradient-cyber">{t("title2")}</span>{" "}
+                        <span className="text-gray-100">{t("title3")}</span>
                     </h2>
                     <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        Güvenlik odaklı projeler ve yazılım geliştirme çalışmalarım
+                        {t("desc")}
                     </p>
                 </motion.div>
 
@@ -109,7 +118,7 @@ export default function Projects() {
                     viewport={{ once: true, margin: "-50px" }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
-                    {projects.map((project, index) => (
+                    {localizedProjects.map((project, index) => (
                         <motion.div
                             key={project.title}
                             variants={cardVariants}

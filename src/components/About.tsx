@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import { Terminal, MapPin, Shield, Coffee } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function About() {
+    const t = useTranslations("About");
     return (
         <section id="about" className="relative py-24 md:py-32">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyber-green/15 to-transparent" />
@@ -17,10 +19,10 @@ export default function About() {
                     transition={{ duration: 0.6 }}
                     className="mb-14 text-center"
                 >
-                    <span className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
-                        {"// whoami"}
+                    <span lang="en" className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
-                    <h2 className="section-title text-gray-100">Hakkımda</h2>
+                    <h2 className="section-title text-gray-100">{t("title")}</h2>
                 </motion.div>
 
                 <div className="grid md:grid-cols-5 gap-8 items-start">
@@ -38,28 +40,20 @@ export default function About() {
                             <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
                             <div className="w-3 h-3 rounded-full bg-green-500/70" />
                             <span className="ml-3 font-mono text-xs text-gray-600">
-                                kerem@portfolio ~ $ cat about.txt
+                                {t("terminal_title")}
                             </span>
                         </div>
 
                         <div className="space-y-4 font-mono text-sm leading-relaxed">
                             <p className="text-gray-300">
-                                <span className="text-cyber-green">{">"}</span> Merhaba! Ben{" "}
-                                <span className="text-cyber-green font-semibold">Kerem Düz</span>,
-                                Bilgisayar Mühendisliği öğrencisi ve siber güvenlik tutkunu.
+                                <span className="text-cyber-green">{">"}</span> {t("p1_1")}
+                                <span className="text-cyber-green font-semibold">{t("p1_2")}</span>{t("p1_3")}
                             </p>
                             <p className="text-gray-400">
-                                <span className="text-cyber-green">{">"}</span> Kod satırları
-                                arasında güvenlik açıkları ararken, boş zamanlarımda dünyayı
-                                keşfetmeyi, farklı kültürleri deneyimlemeyi ve anı
-                                biriktirmeyi seviyorum. Her yeni şehir bana farklı bir bakış
-                                açısı kazandırıyor.
+                                <span className="text-cyber-green">{">"}</span> {t("p2")}
                             </p>
                             <p className="text-gray-400">
-                                <span className="text-cyber-green">{">"}</span> Savunma odaklı
-                                siber güvenlik, ağ güvenliği, penetrasyon testi ve zararlı
-                                yazılım analizi alanlarında kendimi geliştiriyorum. Amacım
-                                dijital dünyayı daha güvenli bir yer yapmak.
+                                <span className="text-cyber-green">{">"}</span> {t("p3")}
                             </p>
                             <p className="text-gray-500 mt-4">
                                 <span className="text-cyber-green animate-blink">█</span>
@@ -78,26 +72,26 @@ export default function About() {
                         {[
                             {
                                 icon: Terminal,
-                                label: "Odak Alanı",
-                                value: "Siber Güvenlik & Yazılım",
+                                label: t("focusLabel"),
+                                value: t("focusValue"),
                                 color: "#00ff41",
                             },
                             {
                                 icon: Shield,
-                                label: "Uzmanlık",
+                                label: t("expertiseLabel"),
                                 value: "Network Security, Pentest",
                                 color: "#00f3ff",
                             },
                             {
                                 icon: MapPin,
-                                label: "Konum",
-                                value: "Ankara & Antalya, Türkiye",
+                                label: t("locationLabel"),
+                                value: t("locationValue"),
                                 color: "#f59e0b",
                             },
                             {
                                 icon: Coffee,
-                                label: "Yakıt",
-                                value: "Kahve & Merak",
+                                label: t("fuelLabel"),
+                                value: t("fuelValue"),
                                 color: "#f97316",
                             },
                         ].map((item, i) => (
@@ -135,6 +129,6 @@ export default function About() {
                     </motion.div>
                 </div>
             </div>
-        </section>
+        </section >
     );
 }

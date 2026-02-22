@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ArrowUpRight, Clock, Tag, X } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface BlogPost {
     title: string;
@@ -227,15 +228,16 @@ const posts: BlogPost[] = [
     },
 ];
 
-const categoryConfig = {
-    ctf: { color: "#8b5cf6", label: "CTF Writeup" },
-    security: { color: "#00ff41", label: "Güvenlik" },
-    travel: { color: "#f59e0b", label: "Seyahat" },
-    dev: { color: "#00f3ff", label: "Geliştirme" },
-};
-
 export default function Blog() {
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+    const t = useTranslations("Blog");
+
+    const categoryConfig = {
+        ctf: { color: "#8b5cf6", label: t("cat_ctf") },
+        security: { color: "#00ff41", label: t("cat_security") },
+        travel: { color: "#f59e0b", label: t("cat_travel") },
+        dev: { color: "#00f3ff", label: t("cat_dev") },
+    };
 
     return (
         <section id="blog" className="relative py-24 md:py-32">
@@ -250,16 +252,16 @@ export default function Blog() {
                     transition={{ duration: 0.6 }}
                     className="mb-14 text-center"
                 >
-                    <span className="font-mono text-sm text-purple-400/50 tracking-wider uppercase block mb-3">
-                        {"// blog.latest()"}
+                    <span lang="en" className="font-mono text-sm text-purple-400/50 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                     <h2 className="section-title">
-                        <span className="text-gray-100">Yazılar</span>{" "}
-                        <span className="text-purple-400">&</span>{" "}
-                        <span className="text-gray-100">Writeup&apos;lar</span>
+                        <span className="text-gray-100">{t("title1")}</span>{" "}
+                        <span className="text-purple-400">{t("title2")}</span>{" "}
+                        <span className="text-gray-100">{t("title3")}</span>
                     </h2>
                     <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        Siber güvenlik analizleri, CTF çözümleri ve seyahat notları
+                        {t("desc")}
                     </p>
                 </motion.div>
 
@@ -280,6 +282,7 @@ export default function Blog() {
                                 {/* Top row */}
                                 <div className="flex items-center justify-between mb-4">
                                     <span
+                                        lang={post.category === "ctf" ? "en" : "tr"}
                                         className="px-2.5 py-1 rounded-md text-[10px] font-mono uppercase tracking-wider"
                                         style={{
                                             color: cat.color,

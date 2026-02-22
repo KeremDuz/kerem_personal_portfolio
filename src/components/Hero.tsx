@@ -4,15 +4,18 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import CyberGrid from "./CyberGrid";
 import { ChevronDown } from "lucide-react";
-
-const titles = [
-    "Computer Engineering Student",
-    "Cyber Security Enthusiast",
-    "World Traveler",
-    "Software Developer",
-];
+import { useTranslations } from "next-intl";
 
 export default function Hero() {
+    const t = useTranslations("Hero");
+
+    const titles = [
+        t("roles.0"),
+        t("roles.1"),
+        t("roles.2"),
+        t("roles.3"),
+    ];
+
     const [titleIndex, setTitleIndex] = useState(0);
     const [displayText, setDisplayText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
@@ -70,8 +73,8 @@ export default function Hero() {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="mb-6"
                 >
-                    <span className="font-mono text-sm text-cyber-green/60 tracking-widest uppercase">
-                        {"// initializing portfolio..."}
+                    <span lang="en" className="font-mono text-sm text-cyber-green/60 tracking-widest uppercase">
+                        {t("title")}
                     </span>
                 </motion.div>
 
@@ -82,8 +85,8 @@ export default function Hero() {
                     transition={{ duration: 0.8, delay: 0.4 }}
                     className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight"
                 >
-                    <span className="text-gray-100">Merhaba, Ben </span>
-                    <span className="text-gradient-cyber">Kerem.</span>
+                    <span className="text-gray-100">{t("greeting")}</span>
+                    <span className="text-gradient-cyber">{t("name")}</span>
                 </motion.h1>
 
                 {/* Typewriter Subtitle */}
@@ -117,8 +120,7 @@ export default function Hero() {
                     transition={{ duration: 1, delay: 1.2 }}
                     className="text-gray-400 font-sans text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
                 >
-                    Kod satırları arasında güvenlik açıkları arıyor, dünya haritasında
-                    yeni rotalar çiziyorum.
+                    {t("subtitle")}
                 </motion.p>
             </div>
 

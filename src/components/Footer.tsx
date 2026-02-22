@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Github, Linkedin, Instagram, Mail, Heart, Terminal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const socialLinks = [
     { icon: Github, href: "https://github.com/KeremDuz", label: "GitHub" },
@@ -11,6 +12,8 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+    const t = useTranslations("Footer");
+
     return (
         <footer className="relative py-16 md:py-20">
             {/* Top divider */}
@@ -25,15 +28,14 @@ export default function Footer() {
                     transition={{ duration: 0.6 }}
                 >
                     <span className="font-mono text-sm text-cyber-green/40 block mb-4">
-                        {"// connect.init()"}
+                        {t("tag")}
                     </span>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-100 mb-3">
-                        Let&apos;s{" "}
-                        <span className="text-gradient-cyber">Connect</span>
+                        {t("title1")}{" "}
+                        <span className="text-gradient-cyber">{t("title2")}</span>
                     </h2>
                     <p className="text-gray-400 max-w-md mx-auto mb-8">
-                        Yeni projeler, iş birlikleri veya sadece bir merhaba için bana
-                        ulaşabilirsiniz.
+                        {t("desc")}
                     </p>
                 </motion.div>
 
@@ -72,12 +74,12 @@ export default function Footer() {
                 <div className="font-mono text-xs text-gray-600">
                     <p className="flex items-center justify-center gap-1.5">
                         <span>{">"}</span>
-                        <span>Built with</span>
+                        <span>{t("builtWith")}</span>
                         <Heart size={12} className="text-cyber-green/50" fill="currentColor" />
-                        <span>by Kerem Düz</span>
+                        <span>{t("by")}</span>
                     </p>
                     <p className="mt-2 text-gray-700">
-                        &copy; {new Date().getFullYear()} &mdash; All rights reserved.
+                        &copy; {new Date().getFullYear()} &mdash; {t("rights")}
                     </p>
                 </div>
             </div>

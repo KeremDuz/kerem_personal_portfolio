@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface GalleryPhoto {
     src: string;
@@ -15,6 +16,9 @@ import Image from "next/image";
 import travelData from "@/data/travelData";
 
 export default function PhotoGallery() {
+    const t = useTranslations("Gallery");
+    const tCities = useTranslations("Cities");
+    const tDates = useTranslations("Dates");
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>([]);
 
@@ -67,15 +71,15 @@ export default function PhotoGallery() {
                     transition={{ duration: 0.6 }}
                     className="mb-14 text-center"
                 >
-                    <span className="font-mono text-sm text-travel-amber/50 tracking-wider uppercase block mb-3">
-                        {"// gallery.render()"}
+                    <span lang="en" className="font-mono text-sm text-travel-amber/50 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                     <h2 className="section-title">
-                        <span className="text-gray-100">Fotoğraf</span>{" "}
-                        <span className="text-travel-amber">Galerisi</span>
+                        <span className="text-gray-100">{t("title1")}</span>{" "}
+                        <span className="text-travel-amber">{t("title2")}</span>
                     </h2>
                     <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        Dünya üzerindeki yolculuklardan kareler
+                        {t("desc")}
                     </p>
                 </motion.div>
 
@@ -105,10 +109,10 @@ export default function PhotoGallery() {
                                     <div className="flex items-center gap-1.5 mb-1">
                                         <MapPin size={12} className="text-travel-amber" />
                                         <span className="font-mono text-xs text-travel-amber">
-                                            {photo.location}
+                                            {tCities(photo.location)}
                                         </span>
                                     </div>
-                                    <p className="text-white text-sm line-clamp-1">{photo.caption}</p>
+                                    <p className="text-white text-sm line-clamp-1">{tDates(photo.caption)}</p>
                                 </div>
                             </div>
 
@@ -170,11 +174,11 @@ export default function PhotoGallery() {
                                 <div className="flex items-center justify-center gap-2 mb-1">
                                     <MapPin size={14} className="text-travel-amber" />
                                     <span className="font-mono text-sm text-travel-amber">
-                                        {galleryPhotos[lightboxIndex].location}
+                                        {tCities(galleryPhotos[lightboxIndex].location)}
                                     </span>
                                 </div>
                                 <p className="text-gray-300 text-sm">
-                                    {galleryPhotos[lightboxIndex].caption}
+                                    {tDates(galleryPhotos[lightboxIndex].caption)}
                                 </p>
                                 <span className="text-gray-600 text-xs font-mono mt-1 block">
                                     {lightboxIndex + 1} / {galleryPhotos.length}

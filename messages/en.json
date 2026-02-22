@@ -1,0 +1,244 @@
+{
+    "Navigation": {
+        "home": "Home",
+        "about": "About",
+        "experience": "Experience",
+        "projects": "Projects",
+        "blog": "Blog"
+    },
+    "Hero": {
+        "title": "// initializing portfolio...",
+        "greeting": "Hello, I'm ",
+        "name": "Kerem.",
+        "subtitle": "Hunting for security vulnerabilities among lines of code, drawing new routes on the world map.",
+        "roles": {
+            "0": "Computer Engineering Student",
+            "1": "Cyber Security Enthusiast",
+            "2": "World Traveler",
+            "3": "Software Developer"
+        }
+    },
+    "About": {
+        "tag": "// whoami",
+        "title": "About Me",
+        "terminal_title": "kerem@portfolio ~ $ cat about.txt",
+        "p1_1": "Hello! I am ",
+        "p1_2": "Kerem Düz",
+        "p1_3": ", a Computer Engineering student and cyber security enthusiast.",
+        "p2": "While hunting for security vulnerabilities among lines of code, in my free time I love exploring the world, experiencing different cultures, and collecting memories. Every new city gives me a different perspective.",
+        "p3": "I am developing myself in defense-oriented cyber security, network security, penetration testing, and malware analysis. My goal is to make the digital world a safer place.",
+        "focusLabel": "Focus Area",
+        "focusValue": "Cyber Security & Software",
+        "expertiseLabel": "Expertise",
+        "locationLabel": "Location",
+        "locationValue": "Ankara & Antalya, Turkey",
+        "fuelLabel": "Fuel",
+        "fuelValue": "Coffee & Curiosity"
+    },
+    "Stats": {
+        "tag": "// stats.render()",
+        "countries": "Countries Visited",
+        "projects": "Projects Completed",
+        "security": "Security Analyses",
+        "memories": "Memories Collected"
+    },
+    "Timeline": {
+        "tag": "// journey.timeline()",
+        "title1": "Experience",
+        "title2": "&",
+        "title3": "Education",
+        "education": "Education",
+        "work": "Experience",
+        "certification": "Certification",
+        "items": {
+            "0": {
+                "title": "Intern",
+                "subtitle": "S4E",
+                "desc": "Internship experience within the company.",
+                "tags": [
+                    "Internship",
+                    "Cyber Security"
+                ]
+            },
+            "1": {
+                "title": "Computer Engineering",
+                "subtitle": "Akdeniz University",
+                "desc": "Computer Engineering bachelor's program. Focusing on network security, software development, and system administration."
+            },
+            "2": {
+                "title": "12th Grade (2nd Semester)",
+                "subtitle": "Open Education High School",
+                "desc": "Completed the last semester of my high school education at the Open Education High School."
+            },
+            "3": {
+                "title": "12th Grade (1st Semester)",
+                "subtitle": "Gelibolu American Culture College",
+                "desc": "First semester of senior year in high school."
+            },
+            "4": {
+                "title": "10th and 11th Grade",
+                "subtitle": "Hayat College",
+                "desc": "Middle period of my high school education."
+            },
+            "5": {
+                "title": "9th Grade",
+                "subtitle": "Kars Harakani Anatolian High School",
+                "desc": "Started my high school education in Kars."
+            }
+        }
+    },
+    "Projects": {
+        "tag": "// career.mode()",
+        "title1": "Cyber Security",
+        "title2": "&",
+        "title3": "Software",
+        "desc": "Security-focused projects and software development works",
+        "items": {
+            "0": {
+                "title": "WiFi & Bluetooth Jammer",
+                "desc": "Dual-mode device analyzing 2.4GHz WiFi and Bluetooth frequencies with an ESP32 microcontroller. Developed with Arduino IDE and C++."
+            },
+            "1": {
+                "title": "WiFi Deauthenticator",
+                "desc": "System testing network security and monitoring WiFi traffic (Packet Monitoring/Deauth) with an ESP8266."
+            },
+            "2": {
+                "title": "E-Commerce Website",
+                "desc": "Comprehensive shopping site based on Angular and Spring Boot. Secure login with JWT, product and cart management features."
+            },
+            "3": {
+                "title": "Book Inventory System",
+                "desc": "Java-based stock tracking automation. Developed using Design Patterns like Observer, Composite, and Strategy."
+            },
+            "4": {
+                "title": "File Upload Detector",
+                "desc": "A Python tool that detects file upload endpoints on websites and analyzes potential security vulnerabilities."
+            },
+            "5": {
+                "title": "Portfolio Website",
+                "desc": "This website! A cyber security-themed personal portfolio built with Next.js, Tailwind CSS, and Three.js."
+            }
+        }
+    },
+    "Certificates": {
+        "tag": "// certificates.list()",
+        "title1": "Certificates",
+        "title2": "&",
+        "title3": "Badges",
+        "items": {
+            "0": {
+                "title": "Cyber Heroes 2.0 Czechia",
+                "issuer": "Cyber Heroes"
+            },
+            "1": {
+                "title": "Cyber Heroes 2.0 Azerbaijan",
+                "issuer": "Cyber Heroes"
+            },
+            "2": {
+                "title": "Red Hat System Administration",
+                "issuer": "Red Hat"
+            },
+            "3": {
+                "title": "Penetration Testing Training",
+                "issuer": "BG-Tek"
+            },
+            "4": {
+                "title": "White Hat Hacker and Basic Linux Training",
+                "issuer": "BTK Academy"
+            },
+            "5": {
+                "title": "Malware Analysis and Reverse Engineering",
+                "issuer": "Cyber Security"
+            },
+            "6": {
+                "title": "Algorithm Of Social Entrepreneurship",
+                "issuer": "Erasmus+"
+            },
+            "7": {
+                "title": "Speak Up, Make a Difference, Stop The Bullying",
+                "issuer": "Erasmus+"
+            },
+            "8": {
+                "title": "Leadership Training",
+                "issuer": "Personal Development"
+            }
+        }
+    },
+    "Blog": {
+        "tag": "// blog.latest()",
+        "title1": "Articles",
+        "title2": "&",
+        "title3": "Writeups",
+        "desc": "Cyber security analyses, CTF solutions, and travel notes",
+        "cat_ctf": "CTF Writeup",
+        "cat_security": "Security",
+        "cat_travel": "Travel",
+        "cat_dev": "Development"
+    },
+    "GitHub": {
+        "tag": "// github.activity()",
+        "title1": "GitHub",
+        "title2": "Activity",
+        "graphLabel": "Contribution Graph",
+        "less": "Less",
+        "more": "More",
+        "fallbackDesc1": "Network security scanner written in Python",
+        "fallbackDesc2": "CTF competition solutions and writeup collection",
+        "fallbackDesc3": "Personal portfolio website built with Next.js"
+    },
+    "Gallery": {
+        "tag": "// gallery.render()",
+        "title1": "Photo",
+        "title2": "Gallery",
+        "desc": "Frames from journeys around the world"
+    },
+    "Travel": {
+        "tag": "// explorer.mode()",
+        "title1": "World",
+        "title2": ".execute",
+        "title3": "(",
+        "title4": "Travel_Memories",
+        "title5": ")",
+        "desc": "Spin the globe, touch my memories. Every pin holds a story.",
+        "loading": "> Initializing 3D engine...",
+        "globeOverlay": "Click to spin the globe..."
+    },
+    "MemoryViewer": {
+        "play": "Play",
+        "pause": "Pause"
+    },
+    "Footer": {
+        "tag": "// connect.init()",
+        "title1": "Let's",
+        "title2": "Connect",
+        "desc": "Feel free to reach out for new projects, collaborations, or just to say hi.",
+        "builtWith": "Built with",
+        "by": "by Kerem Düz",
+        "rights": "All rights reserved."
+    },
+    "Cities": {
+        "Viyana": "Vienna",
+        "Budapeşte": "Budapest",
+        "Mezőkövesd": "Mezőkövesd",
+        "Bratislava": "Bratislava",
+        "Bakü": "Baku",
+        "Brno": "Brno",
+        "Gobustan": "Gobustan",
+        "Prag": "Prague",
+        "Ústí nad Orlicí": "Ústí nad Orlicí"
+    },
+    "Dates": {
+        "Mart 2025": "March 2025",
+        "Ağustos 2024": "August 2024",
+        "Şubat 2025": "February 2025",
+        "Kasım 2025": "November 2025",
+        "Eylül 2025": "September 2025"
+    },
+    "Countries": {
+        "Avusturya": "Austria",
+        "Macaristan": "Hungary",
+        "Slovakya": "Slovakia",
+        "Azerbaycan": "Azerbaijan",
+        "Çek Cumhuriyeti": "Czech Republic"
+    }
+}

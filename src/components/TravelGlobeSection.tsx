@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import travelData from "@/data/travelData";
 import type { TravelPin } from "@/data/travelData";
 import MemoryViewer from "./MemoryViewer";
+import { useTranslations } from "next-intl";
 
 // Dynamic import with no SSR for the 3D globe
 const TravelGlobe = dynamic(() => import("./TravelGlobe"), {
@@ -20,6 +21,8 @@ const TravelGlobe = dynamic(() => import("./TravelGlobe"), {
 });
 
 export default function TravelGlobeSection() {
+    const t = useTranslations("Travel");
+    const tCities = useTranslations("Cities");
     const [selectedPin, setSelectedPin] = useState<TravelPin | null>(null);
     // Optimization: Only load the Heavy 3D Globe when the user scrolls to this section
     const [shouldLoadGlobe, setShouldLoadGlobe] = useState(false);
@@ -42,18 +45,18 @@ export default function TravelGlobeSection() {
                     onViewportEnter={() => setShouldLoadGlobe(true)} // Trigger load when title nears viewport
                     className="mb-12 text-center"
                 >
-                    <span className="font-mono text-sm text-travel-amber/60 tracking-wider uppercase block mb-3">
-                        {"// explorer.mode()"}
+                    <span lang="en" className="font-mono text-sm text-travel-amber/60 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                     <h2 className="section-title">
-                        <span className="text-gray-100">World</span>
-                        <span className="text-travel-amber">.execute</span>
-                        <span className="text-gray-100">(</span>
-                        <span className="text-gradient-travel">Travel_Memories</span>
-                        <span className="text-gray-100">)</span>
+                        <span className="text-gray-100">{t("title1")}</span>
+                        <span className="text-travel-amber">{t("title2")}</span>
+                        <span className="text-gray-100">{t("title3")}</span>
+                        <span className="text-gradient-travel">{t("title4")}</span>
+                        <span className="text-gray-100">{t("title5")}</span>
                     </h2>
                     <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        Dünyayı döndür, anılarıma dokun. Her pin bir hikaye barındırır.
+                        {t("desc")}
                     </p>
                 </motion.div>
 
@@ -89,7 +92,7 @@ export default function TravelGlobeSection() {
                                 style={{ backgroundColor: pin.color }}
                             />
                             <span className="font-mono text-xs text-gray-400 group-hover:text-gray-200 transition-colors">
-                                {pin.label}
+                                {tCities(pin.label)}
                             </span>
                         </button>
                     ))}

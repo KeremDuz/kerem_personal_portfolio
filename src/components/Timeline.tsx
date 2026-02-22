@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { GraduationCap, Briefcase, Award, Calendar } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface TimelineItem {
     year: string;
@@ -65,13 +66,22 @@ const timelineData: TimelineItem[] = [
     },
 ];
 
-const typeConfig = {
-    education: { icon: GraduationCap, color: "#00ff41", label: "Eğitim" },
-    work: { icon: Briefcase, color: "#00f3ff", label: "Deneyim" },
-    certification: { icon: Award, color: "#f59e0b", label: "Sertifika" },
-};
-
 export default function Timeline() {
+    const t = useTranslations("Timeline");
+
+    const typeConfig = {
+        education: { icon: GraduationCap, color: "#00ff41", label: t("education") },
+        work: { icon: Briefcase, color: "#00f3ff", label: t("work") },
+        certification: { icon: Award, color: "#f59e0b", label: t("certification") },
+    };
+
+    const localizedTimelineData = timelineData.map((item, index) => ({
+        ...item,
+        title: t(`items.${index}.title`),
+        subtitle: t(`items.${index}.subtitle`),
+        description: t(`items.${index}.desc`),
+    }));
+
     return (
         <section id="timeline" className="relative py-24 md:py-32">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyber-blue/15 to-transparent" />
@@ -85,13 +95,13 @@ export default function Timeline() {
                     transition={{ duration: 0.6 }}
                     className="mb-16 text-center"
                 >
-                    <span className="font-mono text-sm text-cyber-blue/50 tracking-wider uppercase block mb-3">
-                        {"// journey.timeline()"}
+                    <span lang="en" className="font-mono text-sm text-cyber-blue/50 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                     <h2 className="section-title">
-                        <span className="text-gray-100">Deneyim</span>{" "}
-                        <span className="text-gradient-cyber">&</span>{" "}
-                        <span className="text-gray-100">Eğitim</span>
+                        <span className="text-gray-100">{t("title1")}</span>{" "}
+                        <span className="text-gradient-cyber">{t("title2")}</span>{" "}
+                        <span className="text-gray-100">{t("title3")}</span>
                     </h2>
                 </motion.div>
 
@@ -101,7 +111,7 @@ export default function Timeline() {
                     <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyber-green/30 via-cyber-blue/20 to-transparent md:-translate-x-px" />
 
                     <div className="space-y-12">
-                        {timelineData.map((item, index) => {
+                        {localizedTimelineData.map((item, index) => {
                             const config = typeConfig[item.type];
                             const Icon = config.icon;
                             const isLeft = index % 2 === 0;

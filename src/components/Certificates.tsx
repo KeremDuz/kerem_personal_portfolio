@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { motion } from "framer-motion";
 import { Award, ExternalLink, Shield, Code, Globe } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Certificate {
     title: string;
@@ -98,6 +99,14 @@ const iconMap = {
 };
 
 export default function Certificates() {
+    const t = useTranslations("Certificates");
+
+    const localizedCertificates = certificates.map((cert, index) => ({
+        ...cert,
+        title: t(`items.${index}.title`),
+        issuer: t(`items.${index}.issuer`),
+    }));
+
     return (
         <section id="certificates" className="relative py-24 md:py-32">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyber-green/15 to-transparent" />
@@ -111,19 +120,19 @@ export default function Certificates() {
                     transition={{ duration: 0.6 }}
                     className="mb-14 text-center"
                 >
-                    <span className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
-                        {"// certificates.list()"}
+                    <span lang="en" className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                     <h2 className="section-title">
-                        <span className="text-gray-100">Sertifikalar</span>{" "}
-                        <span className="text-cyber-green">&</span>{" "}
-                        <span className="text-gray-100">Rozetler</span>
+                        <span className="text-gray-100">{t("title1")}</span>{" "}
+                        <span className="text-cyber-green">{t("title2")}</span>{" "}
+                        <span className="text-gray-100">{t("title3")}</span>
                     </h2>
                 </motion.div>
 
                 {/* Certificate Grid */}
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {certificates.map((cert, index) => {
+                    {localizedCertificates.map((cert, index) => {
                         const Icon = iconMap[cert.icon];
                         return (
                             <motion.div

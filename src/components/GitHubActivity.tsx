@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { GitCommit, Star, GitFork, ExternalLink } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface GitHubRepo {
     name: string;
@@ -85,7 +86,12 @@ const contributionColors = [
 ];
 
 export default function GitHubActivity() {
-    const [repos] = useState(fallbackRepos);
+    const t = useTranslations("GitHub");
+    const localizedRepos = fallbackRepos.map((repo, i) => ({
+        ...repo,
+        description: t(`fallbackDesc${i + 1}`)
+    }));
+    const [repos] = useState(localizedRepos);
     const [contributions] = useState(generateContributions);
 
     return (
@@ -101,12 +107,12 @@ export default function GitHubActivity() {
                     transition={{ duration: 0.6 }}
                     className="mb-14 text-center"
                 >
-                    <span className="font-mono text-sm text-gray-500 tracking-wider uppercase block mb-3">
-                        {"// github.activity()"}
+                    <span lang="en" className="font-mono text-sm text-gray-500 tracking-wider uppercase block mb-3">
+                        {t("tag")}
                     </span>
                     <h2 className="section-title">
-                        <span className="text-gray-100">GitHub</span>{" "}
-                        <span className="text-cyber-green">Aktivitesi</span>
+                        <span className="text-gray-100">{t("title1")}</span>{" "}
+                        <span className="text-cyber-green">{t("title2")}</span>
                     </h2>
                 </motion.div>
 
@@ -121,7 +127,7 @@ export default function GitHubActivity() {
                     <div className="flex items-center justify-between mb-4">
                         <p className="font-mono text-xs text-gray-500">
                             <GitCommit size={12} className="inline mr-1" />
-                            Contribution Graph
+                            {t("graphLabel")}
                         </p>
                         <a
                             href="https://github.com/keremduz"
@@ -157,7 +163,7 @@ export default function GitHubActivity() {
 
                     {/* Legend */}
                     <div className="flex items-center gap-2 mt-4 justify-end">
-                        <span className="text-[10px] text-gray-600 font-mono">Az</span>
+                        <span className="text-[10px] text-gray-600 font-mono">{t("less")}</span>
                         {contributionColors.map((color, i) => (
                             <div
                                 key={i}
@@ -165,7 +171,7 @@ export default function GitHubActivity() {
                                 style={{ backgroundColor: color }}
                             />
                         ))}
-                        <span className="text-[10px] text-gray-600 font-mono">Çok</span>
+                        <span className="text-[10px] text-gray-600 font-mono">{t("more")}</span>
                     </div>
                 </motion.div>
 

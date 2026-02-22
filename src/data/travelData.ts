@@ -63,11 +63,11 @@ const travelData: TravelPin[] = [
             },
             {
                 type: "image",
-                src: "/travel/viyana/IMG-20250304-114842.webp",
+                src: "/travel/viyana/IMG20250304114842.webp",
             },
             {
                 type: "video",
-                src: "/travel/viyana/VID-20250304-114719.webm",
+                src: "/travel/viyana/VID20250304114719.webm",
             },
         ],
     },
