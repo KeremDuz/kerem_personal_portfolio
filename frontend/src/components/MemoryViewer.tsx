@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, MapPin, Play, Pause } from "lucide-react";
 import type { TravelPin, MediaItem } from "@/data/travelData";
 import { useTranslations } from "next-intl";
@@ -47,10 +46,19 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
         }
     }, [currentIndex, current.type]);
 
-    // Remove manual new Image() preload since it bypasses Next.js optimization.
-    // We will use hidden <Image> components with priority instead.
+    // Preload next images for smoother navigation (Buffer strategy)
     useEffect(() => {
-        // Kept empty to satisfy existing hook structure if needed, or simply let the return block handle it.
+        const PRELOAD_COUNT = 5; // How many future images to preload
+
+        for (let i = 1; i <= PRELOAD_COUNT; i++) {
+            const nextIndex = (currentIndex + i) % media.length;
+            const item = media[nextIndex];
+
+            if (item.type === "image") {
+                const img = new Image();
+                img.src = item.src;
+            }
+        }
     }, [currentIndex, media]);
 
     // Auto-play slideshow — only for images
@@ -163,37 +171,27 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                         {current.type === "image" ? (
                             <>
                                 {/* Blurred background fill */}
-                                <div className="absolute inset-0 scale-110 blur-2xl opacity-40">
-                                    <Image
-                                        src={current.src}
-                                        alt=""
-                                        fill
-                                        quality={30}
-                                        className="object-cover"
-                                        sizes="100vw"
-                                    />
-                                </div>
+                                <div
+                                    className="absolute inset-0 scale-110 blur-2xl opacity-40"
+                                    style={{
+                                        backgroundImage: `url(${current.src})`,
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                    }}
+                                />
                                 {/* Main image with Ken Burns effect */}
-                                <motion.div
-                                    className="absolute inset-0 z-[1]"
+                                <motion.img
+                                    src={current.src}
+                                    alt={pin.label}
+                                    className="absolute inset-0 w-full h-full object-contain z-[1]"
+                                    onLoad={() => setImageLoaded(true)}
                                     initial={{ scale: 1 }}
                                     animate={
                                         imageLoaded
                                             ? { scale: 1.04, transition: { duration: 8, ease: "linear" } }
                                             : {}
                                     }
-                                >
-                                    <Image
-                                        src={current.src}
-                                        alt={pin.label}
-                                        fill
-                                        priority
-                                        quality={85}
-                                        className="object-contain"
-                                        onLoad={() => setImageLoaded(true)}
-                                        sizes="100vw"
-                                    />
-                                </motion.div>
+                                />
                             </>
                         ) : (
                             <video
@@ -215,27 +213,6 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
             <div className="absolute inset-0 z-[2] pointer-events-none">
                 <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-black/80 via-black/40 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 h-56 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-            </div>
-
-            {/* Hidden Next.js optimized preloader for the next 3 images */}
-            <div className="hidden">
-                {Array.from({ length: 3 }).map((_, i) => {
-                    const nextIndex = (currentIndex + i + 1) % media.length;
-                    const item = media[nextIndex];
-                    if (item && item.type === "image") {
-                        return (
-                            <Image
-                                key={`preload-${nextIndex}`}
-                                src={item.src}
-                                alt="preload"
-                                width={100}
-                                height={100}
-                                priority
-                            />
-                        );
-                    }
-                    return null;
-                })}
             </div>
 
             {/* Top bar — location info + close */}

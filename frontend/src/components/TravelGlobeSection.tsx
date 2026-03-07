@@ -41,6 +41,32 @@ export default function TravelGlobeSection() {
             });
     }, []);
 
+    // Background aggressive prefetch of all photos ONLY AFTER the globe starts loading
+    // This satisfies the requirement: preload after initial page load is done, using full bandwidth.
+    useEffect(() => {
+        if (!shouldLoadGlobe) return;
+
+        // Wait 3 seconds so we don't block the spinning globe initialization
+        const timer = setTimeout(() => {
+            const allMediaSrcs: string[] = [];
+            travelData.forEach(pin => {
+                pin.media?.forEach(item => {
+                    if (item.type === "image") {
+                        allMediaSrcs.push(item.src);
+                    }
+                });
+            });
+
+            // Native browser cache fetching (very fast for WebP without Next.js optimization overhead)
+            allMediaSrcs.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [shouldLoadGlobe, travelData]);
+
     return (
         <section
             id="travel"
