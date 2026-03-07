@@ -19,6 +19,7 @@ const visitorLogger = async (
             return next();
         }
 
+        // @ts-ignore - Handle ua-parser-js version inconsistencies gracefully
         const ua = new UAParser(req.headers["user-agent"] || "");
         const browser = ua.getBrowser();
         const os = ua.getOS();
