@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import UAParser from "ua-parser-js";
+import UAParser = require("ua-parser-js");
 import Visitor from "../models/Visitor";
 
 const visitorLogger = async (
