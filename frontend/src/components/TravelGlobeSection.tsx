@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import travelData from "@/data/travelData";
+import staticTravelData from "@/data/travelData";
 import type { TravelPin } from "@/data/travelData";
 import MemoryViewer from "./MemoryViewer";
 import { useTranslations } from "next-intl";
+import { travelAPI } from "@/lib/api";
 
 // Dynamic import with no SSR for the 3D globe
 const TravelGlobe = dynamic(() => import("./TravelGlobe"), {
@@ -24,8 +25,21 @@ export default function TravelGlobeSection() {
     const t = useTranslations("Travel");
     const tCities = useTranslations("Cities");
     const [selectedPin, setSelectedPin] = useState<TravelPin | null>(null);
-    // Optimization: Only load the Heavy 3D Globe when the user scrolls to this section
     const [shouldLoadGlobe, setShouldLoadGlobe] = useState(false);
+    const [travelData, setTravelData] = useState<TravelPin[]>(staticTravelData);
+
+    // Fetch travel data from API, fallback to static data
+    useEffect(() => {
+        travelAPI.getAll()
+            .then((data) => {
+                if (data && data.length > 0) {
+                    setTravelData(data as TravelPin[]);
+                }
+            })
+            .catch(() => {
+                // Silently fallback to static data
+            });
+    }, []);
 
     return (
         <section
@@ -42,7 +56,7 @@ export default function TravelGlobeSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6 }}
-                    onViewportEnter={() => setShouldLoadGlobe(true)} // Trigger load when title nears viewport
+                    onViewportEnter={() => setShouldLoadGlobe(true)}
                     className="mb-12 text-center"
                 >
                     <span lang="en" className="font-mono text-sm text-travel-amber/60 tracking-wider uppercase block mb-3">

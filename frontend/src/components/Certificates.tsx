@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 import { motion } from "framer-motion";
 import { Award, ExternalLink, Shield, Code, Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { certificateAPI } from "@/lib/api";
 
 interface Certificate {
     title: string;
@@ -16,7 +18,7 @@ interface Certificate {
     link?: string;
 }
 
-const certificates: Certificate[] = [
+const staticCertificates: Certificate[] = [
     {
         title: "Cyber Heroes 2.0 Czechia",
         issuer: "Cyber Heroes",
@@ -100,6 +102,17 @@ const iconMap = {
 
 export default function Certificates() {
     const t = useTranslations("Certificates");
+    const [certificates, setCertificates] = useState<Certificate[]>(staticCertificates);
+
+    useEffect(() => {
+        certificateAPI.getAll()
+            .then((data) => {
+                if (data && data.length > 0) {
+                    setCertificates(data as Certificate[]);
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     const localizedCertificates = certificates.map((cert, index) => ({
         ...cert,

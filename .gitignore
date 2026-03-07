@@ -1,17 +1,18 @@
 # Dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
 
 # Testing
-/coverage
+coverage/
 
 # Next.js
-/.next/
-/out/
+.next/
+out/
 
 # Production
-/build
+build/
+dist/
 
 # Misc
 .DS_Store
@@ -24,8 +25,8 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # Local env files
-.env*.local
 .env
+.env*.local
 .env.local
 .env.development.local
 .env.test.local
@@ -38,7 +39,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Agent / Tooling (These clutter the source control view)
+# Agent / Tooling
 .agent/
 .gemini/
 __pycache__/
@@ -46,9 +47,8 @@ __pycache__/
 *.pyo
 venv/
 .venv/
-env/
-.env/
-# Exclude large media files to prevent GitHub upload errors
+
+# Exclude large media files
 *.mp4
 *.mov
 *.avi
@@ -63,5 +63,8 @@ env/
 .DS_Store
 Thumbs.db
 
-# Backup Folder (Stores large media folders moved from root)
+# Backup Folder
 _YEDEKLER/
+
+# Certificates folder (large files)
+Sertifikalar/

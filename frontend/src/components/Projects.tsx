@@ -1,16 +1,23 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Shield, Code, Terminal, Wifi, Lock, Database, Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { projectAPI } from "@/lib/api";
 
-const projects = [
+const iconMap: Record<string, any> = {
+    wifi: Wifi, shield: Shield, globe: Globe, database: Database,
+    lock: Lock, code: Code, terminal: Terminal,
+};
+
+const staticProjects = [
     {
         title: "WiFi & Bluetooth Jammer",
         description:
             "ESP32 mikrodenetleyicisi ile 2.4GHz WiFi ve Bluetooth frekanslarını analiz eden çift modlu cihaz. Arduino IDE ve C++ ile geliştirildi.",
         tags: ["ESP32", "C++", "Arduino", "IoT Security"],
-        icon: Wifi,
+        icon: "wifi",
         link: "#",
     },
     {
@@ -18,7 +25,7 @@ const projects = [
         description:
             "ESP8266 ile WiFi trafiğini izleyen ve güvenlik açıklarını test eden (Packet Monitoring/Deauth) sistem.",
         tags: ["ESP8266", "Network Security", "C++", "Packet Sniffing"],
-        icon: Shield,
+        icon: "shield",
         link: "#",
     },
     {
@@ -26,7 +33,7 @@ const projects = [
         description:
             "Angular ve Spring Boot tabanlı kapsamlı alışveriş sitesi. JWT ile güvenli giriş, ürün ve sepet yönetimi özellikleri.",
         tags: ["Angular", "Spring Boot", "Java", "JWT"],
-        icon: Globe,
+        icon: "globe",
         link: "#",
     },
     {
@@ -34,7 +41,7 @@ const projects = [
         description:
             "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları (Design Patterns) kullanılarak geliştirildi.",
         tags: ["Java", "Design Patterns", "OOP", "Automation"],
-        icon: Database,
+        icon: "database",
         link: "#",
     },
     {
@@ -42,15 +49,15 @@ const projects = [
         description:
             "Web sitelerinde file upload noktalarını tespit eden ve potansiyel güvenlik açıklarını analiz eden Python aracı.",
         tags: ["Python", "Web Security", "Vulnerability Scanning"],
-        icon: Lock,
+        icon: "lock",
         link: "#",
     },
     {
         title: "Portfolio Website",
         description:
             "Bu web sitesi! Next.js, Tailwind CSS ve Three.js ile geliştirilmiş, siber güvenlik temalı kişisel portfolyo.",
-        tags: ["Next.js", "React", "TypScript", "Three.js"],
-        icon: Code,
+        tags: ["Next.js", "React", "TypeScript", "Three.js"],
+        icon: "code",
         link: "#",
     },
 ];
@@ -76,9 +83,27 @@ const cardVariants = {
 
 export default function Projects() {
     const t = useTranslations("Projects");
+    const [projects, setProjects] = useState(staticProjects);
+
+    useEffect(() => {
+        projectAPI.getAll()
+            .then((data) => {
+                if (data && data.length > 0) {
+                    setProjects(data.map((p: any) => ({
+                        title: p.title,
+                        description: p.description,
+                        tags: p.tags || [],
+                        icon: p.icon || "code",
+                        link: p.link || "#",
+                    })));
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     const localizedProjects = projects.map((project, index) => ({
         ...project,
+        IconComponent: iconMap[project.icon] || Code,
         title: t(`items.${index}.title`),
         description: t(`items.${index}.desc`),
     }));
@@ -130,7 +155,7 @@ export default function Projects() {
                             {/* Icon */}
                             <div className="mb-4 flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-lg bg-cyber-green/10 flex items-center justify-center border border-cyber-green/20 group-hover:border-cyber-green/40 transition-colors duration-300">
-                                    <project.icon
+                                    <project.IconComponent
                                         size={20}
                                         className="text-cyber-green"
                                         strokeWidth={1.5}

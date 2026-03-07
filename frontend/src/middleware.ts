@@ -5,5 +5,6 @@ export default createMiddleware(routing);
 
 export const config = {
     // Skip all paths that should not be internationalized.
-    matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+    // Added 'admin' to skip i18n for admin panel routes.
+    matcher: ['/((?!api|admin|_next|_vercel|.*\\..*).*)']
 };

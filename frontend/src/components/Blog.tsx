@@ -2,8 +2,9 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ArrowUpRight, Clock, Tag, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { blogAPI } from "@/lib/api";
 
 interface BlogPost {
     title: string;
@@ -230,7 +231,32 @@ const posts: BlogPost[] = [
 
 export default function Blog() {
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+    const [allPosts, setAllPosts] = useState<BlogPost[]>(posts);
     const t = useTranslations("Blog");
+
+    // Fetch blog posts from API, merge with static posts
+    useEffect(() => {
+        blogAPI.getAll()
+            .then((data) => {
+                if (data && data.length > 0) {
+                    // Static posts (with JSX content) take priority
+                    const staticTitles = new Set(posts.map((p) => p.title));
+                    const apiPosts: BlogPost[] = data
+                        .filter((b: any) => !staticTitles.has(b.title))
+                        .map((b: any) => ({
+                            title: b.title,
+                            excerpt: b.excerpt,
+                            date: b.date,
+                            category: b.category,
+                            readTime: b.readTime,
+                            tags: b.tags || [],
+                            link: b.link || "#",
+                        }));
+                    setAllPosts([...posts, ...apiPosts]);
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     const categoryConfig = {
         ctf: { color: "#8b5cf6", label: t("cat_ctf") },
@@ -267,7 +293,7 @@ export default function Blog() {
 
                 {/* Posts Grid */}
                 <div className="grid md:grid-cols-2 gap-6">
-                    {posts.map((post, index) => {
+                    {allPosts.map((post, index) => {
                         const cat = categoryConfig[post.category];
                         return (
                             <motion.div
