@@ -7,7 +7,6 @@ import path from "path";
 
 import connectDB from "./config/database";
 import errorHandler from "./middleware/errorHandler";
-import visitorLogger from "./middleware/visitorLogger";
 
 // Routes
 import authRoutes from "./routes/authRoutes";
@@ -66,8 +65,9 @@ app.use("/api/auth/login", authLimiter);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Visitor tracking (logs every public request)
-app.use(visitorLogger);
+// Tracking API Route (instead of universal middleware, frontend explicitly logs views)
+import trackRoutes from "./routes/trackRoutes";
+app.use("/api/track", trackRoutes);
 
 // API Routes
 app.use("/api/auth", authRoutes);

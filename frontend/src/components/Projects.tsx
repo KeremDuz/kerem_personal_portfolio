@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Shield, Code, Terminal, Wifi, Lock, Database, Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { projectAPI } from "@/lib/api";
+import { projectAPI, analyticsAPI } from "@/lib/api";
 
 const iconMap: Record<string, any> = {
     wifi: Wifi, shield: Shield, globe: Globe, database: Database,
@@ -148,6 +148,12 @@ export default function Projects() {
                             key={project.title}
                             variants={cardVariants}
                             className="glass-card p-6 group cursor-pointer relative overflow-hidden"
+                            onClick={() => {
+                                analyticsAPI.track("view_project", project.title);
+                                if (project.link && project.link !== "#") {
+                                    window.open(project.link, "_blank");
+                                }
+                            }}
                         >
                             {/* Top glow line */}
                             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyber-green/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -161,13 +167,12 @@ export default function Projects() {
                                         strokeWidth={1.5}
                                     />
                                 </div>
-                                <motion.a
-                                    href={project.link}
+                                <motion.div
                                     className="ml-auto text-gray-500 hover:text-cyber-green transition-colors"
                                     whileHover={{ scale: 1.1 }}
                                 >
                                     <ExternalLink size={16} strokeWidth={1.5} />
-                                </motion.a>
+                                </motion.div>
                             </div>
 
                             {/* Title */}

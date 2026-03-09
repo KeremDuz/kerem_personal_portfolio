@@ -7,7 +7,7 @@ import staticTravelData from "@/data/travelData";
 import type { TravelPin } from "@/data/travelData";
 import MemoryViewer from "./MemoryViewer";
 import { useTranslations } from "next-intl";
-import { travelAPI } from "@/lib/api";
+import { travelAPI, analyticsAPI } from "@/lib/api";
 
 // Dynamic import with no SSR for the 3D globe
 const TravelGlobe = dynamic(() => import("./TravelGlobe"), {
@@ -128,7 +128,10 @@ export default function TravelGlobeSection() {
                     {travelData.map((pin, index) => (
                         <button
                             key={`${pin.label}-${index}`}
-                            onClick={() => setSelectedPin(pin)}
+                            onClick={() => {
+                                analyticsAPI.track("click_city", pin.label);
+                                setSelectedPin(pin);
+                            }}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark-surface/50 border border-gray-800/50 hover:border-gray-600 hover:bg-dark-surface transition-all duration-200 cursor-pointer group"
                         >
                             <div

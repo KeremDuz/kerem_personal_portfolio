@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, MapPin, Play, Pause } from "lucide-react";
 import type { TravelPin, MediaItem } from "@/data/travelData";
 import { useTranslations } from "next-intl";
+import { analyticsAPI } from "@/lib/api";
 
 interface MemoryViewerProps {
     pin: TravelPin;
@@ -30,6 +31,11 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
 
     const media = pin.media;
     const current = media[currentIndex];
+
+    // Analytics: View Photo
+    useEffect(() => {
+        analyticsAPI.track("view_photo", `${pin.label} (${currentIndex + 1}/${media.length})`);
+    }, [currentIndex, pin.label, media.length]);
 
     // Lock body scroll
     useEffect(() => {

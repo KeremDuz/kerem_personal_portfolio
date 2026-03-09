@@ -241,3 +241,18 @@ export const uploadAPI = {
             method: "DELETE",
         }),
 };
+
+// ─── Analytics API ────────────────────────────────────
+export const analyticsAPI = {
+    track: async (action: string, details: string) => {
+        try {
+            await apiFetch<{ status: string }>("/track", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action, details }),
+            });
+        } catch (e) {
+            // Silently fail for analytics
+        }
+    }
+};

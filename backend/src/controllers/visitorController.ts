@@ -8,10 +8,45 @@ export const getVisitors = async (req: Request, res: Response): Promise<void> =>
         const limit = parseInt(req.query.limit as string) || 50;
         const skip = (page - 1) * limit;
 
-        const [visitors, total] = await Promise.all([
-            Visitor.find().sort({ visitedAt: -1 }).skip(skip).limit(limit),
-            Visitor.countDocuments(),
+        const [visitors, uniqueIps] = await Promise.all([
+            Visitor.aggregate([
+                { $sort: { visitedAt: -1 } },
+                {
+                    $group: {
+                        _id: "$ip",
+                        latestVisit: { $max: "$visitedAt" },
+                        browser: { $first: "$browser" },
+                        os: { $first: "$os" },
+                        device: { $first: "$device" },
+                        country: { $first: "$country" },
+                        actions: {
+                            $push: {
+                                page: "$page",
+                                visitedAt: "$visitedAt"
+                            }
+                        }
+                    }
+                },
+                { $sort: { latestVisit: -1 } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $project: {
+                        ip: "$_id",
+                        visitedAt: "$latestVisit",
+                        browser: 1,
+                        os: 1,
+                        device: 1,
+                        country: 1,
+                        actions: 1,
+                        _id: 0
+                    }
+                }
+            ]),
+            Visitor.distinct("ip")
         ]);
+
+        const total = uniqueIps.length;
 
         res.json({
             visitors,

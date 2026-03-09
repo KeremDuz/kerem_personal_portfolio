@@ -8,6 +8,8 @@ export interface IVisitor extends Document {
     os: string;
     device: string;
     page: string;
+    action: string;
+    details: string;
     referrer?: string;
     userAgent: string;
     visitedAt: Date;
@@ -21,7 +23,9 @@ const VisitorSchema = new Schema<IVisitor>(
         browser: { type: String, default: "Unknown" },
         os: { type: String, default: "Unknown" },
         device: { type: String, default: "Unknown" },
-        page: { type: String, required: true },
+        page: { type: String, required: true }, // we'll use this as full description for backward compatibility
+        action: { type: String, default: "page_view" }, // e.g. "click_city", "view_photo"
+        details: { type: String, default: "Home" }, // e.g. "Viyana"
         referrer: { type: String },
         userAgent: { type: String },
         visitedAt: { type: Date, default: Date.now },

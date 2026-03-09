@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI } from "@/lib/api";
 
@@ -35,6 +35,7 @@ export default function DashboardPage() {
     const [visitorList, setVisitorList] = useState<any[]>([]);
     const [visitorPage, setVisitorPage] = useState(1);
     const [visitorPagination, setVisitorPagination] = useState<any>(null);
+    const [expandedIp, setExpandedIp] = useState<string | null>(null);
 
     // Content lists
     const [travels, setTravels] = useState<any[]>([]);
@@ -321,19 +322,57 @@ export default function DashboardPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {visitorList.map((v: any, i: number) => (
-                                        <tr key={i} className="border-b border-gray-800/50 hover:bg-white/5 transition-colors">
-                                            <td className="px-4 py-3 text-sm font-mono text-gray-400">
-                                                {new Date(v.visitedAt).toLocaleString("tr-TR")}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm font-mono text-cyber-green/70">{v.ip}</td>
-                                            <td className="px-4 py-3 text-sm font-mono text-gray-300">{v.page}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-400">{v.browser}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-400">
-                                                {v.device === "mobile" ? "📱 Mobil" : v.device === "tablet" ? "📱 Tablet" : "🖥️ Masaüstü"}
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {visitorList.map((v: any, i: number) => {
+                                        const isExpanded = expandedIp === v.ip;
+                                        return (
+                                            <React.Fragment key={i}>
+                                                <tr
+                                                    onClick={() => setExpandedIp(isExpanded ? null : v.ip)}
+                                                    className={`border-b border-gray-800/50 hover:bg-white/5 transition-colors cursor-pointer ${isExpanded ? 'bg-white/5' : ''}`}
+                                                >
+                                                    <td className="px-4 py-3 text-sm font-mono text-gray-400">
+                                                        {new Date(v.visitedAt).toLocaleString("tr-TR")}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm font-mono text-cyber-green/70">
+                                                        <div className="flex items-center gap-2">
+                                                            <span>{isExpanded ? '▼' : '▶'}</span>
+                                                            {v.ip}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm font-mono text-gray-300">
+                                                        {v.actions && v.actions.length > 0 ? (
+                                                            <span className="text-cyber-green text-xs">
+                                                                {v.actions.length} işlem kaydı
+                                                            </span>
+                                                        ) : (
+                                                            v.page
+                                                        )}
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm text-gray-400">{v.browser}</td>
+                                                    <td className="px-4 py-3 text-sm text-gray-400">
+                                                        {v.device === "mobile" ? "📱 Mobil" : v.device === "tablet" ? "📱 Tablet" : "🖥️ Masaüstü"}
+                                                    </td>
+                                                </tr>
+                                                {isExpanded && v.actions && (
+                                                    <tr className="bg-[#0a0a16] border-b border-gray-800/50">
+                                                        <td colSpan={5} className="p-0">
+                                                            <div className="pl-12 pr-4 py-4 max-h-60 overflow-y-auto space-y-2">
+                                                                <h4 className="text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Ziyaretçinin Tüm Hareketleri</h4>
+                                                                {v.actions.map((action: any, aIdx: number) => (
+                                                                    <div key={aIdx} className="flex items-center gap-4 text-sm font-mono py-1.5 border-l-2 border-cyber-green/30 pl-3 hover:border-cyber-green transition-colors">
+                                                                        <span className="text-gray-500 min-w-[140px]">
+                                                                            {new Date(action.visitedAt).toLocaleString("tr-TR")}
+                                                                        </span>
+                                                                        <span className="text-gray-300">{action.page}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
+                                        );
+                                    })}
                                     {visitorList.length === 0 && (
                                         <tr>
                                             <td colSpan={5} className="px-4 py-8 text-center text-gray-600 font-mono">
@@ -391,6 +430,7 @@ export default function DashboardPage() {
                             { key: "lng", label: "Boylam", type: "number", required: true },
                             { key: "description", label: "Tarih / Açıklama", type: "text", required: true },
                             { key: "image", label: "Kapak Görseli", type: "image", required: true },
+                            { key: "media", label: "Medya Galerisi (Klasör)", type: "media" },
                             { key: "color", label: "Renk", type: "text" },
                             { key: "order", label: "Sıra", type: "number" },
                         ]}
@@ -497,7 +537,7 @@ export default function DashboardPage() {
 interface FormField {
     key: string;
     label: string;
-    type: "text" | "textarea" | "number" | "select" | "image";
+    type: "text" | "textarea" | "number" | "select" | "image" | "media";
     required?: boolean;
     options?: string[];
 }
@@ -542,6 +582,31 @@ function ContentListView({
             setError(err.message || "Yükleme hatası oluştu.");
         } finally {
             setUploadingField(null);
+        }
+    };
+
+    const handleMultipleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldKey: string) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        setUploadingField(fieldKey);
+        setError("");
+        try {
+            const uploadedMedia = [...(formData[fieldKey] || [])];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const data = await uploadAPI.upload(file, type);
+                uploadedMedia.push({
+                    type: file.type.startsWith("video/") ? "video" : "image",
+                    src: data.url
+                });
+                setFormData(prev => ({ ...prev, [fieldKey]: [...uploadedMedia] }));
+            }
+        } catch (err: any) {
+            setError(err.message || "Çoklu yükleme sırasında bir hata oluştu.");
+        } finally {
+            setUploadingField(null);
+            if (e.target) e.target.value = "";
         }
     };
 
@@ -655,6 +720,53 @@ function ContentListView({
                                             <option key={opt} value={opt}>{opt}</option>
                                         ))}
                                     </select>
+                                ) : field.type === "media" ? (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex gap-2">
+                                            <label className={`flex-1 flex items-center justify-center px-4 py-2 border border-dashed rounded-lg font-mono text-xs cursor-pointer transition-all ${uploadingField === field.key ? 'bg-gray-800 border-gray-600 text-gray-500 cursor-not-allowed' : 'bg-dark-bg/50 border-gray-700 text-gray-400 hover:border-cyber-green/50 hover:text-cyber-green'}`}>
+                                                {uploadingField === field.key ? "Yükleniyor..." : "📁 Klasör Seç"}
+                                                <input
+                                                    type="file"
+                                                    accept="image/*,video/*"
+                                                    multiple
+                                                    {...{ webkitdirectory: "true", mozdirectory: "true" }}
+                                                    onChange={(e) => handleMultipleFileUpload(e, field.key)}
+                                                    className="hidden"
+                                                    disabled={uploadingField === field.key}
+                                                />
+                                            </label>
+                                            <label className={`flex-1 flex items-center justify-center px-4 py-2 border border-dashed rounded-lg font-mono text-xs cursor-pointer transition-all ${uploadingField === field.key ? 'bg-gray-800 border-gray-600 text-gray-500 cursor-not-allowed' : 'bg-dark-bg/50 border-gray-700 text-gray-400 hover:border-cyber-green/50 hover:text-cyber-green'}`}>
+                                                {uploadingField === field.key ? "Yükleniyor..." : "📄 Dosyaları Seç"}
+                                                <input
+                                                    type="file"
+                                                    accept="image/*,video/*"
+                                                    multiple
+                                                    onChange={(e) => handleMultipleFileUpload(e, field.key)}
+                                                    className="hidden"
+                                                    disabled={uploadingField === field.key}
+                                                />
+                                            </label>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 bg-dark-bg/50 rounded-lg border border-gray-800">
+                                            {formData[field.key]?.map((m: any, idx: number) => (
+                                                <div key={idx} className="w-12 h-12 rounded border border-gray-700 bg-gray-900 overflow-hidden relative group">
+                                                    {m.type === "image" ? (
+                                                        <img src={m.src} alt="preview" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="flex items-center justify-center w-full h-full text-[10px] text-gray-400">🎬</div>
+                                                    )}
+                                                    <button type="button" onClick={() => {
+                                                        const newMedia = [...formData[field.key]];
+                                                        newMedia.splice(idx, 1);
+                                                        setFormData(prev => ({ ...prev, [field.key]: newMedia }));
+                                                    }} className="absolute top-0 right-0 bg-red-500 text-white text-[10px] w-4 h-4 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity">✕</button>
+                                                </div>
+                                            ))}
+                                            {(!formData[field.key] || formData[field.key].length === 0) && (
+                                                <p className="text-[10px] text-gray-600 font-mono w-full text-center py-2">Henüz medya yüklenmedi</p>
+                                            )}
+                                        </div>
+                                    </div>
                                 ) : field.type === "image" ? (
                                     <div className="flex gap-2">
                                         <input

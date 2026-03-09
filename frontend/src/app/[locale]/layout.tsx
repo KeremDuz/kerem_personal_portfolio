@@ -38,6 +38,8 @@ export const metadata: Metadata = {
     },
 };
 
+import AnalyticsTracker from "@/components/AnalyticsTracker";
+
 export default async function RootLayout({
     children,
     params
@@ -57,6 +59,7 @@ export default async function RootLayout({
         <html lang={locale} className={`dark ${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
             <body className="bg-dark-bg text-gray-200 font-sans antialiased" suppressHydrationWarning>
                 <NextIntlClientProvider messages={messages}>
+                    <AnalyticsTracker />
                     {children}
                 </NextIntlClientProvider>
             </body>
