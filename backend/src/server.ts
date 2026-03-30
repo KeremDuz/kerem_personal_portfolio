@@ -20,7 +20,7 @@ import timelineRoutes from "./routes/timelineRoutes";
 import aboutRoutes from "./routes/aboutRoutes";
 
 // Load environment variables
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../.env"), override: true });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
