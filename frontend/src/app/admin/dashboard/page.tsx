@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, Fragment } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI, timelineAPI, aboutAPI } from "@/lib/api";
 import { Terminal, MapPin, Shield, Coffee, Save, GraduationCap, Briefcase, Award, Calendar, Plus, Trash2 } from "lucide-react";
 
@@ -938,7 +937,6 @@ function ContentListView({
 
 // ─── About Form Interface ────────────────────────────
 function AboutForm({ data, onSave }: { data: any, onSave: (data: any) => Promise<void> }) {
-    const t = useTranslations("About");
     const [formData, setFormData] = useState<any>(data || {});
     const [saving, setSaving] = useState(false);
 
@@ -946,25 +944,25 @@ function AboutForm({ data, onSave }: { data: any, onSave: (data: any) => Promise
         if (data && Object.keys(data).length > 0) {
             setFormData(data);
         } else {
-            // First time use: preload from static i18n values
+            // Default Turkish initial data
             setFormData({
                 terminal_title: "kerem@portfolio ~ $ cat about.txt",
-                p1_1: t("intro.p1_1"),
-                p1_2: t("intro.p1_2"),
-                p1_3: t("intro.p1_3"),
-                p2: t("intro.p2"),
-                p3: t("intro.p3"),
-                focusLabel: t("stats.focusLabel"),
-                focusValue: t("stats.focusValue"),
-                expertiseLabel: t("stats.expertiseLabel"),
-                expertiseValue: t("stats.expertiseValue"),
-                locationLabel: t("stats.locationLabel"),
-                locationValue: t("stats.locationValue"),
-                fuelLabel: t("stats.fuelLabel"),
-                fuelValue: t("stats.fuelValue"),
+                p1_1: "Merhaba! Ben ",
+                p1_2: "Kerem Düz",
+                p1_3: ", Bilgisayar Mühendisliği öğrencisi ve siber güvenlik tutkunu.",
+                p2: "Kod satırları arasında güvenlik açıkları ararken, boş zamanlarında dünyayı keşfetmeyi, farklı kültürleri deneyimlemeyi ve anı biriktirmeyi seviyorum. Her yeni şehir bana farklı bir bakış açısı kazandırıyor.",
+                p3: "Savunma odaklı siber güvenlik, ağ güvenliği, penetrasyon testi ve zararlı yazılım analizi alanlarında kendimi geliştiriyorum. Amacım dijital dünyayı daha güvenli bir yer yapmak.",
+                focusLabel: "ODAK ALANI",
+                focusValue: "Siber Güvenlik & Yazılım",
+                expertiseLabel: "UZMANLIK",
+                expertiseValue: "Network Security, Pentest",
+                locationLabel: "KONUM",
+                locationValue: "Ankara & Antalya, Türkiye",
+                fuelLabel: "YAKIT",
+                fuelValue: "Kahve & Merak"
             });
         }
-    }, [data, t]);
+    }, [data]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -1258,10 +1256,22 @@ function TimelineVisualEditor({ items, onSave, onDelete }: { items: any[], onSav
         setLocalItems([{ _id: "", type: "education", title: "Yeni Başlık", subtitle: "Kurum", description: "Açıklama...", year: "2026", order: items.length }, ...localItems]);
     };
 
+    const handlePrepopulateDefaults = () => {
+        setLocalItems([
+            { _id: "", year: "2026", title: "Stajyer", subtitle: "S4E", description: "Şirket bünyesinde staj deneyimi.", type: "work", tags: ["Staj", "Siber Güvenlik"], order: 10 },
+            { _id: "", year: "2022 — Devam", title: "Bilgisayar Mühendisliği", subtitle: "Akdeniz Üniversitesi", description: "Bilgisayar Mühendisliği lisans programı. Ağ güvenliği, yazılım geliştirme ve sistem yönetimi üzerine odaklanma.", type: "education", tags: ["C/C++", "Java", "Data Structures", "Algorithms"], order: 20 },
+            { _id: "", year: "2022", title: "12. Sınıf (2. Dönem)", subtitle: "Açık Öğretim Lisesi", description: "Lise eğitimimin son dönemini Açık Öğretim Lisesi'nde tamamladım.", type: "education", order: 30 },
+            { _id: "", year: "2021", title: "12. Sınıf (1. Dönem)", subtitle: "Gelibolu Amerikan Kültür Koleji", description: "Lise son sınıf eğitiminin ilk dönemi.", type: "education", order: 40 },
+            { _id: "", year: "2019 — 2021", title: "10. ve 11. Sınıf", subtitle: "Hayat Koleji", description: "Lise eğitimimin orta dönemi.", type: "education", order: 50 },
+            { _id: "", year: "2018 — 2019", title: "9. Sınıf", subtitle: "Kars Harakani Anadolu Lisesi", description: "Lise eğitimime Kars'ta başladım.", type: "education", order: 60 }
+        ]);
+    };
+
     const handleSaveItem = async (index: number) => {
         const item = localItems[index];
+        const { _id, ...payload } = item;
         try {
-            await onSave(item, item._id || undefined);
+            await onSave(payload, _id || undefined);
             alert("Başarıyla kaydedildi!");
         } catch (e: any) {
             alert("Hata: " + e.message);
@@ -1292,10 +1302,16 @@ function TimelineVisualEditor({ items, onSave, onDelete }: { items: any[], onSav
 
     if (localItems.length === 0) {
         return (
-            <div className="w-full flex justify-center items-center h-64 glass-card">
-                <button onClick={handleAdd} className="flex items-center gap-2 bg-cyber-green text-black px-6 py-3 rounded-lg font-mono text-sm font-bold opacity-90 hover:opacity-100 transition-opacity">
-                    <Plus size={18} /> İlk Deneyimi Ekle
-                </button>
+            <div className="w-full flex flex-col justify-center items-center gap-4 h-64 glass-card">
+                <p className="text-gray-400 font-mono text-sm">Hiç kayıt bulunamadı.</p>
+                <div className="flex gap-4">
+                    <button onClick={handlePrepopulateDefaults} className="flex items-center gap-2 bg-dark-surface border border-gray-700 hover:border-cyber-green/50 text-gray-200 px-6 py-3 rounded-lg font-mono text-sm transition-all focus:outline-none">
+                        Varsayılanları Yükle
+                    </button>
+                    <button onClick={handleAdd} className="flex items-center gap-2 bg-cyber-green text-black px-6 py-3 rounded-lg font-mono text-sm font-bold opacity-90 hover:opacity-100 transition-opacity">
+                        <Plus size={18} /> Boş Ekle
+                    </button>
+                </div>
             </div>
         );
     }

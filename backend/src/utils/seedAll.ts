@@ -5,6 +5,7 @@ import Travel from "../models/Travel";
 import Project from "../models/Project";
 import Certificate from "../models/Certificate";
 import Blog from "../models/Blog";
+import Timeline from "../models/Timeline";
 
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
@@ -340,6 +341,16 @@ const blogsData = [
     },
 ];
 
+// ─── Timeline Data ──────────────────────────────────
+const timelineData = [
+    { year: "2026", title: "Stajyer", subtitle: "S4E", description: "Şirket bünyesinde staj deneyimi.", type: "work", tags: ["Staj", "Siber Güvenlik"], order: 10 },
+    { year: "2022 — Devam", title: "Bilgisayar Mühendisliği", subtitle: "Akdeniz Üniversitesi", description: "Bilgisayar Mühendisliği lisans programı. Ağ güvenliği, yazılım geliştirme ve sistem yönetimi üzerine odaklanma.", type: "education", tags: ["C/C++", "Java", "Data Structures", "Algorithms"], order: 20 },
+    { year: "2022", title: "12. Sınıf (2. Dönem)", subtitle: "Açık Öğretim Lisesi", description: "Lise eğitimimin son dönemini Açık Öğretim Lisesi'nde tamamladım.", type: "education", tags: [], order: 30 },
+    { year: "2021", title: "12. Sınıf (1. Dönem)", subtitle: "Gelibolu Amerikan Kültür Koleji", description: "Lise son sınıf eğitiminin ilk dönemi.", type: "education", tags: [], order: 40 },
+    { year: "2019 — 2021", title: "10. ve 11. Sınıf", subtitle: "Hayat Koleji", description: "Lise eğitimimin orta dönemi.", type: "education", tags: [], order: 50 },
+    { year: "2018 — 2019", title: "9. Sınıf", subtitle: "Kars Harakani Anadolu Lisesi", description: "Lise eğitimime Kars'ta başladım.", type: "education", tags: [], order: 60 },
+];
+
 // ─── Seed All Data ──────────────────────────────────
 async function seedAll() {
     try {
@@ -358,21 +369,24 @@ async function seedAll() {
             Project.deleteMany({}),
             Certificate.deleteMany({}),
             Blog.deleteMany({}),
+            Timeline.deleteMany({}),
         ]);
         console.log("🗑️  Eski veriler temizlendi.");
 
         // Seed all
-        const [travels, projects, certs, blogs] = await Promise.all([
+        const [travels, projects, certs, blogs, timelines] = await Promise.all([
             Travel.insertMany(travelData),
             Project.insertMany(projectsData),
             Certificate.insertMany(certificatesData),
             Blog.insertMany(blogsData),
+            Timeline.insertMany(timelineData),
         ]);
 
         console.log(`✅ ${travels.length} seyahat noktası eklendi.`);
         console.log(`✅ ${projects.length} proje eklendi.`);
         console.log(`✅ ${certs.length} sertifika eklendi.`);
         console.log(`✅ ${blogs.length} blog yazısı eklendi.`);
+        console.log(`✅ ${timelines.length} timeline kaydı eklendi.`);
 
         await mongoose.disconnect();
         console.log("✅ Tamamlandı!");
