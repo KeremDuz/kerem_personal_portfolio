@@ -83,13 +83,14 @@ const cardVariants = {
 
 export default function Projects() {
     const t = useTranslations("Projects");
-    const [projects, setProjects] = useState(staticProjects);
+    const [projects, setProjects] = useState<any[]>(staticProjects);
 
     useEffect(() => {
         projectAPI.getAll()
             .then((data) => {
                 if (data && data.length > 0) {
                     setProjects(data.map((p: any) => ({
+                        _id: p._id,
                         title: p.title,
                         description: p.description,
                         tags: p.tags || [],
@@ -104,8 +105,8 @@ export default function Projects() {
     const localizedProjects = projects.map((project, index) => ({
         ...project,
         IconComponent: iconMap[project.icon] || Code,
-        title: t(`items.${index}.title`),
-        description: t(`items.${index}.desc`),
+        title: project._id ? project.title : t(`items.${index}.title`),
+        description: project._id ? project.description : t(`items.${index}.desc`),
     }));
 
     return (
@@ -187,7 +188,7 @@ export default function Projects() {
 
                             {/* Tags */}
                             <div className="flex flex-wrap gap-2">
-                                {project.tags.map((tag) => (
+                                {project.tags.map((tag: string) => (
                                     <span key={tag} className="badge text-[11px]">
                                         {tag}
                                     </span>

@@ -16,6 +16,8 @@ import projectRoutes from "./routes/projectRoutes";
 import certificateRoutes from "./routes/certificateRoutes";
 import visitorRoutes from "./routes/visitorRoutes";
 import uploadRoutes from "./routes/uploadRoutes";
+import timelineRoutes from "./routes/timelineRoutes";
+import aboutRoutes from "./routes/aboutRoutes";
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
@@ -77,6 +79,8 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/admin/visitors", visitorRoutes);
 app.use("/api/admin/upload", uploadRoutes);
+app.use("/api/timeline", timelineRoutes);
+app.use("/api/about", aboutRoutes);
 
 // Health check
 app.get("/api/health", (_req, res) => {

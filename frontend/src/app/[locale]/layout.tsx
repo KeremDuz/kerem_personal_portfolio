@@ -39,6 +39,7 @@ export const metadata: Metadata = {
 };
 
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export default async function RootLayout({
     children,
@@ -58,6 +59,7 @@ export default async function RootLayout({
     return (
         <html lang={locale} className={`dark ${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
             <body className="bg-dark-bg text-gray-200 font-sans antialiased" suppressHydrationWarning>
+                {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
                 <NextIntlClientProvider messages={messages}>
                     <AnalyticsTracker />
                     {children}

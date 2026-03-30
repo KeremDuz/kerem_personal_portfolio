@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { GraduationCap, Briefcase, Award, Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
+import { timelineAPI } from "@/lib/api";
 
 interface TimelineItem {
     year: string;
@@ -68,18 +70,29 @@ const timelineData: TimelineItem[] = [
 
 export default function Timeline() {
     const t = useTranslations("Timeline");
+    const [timelines, setTimelines] = useState<any[]>(timelineData);
 
-    const typeConfig = {
+    useEffect(() => {
+        timelineAPI.getAll()
+            .then(data => {
+                if (data && data.length > 0) {
+                    setTimelines(data);
+                }
+            })
+            .catch(() => {});
+    }, []);
+
+    const typeConfig: Record<string, any> = {
         education: { icon: GraduationCap, color: "#00ff41", label: t("education") },
         work: { icon: Briefcase, color: "#00f3ff", label: t("work") },
         certification: { icon: Award, color: "#f59e0b", label: t("certification") },
     };
 
-    const localizedTimelineData = timelineData.map((item, index) => ({
+    const localizedTimelineData = timelines.map((item, index) => ({
         ...item,
-        title: t(`items.${index}.title`),
-        subtitle: t(`items.${index}.subtitle`),
-        description: t(`items.${index}.desc`),
+        title: item._id ? item.title : t(`items.${index}.title`),
+        subtitle: item._id ? item.subtitle : t(`items.${index}.subtitle`),
+        description: item._id ? item.description : t(`items.${index}.desc`),
     }));
 
     return (
@@ -178,7 +191,7 @@ export default function Timeline() {
                                             {/* Tags */}
                                             {item.tags && (
                                                 <div className="flex flex-wrap gap-1.5">
-                                                    {item.tags.map((tag) => (
+                                                    {item.tags.map((tag: string) => (
                                                         <span
                                                             key={tag}
                                                             className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-dark-surface/80 border border-gray-800 text-gray-500"

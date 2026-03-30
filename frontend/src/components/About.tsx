@@ -3,9 +3,39 @@
 import { motion } from "framer-motion";
 import { Terminal, MapPin, Shield, Coffee } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
+import { aboutAPI } from "@/lib/api";
 
 export default function About() {
     const t = useTranslations("About");
+    const [aboutData, setAboutData] = useState<any>(null);
+
+    useEffect(() => {
+        aboutAPI.get()
+            .then(data => {
+                if (data && data.terminal_title) {
+                    setAboutData(data);
+                }
+            })
+            .catch(() => {});
+    }, []);
+
+    const values = {
+        terminal_title: aboutData?.terminal_title || t("terminal_title"),
+        p1_1: aboutData?.p1_1 || t("p1_1"),
+        p1_2: aboutData?.p1_2 || t("p1_2"),
+        p1_3: aboutData?.p1_3 || t("p1_3"),
+        p2: aboutData?.p2 || t("p2"),
+        p3: aboutData?.p3 || t("p3"),
+        focusLabel: aboutData?.focusLabel || t("focusLabel"),
+        focusValue: aboutData?.focusValue || t("focusValue"),
+        expertiseLabel: aboutData?.expertiseLabel || t("expertiseLabel"),
+        expertiseValue: aboutData?.expertiseValue || "Network Security, Pentest",
+        locationLabel: aboutData?.locationLabel || t("locationLabel"),
+        locationValue: aboutData?.locationValue || t("locationValue"),
+        fuelLabel: aboutData?.fuelLabel || t("fuelLabel"),
+        fuelValue: aboutData?.fuelValue || t("fuelValue"),
+    };
     return (
         <section id="about" className="relative py-24 md:py-32">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyber-green/15 to-transparent" />
@@ -40,20 +70,20 @@ export default function About() {
                             <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
                             <div className="w-3 h-3 rounded-full bg-green-500/70" />
                             <span className="ml-3 font-mono text-xs text-gray-600">
-                                {t("terminal_title")}
+                                {values.terminal_title}
                             </span>
                         </div>
 
                         <div className="space-y-4 font-mono text-sm leading-relaxed">
                             <p className="text-gray-300">
-                                <span className="text-cyber-green">{">"}</span> {t("p1_1")}
-                                <span className="text-cyber-green font-semibold">{t("p1_2")}</span>{t("p1_3")}
+                                <span className="text-cyber-green">{">"}</span> {values.p1_1}
+                                <span className="text-cyber-green font-semibold">{values.p1_2}</span>{values.p1_3}
                             </p>
                             <p className="text-gray-400">
-                                <span className="text-cyber-green">{">"}</span> {t("p2")}
+                                <span className="text-cyber-green">{">"}</span> {values.p2}
                             </p>
                             <p className="text-gray-400">
-                                <span className="text-cyber-green">{">"}</span> {t("p3")}
+                                <span className="text-cyber-green">{">"}</span> {values.p3}
                             </p>
                             <p className="text-gray-500 mt-4">
                                 <span className="text-cyber-green animate-blink">█</span>
@@ -72,26 +102,26 @@ export default function About() {
                         {[
                             {
                                 icon: Terminal,
-                                label: t("focusLabel"),
-                                value: t("focusValue"),
+                                label: values.focusLabel,
+                                value: values.focusValue,
                                 color: "#00ff41",
                             },
                             {
                                 icon: Shield,
-                                label: t("expertiseLabel"),
-                                value: "Network Security, Pentest",
+                                label: values.expertiseLabel,
+                                value: values.expertiseValue,
                                 color: "#00f3ff",
                             },
                             {
                                 icon: MapPin,
-                                label: t("locationLabel"),
-                                value: t("locationValue"),
+                                label: values.locationLabel,
+                                value: values.locationValue,
                                 color: "#f59e0b",
                             },
                             {
                                 icon: Coffee,
-                                label: t("fuelLabel"),
-                                value: t("fuelValue"),
+                                label: values.fuelLabel,
+                                value: values.fuelValue,
                                 color: "#f97316",
                             },
                         ].map((item, i) => (

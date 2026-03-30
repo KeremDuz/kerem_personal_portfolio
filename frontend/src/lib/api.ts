@@ -64,6 +64,36 @@ export interface Visitor {
     visitedAt: string;
 }
 
+export interface TimelineItem {
+    _id: string;
+    year: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    type: "education" | "work" | "certification";
+    tags: string[];
+    order: number;
+    isActive: boolean;
+}
+
+export interface AboutData {
+    _id: string;
+    terminal_title: string;
+    p1_1: string;
+    p1_2: string;
+    p1_3: string;
+    p2: string;
+    p3: string;
+    focusLabel: string;
+    focusValue: string;
+    expertiseLabel: string;
+    expertiseValue: string;
+    locationLabel: string;
+    locationValue: string;
+    fuelLabel: string;
+    fuelValue: string;
+}
+
 export interface VisitorStats {
     total: number;
     today: number;
@@ -211,6 +241,32 @@ export const certificateAPI = {
     }),
     delete: (id: string) => apiFetch<{ message: string }>(`/certificates/admin/${id}`, {
         method: "DELETE",
+    }),
+};
+
+// ─── Timeline API ───────────────────────────────────
+export const timelineAPI = {
+    getAll: () => apiFetch<TimelineItem[]>("/timeline"),
+    getAllAdmin: () => apiFetch<TimelineItem[]>("/timeline/admin/all"),
+    create: (data: Partial<TimelineItem>) => apiFetch<TimelineItem>("/timeline/admin", {
+        method: "POST",
+        body: JSON.stringify(data),
+    }),
+    update: (id: string, data: Partial<TimelineItem>) => apiFetch<TimelineItem>(`/timeline/admin/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+    }),
+    delete: (id: string) => apiFetch<{ message: string }>(`/timeline/admin/${id}`, {
+        method: "DELETE",
+    }),
+};
+
+// ─── About API ──────────────────────────────────────
+export const aboutAPI = {
+    get: () => apiFetch<AboutData>("/about"),
+    upsert: (data: Partial<AboutData>) => apiFetch<AboutData>("/about/admin", {
+        method: "PUT",
+        body: JSON.stringify(data),
     }),
 };
 

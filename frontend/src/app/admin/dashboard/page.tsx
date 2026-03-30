@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useCallback, Fragment } from "react";
 import { useRouter } from "next/navigation";
-import { authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI } from "@/lib/api";
+import { authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI, timelineAPI, aboutAPI } from "@/lib/api";
+import { Terminal, MapPin, Shield, Coffee, Save } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────
 interface Stats {
@@ -23,7 +24,7 @@ interface Counts {
     certificates: number;
 }
 
-type ActiveTab = "overview" | "visitors" | "travel" | "blogs" | "projects" | "certificates";
+type ActiveTab = "overview" | "visitors" | "ga" | "travel" | "blogs" | "projects" | "certificates" | "timeline" | "about";
 
 // ─── Main Dashboard ─────────────────────────────────
 export default function DashboardPage() {
@@ -42,6 +43,8 @@ export default function DashboardPage() {
     const [blogs, setBlogs] = useState<any[]>([]);
     const [projects, setProjects] = useState<any[]>([]);
     const [certificates, setCertificates] = useState<any[]>([]);
+    const [timelines, setTimelines] = useState<any[]>([]);
+    const [aboutData, setAboutData] = useState<any>(null);
 
     // ─── Auth Check ─────────────────────────────────
     useEffect(() => {
@@ -54,19 +57,24 @@ export default function DashboardPage() {
 
     const loadDashboard = async () => {
         try {
-            const [statsData, travelsData, blogsData, projectsData, certsData] = await Promise.all([
+            const [statsData, travelsData, blogsData, projectsData, certsData, timelinesData, aboutRes] = await Promise.all([
                 visitorAPI.getStats(),
                 travelAPI.getAllAdmin(),
                 blogAPI.getAllAdmin(),
                 projectAPI.getAllAdmin(),
                 certificateAPI.getAllAdmin(),
+                timelineAPI.getAllAdmin(),
+                aboutAPI.get(),
             ]);
             setStats(statsData);
             setTravels(travelsData);
             setBlogs(blogsData);
             setProjects(projectsData);
             setCertificates(certsData);
+            setTimelines(timelinesData);
+            setAboutData(aboutRes);
             setCounts({
+                ...counts,
                 travels: travelsData.length,
                 blogs: blogsData.length,
                 projects: projectsData.length,
@@ -111,6 +119,7 @@ export default function DashboardPage() {
                 case "blog": await blogAPI.delete(id); break;
                 case "project": await projectAPI.delete(id); break;
                 case "certificate": await certificateAPI.delete(id); break;
+                case "timeline": await timelineAPI.delete(id); break;
             }
             loadDashboard();
         } catch (err: any) {
@@ -126,6 +135,7 @@ export default function DashboardPage() {
                 case "blog": await blogAPI.update(id, data); break;
                 case "project": await projectAPI.update(id, data); break;
                 case "certificate": await certificateAPI.update(id, data); break;
+                case "timeline": await timelineAPI.update(id, data); break;
             }
             loadDashboard();
         } catch (err: any) {
@@ -147,7 +157,10 @@ export default function DashboardPage() {
     // ─── Sidebar tabs ───────────────────────────────
     const tabs: { id: ActiveTab; label: string; icon: string }[] = [
         { id: "overview", label: "Genel Bakış", icon: "📊" },
-        { id: "visitors", label: "Ziyaretçiler", icon: "👥" },
+        { id: "visitors", label: "Yerel Ziyaretçiler", icon: "👥" },
+        { id: "ga", label: "Google Analytics", icon: "📈" },
+        { id: "about", label: "Hakkımda", icon: "👨‍💻" },
+        { id: "timeline", label: "Deneyim & Eğitim", icon: "⏳" },
         { id: "travel", label: "Seyahatler", icon: "🌍" },
         { id: "blogs", label: "Blog Yazıları", icon: "📝" },
         { id: "projects", label: "Projeler", icon: "💻" },
@@ -528,6 +541,53 @@ export default function DashboardPage() {
                         ]}
                     />
                 )}
+
+                {/* ─── Google Analytics Tab ──────────────── */}
+                {activeTab === "ga" && (
+                    <GATab />
+                )}
+
+                {/* ─── Timeline Tab ─────────────────────── */}
+                {activeTab === "timeline" && (
+                    <ContentListView
+                        title="Deneyim & Eğitim (Timeline)"
+                        items={timelines}
+                        type="timeline"
+                        onDelete={(id) => handleDelete("timeline", id)}
+                        onToggleActive={(id, active) => handleToggleActive("timeline", id, active)}
+                        onSave={async (data, id) => {
+                            if (id) await timelineAPI.update(id, data);
+                            else await timelineAPI.create(data);
+                            loadDashboard();
+                        }}
+                        columns={[
+                            { key: "year", label: "Yıl" },
+                            { key: "title", label: "Başlık" },
+                            { key: "subtitle", label: "Alt Başlık" },
+                            { key: "type", label: "Tür" },
+                        ]}
+                        formFields={[
+                            { key: "year", label: "Yıl Değeri", type: "text", required: true },
+                            { key: "title", label: "Başlık", type: "text", required: true },
+                            { key: "subtitle", label: "Alt Başlık (Firma/Okul)", type: "text", required: true },
+                            { key: "description", label: "Açıklama", type: "textarea", required: true },
+                            { key: "type", label: "Tür", type: "select", options: ["education", "work", "certification"], required: true },
+                            { key: "tags", label: "Etiketler (virgülle)", type: "text" },
+                            { key: "order", label: "Sıralama (Küçük önce)", type: "number" },
+                        ]}
+                    />
+                )}
+
+                {/* ─── About Tab ────────────────────────── */}
+                {activeTab === "about" && (
+                    <AboutForm
+                        data={aboutData}
+                        onSave={async (data) => {
+                            await aboutAPI.upsert(data);
+                            loadDashboard();
+                        }}
+                    />
+                )}
             </main>
         </div>
     );
@@ -887,6 +947,289 @@ function ContentListView({
                     </tbody>
                 </table>
             </div>
+        </div>
+    );
+}
+
+// ─── About Form Interface ────────────────────────────
+function AboutForm({ data, onSave }: { data: any, onSave: (data: any) => Promise<void> }) {
+    const [formData, setFormData] = useState<any>(data || {});
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        if (data) setFormData(data);
+    }, [data]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
+        try {
+            await onSave(formData);
+            alert("Hakkımda bilgileri güncellendi!");
+        } catch (err: any) {
+            alert("Kaydetme hatası: " + err.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleReset = () => {
+        if (data) setFormData(data);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="w-full">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h2 className="font-mono text-2xl font-bold text-gray-100">Hakkımda Görsel Düzenleyici</h2>
+                    <p className="text-gray-400 font-mono text-sm mt-1">Sitedeki görünümüyle birebir düzenleyin. Değiştirmek için metinlerin üzerine tıklayın.</p>
+                </div>
+                <div className="flex gap-3">
+                    <button
+                        type="button"
+                        onClick={handleReset}
+                        className="px-4 py-2 font-mono text-sm text-gray-400 hover:text-white transition-colors"
+                    >
+                        Geri Al
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={saving}
+                        className="flex items-center gap-2 bg-cyber-green text-black px-6 py-2 rounded-lg font-mono text-sm font-bold opacity-90 hover:opacity-100 transition-opacity disabled:opacity-50"
+                    >
+                        <Save size={16} />
+                        {saving ? "Kaydediliyor..." : "Kaydet"}
+                    </button>
+                </div>
+            </div>
+
+            <div className="grid md:grid-cols-5 gap-8 items-start">
+                {/* Left — Terminal-style bio */}
+                <div className="md:col-span-3 glass-card p-6 md:p-8">
+                    {/* Terminal header */}
+                    <div className="flex items-center gap-2 mb-8 pb-3 border-b border-gray-800">
+                        <div className="w-3 h-3 rounded-full bg-red-500/70 shrink-0" />
+                        <div className="w-3 h-3 rounded-full bg-yellow-500/70 shrink-0" />
+                        <div className="w-3 h-3 rounded-full bg-green-500/70 shrink-0" />
+                        <input
+                            type="text"
+                            value={formData.terminal_title || ""}
+                            onChange={(e) => setFormData({ ...formData, terminal_title: e.target.value })}
+                            className="ml-3 font-mono text-xs text-gray-400 bg-transparent border-0 border-b border-transparent hover:border-gray-700 focus:border-cyber-green/50 focus:outline-none flex-1 transition-all"
+                            placeholder="Terminal başlığı"
+                            required
+                        />
+                    </div>
+
+                    <div className="space-y-4 font-mono text-sm leading-relaxed">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-cyber-green">{">"}</span>
+                            <input
+                                type="text"
+                                value={formData.p1_1 || ""}
+                                onChange={(e) => setFormData({ ...formData, p1_1: e.target.value })}
+                                className="text-gray-300 bg-transparent border-b border-transparent bg-white/5 hover:border-gray-700 focus:border-cyber-green/50 focus:outline-none transition-all w-24 p-1 rounded-t line-clamp-1"
+                                placeholder="Giriş"
+                                required
+                            />
+                            <input
+                                type="text"
+                                value={formData.p1_2 || ""}
+                                onChange={(e) => setFormData({ ...formData, p1_2: e.target.value })}
+                                className="text-cyber-green font-semibold bg-transparent border-b border-transparent bg-white/5 hover:border-gray-700 focus:border-cyber-green/50 focus:outline-none transition-all w-28 p-1 rounded-t line-clamp-1"
+                                placeholder="İsim"
+                                required
+                            />
+                            <input
+                                type="text"
+                                value={formData.p1_3 || ""}
+                                onChange={(e) => setFormData({ ...formData, p1_3: e.target.value })}
+                                className="text-gray-300 bg-transparent border-b border-transparent bg-white/5 hover:border-gray-700 focus:border-cyber-green/50 focus:outline-none transition-all flex-1 min-w-[150px] p-1 rounded-t"
+                                placeholder="Devamı"
+                                required
+                            />
+                        </div>
+                        
+                        <div className="flex gap-3 items-start mt-6">
+                            <span className="text-cyber-green mt-2">{">"}</span>
+                            <textarea
+                                value={formData.p2 || ""}
+                                onChange={(e) => setFormData({ ...formData, p2: e.target.value })}
+                                className="text-gray-400 bg-transparent border border-transparent bg-white/5 hover:border-gray-700 focus:border-cyber-green/50 focus:bg-white/10 focus:shadow-inner focus:outline-none transition-all flex-1 min-h-[120px] w-full resize-y rounded p-3"
+                                placeholder="Paragraf 2"
+                                required
+                            />
+                        </div>
+
+                        <div className="flex gap-3 items-start mt-4">
+                            <span className="text-cyber-green mt-2">{">"}</span>
+                            <textarea
+                                value={formData.p3 || ""}
+                                onChange={(e) => setFormData({ ...formData, p3: e.target.value })}
+                                className="text-gray-400 bg-transparent border border-transparent bg-white/5 hover:border-gray-700 focus:border-cyber-green/50 focus:bg-white/10 focus:shadow-inner focus:outline-none transition-all flex-1 min-h-[120px] w-full resize-y rounded p-3"
+                                placeholder="Paragraf 3"
+                                required
+                            />
+                        </div>
+                        <p className="text-gray-500 mt-4 pl-1">
+                            <span className="text-cyber-green animate-blink">█</span>
+                        </p>
+                    </div>
+                </div>
+
+                {/* Right — Quick facts */}
+                <div className="md:col-span-2 space-y-4">
+                    {[
+                        {
+                            id: "focus",
+                            icon: Terminal,
+                            labelKey: "focusLabel",
+                            valueKey: "focusValue",
+                            color: "#00ff41",
+                        },
+                        {
+                            id: "expertise",
+                            icon: Shield,
+                            labelKey: "expertiseLabel",
+                            valueKey: "expertiseValue",
+                            color: "#00f3ff",
+                        },
+                        {
+                            id: "location",
+                            icon: MapPin,
+                            labelKey: "locationLabel",
+                            valueKey: "locationValue",
+                            color: "#f59e0b",
+                        },
+                        {
+                            id: "fuel",
+                            icon: Coffee,
+                            labelKey: "fuelLabel",
+                            valueKey: "fuelValue",
+                            color: "#f97316",
+                        },
+                    ].map((item, i) => (
+                        <div
+                            key={item.id}
+                            className="glass-card p-4 flex items-center gap-4 group hover:border-gray-700 transition-colors"
+                        >
+                            <div
+                                className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                                style={{
+                                    backgroundColor: `${item.color}15`,
+                                    border: `1px solid ${item.color}25`,
+                                }}
+                            >
+                                <item.icon
+                                    size={18}
+                                    style={{ color: item.color }}
+                                    strokeWidth={1.5}
+                                />
+                            </div>
+                            <div className="flex-1 min-w-0 flex flex-col gap-1">
+                                <input
+                                    type="text"
+                                    value={formData[item.labelKey] || ""}
+                                    onChange={(e) => setFormData({ ...formData, [item.labelKey]: e.target.value })}
+                                    className="text-gray-500 text-xs font-mono uppercase tracking-wider bg-transparent border-b border-transparent bg-white/5 hover:border-gray-700 focus:border-cyber-green/50 focus:outline-none transition-all w-full p-0.5 rounded-t"
+                                    placeholder="Başlık"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    value={formData[item.valueKey] || ""}
+                                    onChange={(e) => setFormData({ ...formData, [item.valueKey]: e.target.value })}
+                                    className="text-gray-200 text-sm font-medium bg-transparent border-b border-transparent bg-white/5 hover:border-gray-700 focus:border-cyber-green/50 focus:outline-none transition-all w-full leading-tight p-0.5 rounded-t"
+                                    placeholder="Değer"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </form>
+    );
+}
+
+// ─── Google Analytics Tab Component ─────────────────
+function GATab() {
+    const [embedUrl, setEmbedUrl] = useState<string>("");
+    const [savedUrl, setSavedUrl] = useState<string>("");
+
+    useEffect(() => {
+        const stored = localStorage.getItem("ga_looker_studio_url");
+        if (stored) {
+            setSavedUrl(stored);
+            setEmbedUrl(stored);
+        }
+    }, []);
+
+    const handleSave = () => {
+        localStorage.setItem("ga_looker_studio_url", embedUrl);
+        setSavedUrl(embedUrl);
+        alert("Google Analytics panosu kaydedildi!");
+    };
+
+    return (
+        <div className="flex flex-col gap-6">
+            <div className="glass-card p-6 border-l-4 border-cyber-green">
+                <h2 className="text-xl font-mono text-gray-100 mb-2">Google Analytics Entegrasyonu</h2>
+                <p className="text-sm font-mono text-gray-400 leading-relaxed mb-4">
+                    Siteye Google Analytics (GA4) kodları yerleştirilmiştir. Ziyaretçi bildirim detaylarını, sayfa sürelerini ve lokasyonlarını kendi panelinizden görmek için Google'ın ücretsiz aracı olan <strong>Looker Studio</strong> (eski adıyla Data Studio) kullanıyoruz. <br /><br />
+                    1. <a href="https://lookerstudio.google.com/" target="_blank" rel="noreferrer" className="text-cyber-green underline">Looker Studio</a> sayfasına gidin ve GA4 mülkünüzü seçerek bir rapor oluşturun.<br />
+                    2. Raporu oluşturduktan sonra sağ üstteki "Paylaş" sekmesinden "Raporu Yerleştir (Embed)" diyerek verilen iframe içindeki URL bağlantısını (src="..." arasındaki linki) kopyalayın.<br />
+                    3. Kopyaladığınız linki aşağıdaki alana yapıştırın ve kaydedin.
+                </p>
+                <div className="flex gap-2">
+                    <input
+                        type="url"
+                        value={embedUrl}
+                        onChange={(e) => setEmbedUrl(e.target.value)}
+                        placeholder="https://lookerstudio.google.com/embed/reporting/..."
+                        className="flex-1 px-4 py-2 bg-dark-bg/50 border border-gray-700 rounded-lg font-mono text-sm text-gray-200 focus:border-cyber-green/50 focus:outline-none transition-all"
+                    />
+                    <button
+                        onClick={handleSave}
+                        className="bg-cyber-green text-black px-6 py-2 rounded-lg font-mono text-sm font-bold opacity-90 hover:opacity-100 transition-opacity"
+                    >
+                        Kaydet
+                    </button>
+                    {savedUrl && (
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem("ga_looker_studio_url");
+                                setSavedUrl("");
+                                setEmbedUrl("");
+                            }}
+                            className="bg-red-500/20 text-red-400 px-6 py-2 rounded-lg font-mono text-sm font-bold hover:bg-red-500/30 transition-all border border-red-500/30"
+                        >
+                            Kaldır
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {savedUrl ? (
+                <div className="glass-card overflow-hidden h-[800px] w-full border border-gray-800 rounded-lg">
+                    <iframe 
+                        width="100%" 
+                        height="100%" 
+                        src={savedUrl} 
+                        frameBorder="0" 
+                        allowFullScreen 
+                        sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                    />
+                </div>
+            ) : (
+                <div className="glass-card p-12 flex flex-col items-center justify-center text-center h-[400px] border border-dashed border-gray-800">
+                    <div className="text-6xl mb-4 opacity-50">📊</div>
+                    <h3 className="text-xl font-mono text-gray-500 mb-2">Henüz Rapor Eklenmedi</h3>
+                    <p className="text-sm font-mono text-gray-600 max-w-md">
+                        Looker Studio üzerinden aldığınız Embed URL'sini yukarıdaki alana yapıştırarak tüm Google Analytics verilerinizi bu panel üzerinden canlı olarak takip edebilirsiniz.
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
