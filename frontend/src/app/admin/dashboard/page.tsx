@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI, timelineAPI, aboutAPI } from "@/lib/api";
-import { Terminal, MapPin, Shield, Coffee, Save } from "lucide-react";
+import { Terminal, MapPin, Shield, Coffee, Save, GraduationCap, Briefcase, Award, Calendar, Plus, Trash2 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────
 interface Stats {
@@ -550,32 +550,16 @@ export default function DashboardPage() {
 
                 {/* ─── Timeline Tab ─────────────────────── */}
                 {activeTab === "timeline" && (
-                    <ContentListView
-                        title="Deneyim & Eğitim (Timeline)"
+                    <TimelineVisualEditor
                         items={timelines}
-                        type="timeline"
-                        onDelete={(id) => handleDelete("timeline", id)}
-                        onToggleActive={(id, active) => handleToggleActive("timeline", id, active)}
                         onSave={async (data, id) => {
                             if (id) await timelineAPI.update(id, data);
                             else await timelineAPI.create(data);
                             loadDashboard();
                         }}
-                        columns={[
-                            { key: "year", label: "Yıl" },
-                            { key: "title", label: "Başlık" },
-                            { key: "subtitle", label: "Alt Başlık" },
-                            { key: "type", label: "Tür" },
-                        ]}
-                        formFields={[
-                            { key: "year", label: "Yıl Değeri", type: "text", required: true },
-                            { key: "title", label: "Başlık", type: "text", required: true },
-                            { key: "subtitle", label: "Alt Başlık (Firma/Okul)", type: "text", required: true },
-                            { key: "description", label: "Açıklama", type: "textarea", required: true },
-                            { key: "type", label: "Tür", type: "select", options: ["education", "work", "certification"], required: true },
-                            { key: "tags", label: "Etiketler (virgülle)", type: "text" },
-                            { key: "order", label: "Sıralama (Küçük önce)", type: "number" },
-                        ]}
+                        onDelete={async (id) => {
+                            await handleDelete("timeline", id);
+                        }}
                     />
                 )}
 
@@ -1255,3 +1239,189 @@ function GATab() {
         </div>
     );
 }
+
+// ─── Timeline Visual Editor Component ─────────────────
+function TimelineVisualEditor({ items, onSave, onDelete }: { items: any[], onSave: (data: any, id?: string) => Promise<void>, onDelete: (id: string) => Promise<void> }) {
+    const [localItems, setLocalItems] = useState<any[]>(items);
+
+    useEffect(() => {
+        setLocalItems(items);
+    }, [items]);
+
+    const typeConfig: Record<string, any> = {
+        education: { icon: GraduationCap, color: "#00ff41", label: "EĞİTİM" },
+        work: { icon: Briefcase, color: "#00f3ff", label: "İŞ/STAJ" },
+        certification: { icon: Award, color: "#f59e0b", label: "SERTİFİKA" },
+    };
+
+    const handleAdd = () => {
+        setLocalItems([{ _id: "", type: "education", title: "Yeni Başlık", subtitle: "Kurum", description: "Açıklama...", year: "2026", order: items.length }, ...localItems]);
+    };
+
+    const handleSaveItem = async (index: number) => {
+        const item = localItems[index];
+        try {
+            await onSave(item, item._id || undefined);
+            alert("Başarıyla kaydedildi!");
+        } catch (e: any) {
+            alert("Hata: " + e.message);
+        }
+    };
+
+    const handleDeleteItem = async (id: string, index: number) => {
+        if (!id) {
+            const newItems = [...localItems];
+            newItems.splice(index, 1);
+            setLocalItems(newItems);
+            return;
+        }
+        if (confirm("Bu kaydı silmek istediğine emin misin?")) {
+            try {
+                await onDelete(id);
+            } catch (e: any) {
+                alert("Silme hatası: " + e.message);
+            }
+        }
+    };
+
+    const handleChange = (index: number, field: string, value: any) => {
+        const newItems = [...localItems];
+        newItems[index] = { ...newItems[index], [field]: value };
+        setLocalItems(newItems);
+    };
+
+    if (localItems.length === 0) {
+        return (
+            <div className="w-full flex justify-center items-center h-64 glass-card">
+                <button onClick={handleAdd} className="flex items-center gap-2 bg-cyber-green text-black px-6 py-3 rounded-lg font-mono text-sm font-bold opacity-90 hover:opacity-100 transition-opacity">
+                    <Plus size={18} /> İlk Deneyimi Ekle
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="w-full relative">
+            <div className="flex items-center justify-between mb-12">
+                <div>
+                    <h2 className="font-mono text-2xl font-bold text-gray-100">Deneyim & Eğitim Görsel Düzenleyici</h2>
+                    <p className="text-gray-400 font-mono text-sm mt-1">Sitedeki görünümüyle birebir düzenleyin. Başlıklara ve açıklamalara tıklayarak değiştirebilirsiniz.</p>
+                </div>
+                <button onClick={handleAdd} className="flex items-center gap-2 bg-cyber-green text-black px-4 py-2 rounded-lg font-mono text-sm font-bold opacity-90 hover:opacity-100 transition-opacity shrink-0">
+                    <Plus size={16} /> Yeni Ekle
+                </button>
+            </div>
+
+            <div className="relative">
+                {/* Vertical line */}
+                <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyber-green/30 via-cyber-blue/20 to-transparent md:-translate-x-px" />
+
+                <div className="space-y-12">
+                    {localItems.map((item, index) => {
+                        const tConfig = typeConfig[item.type] || typeConfig.education;
+                        const Icon = tConfig.icon;
+                        const isLeft = index % 2 === 0;
+
+                        return (
+                            <div
+                                key={item._id || index}
+                                className={`relative flex items-start gap-6 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}
+                            >
+                                {/* Dot on line */}
+                                <div className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full border-2 -translate-x-1/2 z-10 mt-6"
+                                    style={{
+                                        borderColor: tConfig.color,
+                                        backgroundColor: "#0a0a0a",
+                                        boxShadow: `0 0 8px ${tConfig.color}50`,
+                                    }}
+                                />
+
+                                <div className="w-12 shrink-0 md:hidden" />
+
+                                <div className={`flex-1 ${isLeft ? "md:pr-12" : "md:pl-12"} md:w-1/2`}>
+                                    <div className={`glass-card p-5 group relative border transition-colors ${!item._id ? 'border-yellow-500/50' : 'border-gray-800 hover:border-cyber-green/50'}`}>
+                                        
+                                        {/* Action Buttons */}
+                                        <div className="absolute -top-4 -right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                            <button onClick={() => handleDeleteItem(item._id, index)} className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 shadow-lg" title="Sil">
+                                                <Trash2 size={14} />
+                                            </button>
+                                            <button onClick={() => handleSaveItem(index)} className="w-8 h-8 rounded-full bg-cyber-green text-black flex items-center justify-center hover:bg-[#00e63b] shadow-lg" title="Kaydet">
+                                                <Save size={14} />
+                                            </button>
+                                        </div>
+
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${tConfig.color}15`, border: `1px solid ${tConfig.color}25` }}>
+                                                <Icon size={16} style={{ color: tConfig.color }} strokeWidth={1.5} />
+                                            </div>
+                                            <select
+                                                value={item.type}
+                                                onChange={(e) => handleChange(index, 'type', e.target.value)}
+                                                className="text-[10px] font-mono uppercase tracking-widest bg-transparent border-0 focus:ring-0 outline-none p-0 m-0 w-28 cursor-pointer"
+                                                style={{ color: tConfig.color }}
+                                            >
+                                                <option value="education" className="bg-dark-bg text-gray-200">EĞİTİM</option>
+                                                <option value="work" className="bg-dark-bg text-gray-200">İŞ/STAJ</option>
+                                                <option value="certification" className="bg-dark-bg text-gray-200">SERTİFİKA</option>
+                                            </select>
+                                            
+                                            <div className="ml-auto flex items-center gap-1.5 text-gray-600 group/year">
+                                                <label className="text-[10px] opacity-0 group-hover/year:opacity-100 transition-opacity">Sıra:</label>
+                                                <input
+                                                    type="number"
+                                                    value={item.order ?? 0}
+                                                    onChange={(e) => handleChange(index, 'order', parseInt(e.target.value) || 0)}
+                                                    title="Ekrandaki sıralama numarası"
+                                                    className="w-8 text-right bg-transparent border-b border-transparent hover:border-gray-700 font-mono text-xs text-gray-500 p-0 m-0 focus:text-white"
+                                                />
+                                                <Calendar size={12} className="ml-2" />
+                                                <input
+                                                    value={item.year || ''}
+                                                    onChange={(e) => handleChange(index, 'year', e.target.value)}
+                                                    className="font-mono text-xs w-[120px] bg-transparent border-b border-transparent hover:border-gray-700 outline-none text-gray-300 text-right pr-1"
+                                                    placeholder="Örn: 2022 - Devam"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <input
+                                            value={item.title || ''}
+                                            onChange={(e) => handleChange(index, 'title', e.target.value)}
+                                            className="font-mono font-semibold w-full bg-transparent border-b border-transparent hover:border-gray-700 outline-none text-gray-100 hover:text-cyber-green transition-colors mb-1 text-lg"
+                                            placeholder="Başlık (Örn: Bilgisayar Müh.)"
+                                        />
+                                        <input
+                                            value={item.subtitle || ''}
+                                            onChange={(e) => handleChange(index, 'subtitle', e.target.value)}
+                                            className="text-sm w-full bg-transparent border-b border-transparent hover:border-gray-700 outline-none text-gray-500 mb-3 block"
+                                            placeholder="Alt Başlık (Örn: Akdeniz Üniversitesi)"
+                                        />
+                                        <textarea
+                                            value={item.description || ''}
+                                            onChange={(e) => handleChange(index, 'description', e.target.value)}
+                                            className="text-sm w-full min-h-[60px] bg-transparent border border-transparent hover:border-gray-700 focus:bg-white/5 focus:p-2 rounded outline-none text-gray-400 leading-relaxed mb-4 resize-y transition-all"
+                                            placeholder="Detaylı açıklama metni..."
+                                        />
+
+                                        <div className="flex flex-col gap-1.5 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
+                                            <span className="text-[10px] font-mono text-gray-600 block">ETİKETLER (VİRGÜLLE AYIRIN):</span>
+                                            <input
+                                                value={(item.tags || []).join(", ")}
+                                                onChange={(e) => handleChange(index, 'tags', e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
+                                                className="w-full bg-transparent border border-gray-800 rounded px-2 py-1.5 text-xs font-mono text-cyber-green outline-none focus:border-cyber-green/50"
+                                                placeholder="Örn: Java, C++, Staj"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="hidden md:block flex-1 md:w-1/2" />
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    );
+}
+
