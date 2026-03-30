@@ -139,7 +139,7 @@ export default function TravelGlobeSection() {
                                 style={{ backgroundColor: pin.color }}
                             />
                             <span className="font-mono text-xs text-gray-400 group-hover:text-gray-200 transition-colors">
-                                {tCities(pin.label)}
+                                {pin._id ? pin.label : tCities(pin.label)}
                             </span>
                         </button>
                     ))}

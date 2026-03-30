@@ -108,16 +108,19 @@ export default function Certificates() {
         certificateAPI.getAll()
             .then((data) => {
                 if (data && data.length > 0) {
-                    setCertificates(data as Certificate[]);
+                    setCertificates(data.map((c: any) => ({
+                        ...c,
+                        _id: c._id
+                    })));
                 }
             })
             .catch(() => { });
     }, []);
 
-    const localizedCertificates = certificates.map((cert, index) => ({
+    const localizedCertificates = certificates.map((cert: any, index) => ({
         ...cert,
-        title: t(`items.${index}.title`),
-        issuer: t(`items.${index}.issuer`),
+        title: cert._id ? cert.title : t(`items.${index}.title`),
+        issuer: cert._id ? cert.issuer : t(`items.${index}.issuer`),
     }));
 
     return (
@@ -146,7 +149,7 @@ export default function Certificates() {
                 {/* Certificate Grid */}
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {localizedCertificates.map((cert, index) => {
-                        const Icon = iconMap[cert.icon];
+                        const Icon = iconMap[cert.icon as keyof typeof iconMap] || iconMap.award;
                         return (
                             <motion.div
                                 key={cert.title}

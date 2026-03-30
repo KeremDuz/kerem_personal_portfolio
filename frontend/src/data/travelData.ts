@@ -5,6 +5,7 @@ export interface MediaItem {
 }
 
 export interface TravelPin {
+    _id?: string;
     lat: number;
     lng: number;
     label: string;

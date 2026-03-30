@@ -237,11 +237,11 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                                 className="font-mono text-sm tracking-wider uppercase"
                                 style={{ color: pin.color }}
                             >
-                                {tCountries(pin.country)}
+                                {pin._id ? pin.country : tCountries(pin.country)}
                             </span>
                         </div>
                         <h2 className="text-3xl md:text-4xl font-bold text-white">
-                            {tCities(pin.label)}
+                            {pin._id ? pin.label : tCities(pin.label)}
                         </h2>
 
                     </motion.div>
