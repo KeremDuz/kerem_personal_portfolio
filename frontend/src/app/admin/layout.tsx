@@ -1,21 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import "../globals.css";
-
-const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-inter",
-    display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-    subsets: ["latin"],
-    variable: "--font-mono",
-    display: "swap",
-});
 
 export const metadata: Metadata = {
-    title: "Admin Panel | Antigravity",
+    title: "Admin Panel",
     robots: { index: false, follow: false },
 };
 
@@ -24,11 +10,5 @@ export default function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    return (
-        <html lang="tr" className={`dark ${inter.variable} ${jetbrainsMono.variable}`}>
-            <body className="bg-dark-bg text-gray-200 font-sans antialiased">
-                {children}
-            </body>
-        </html>
-    );
+    return <>{children}</>;
 }

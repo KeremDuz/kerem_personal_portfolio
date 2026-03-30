@@ -1,22 +1,8 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import "../globals.css";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-
-const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-inter",
-    display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-    subsets: ["latin"],
-    variable: "--font-mono",
-    display: "swap",
-});
 
 export const metadata: Metadata = {
     title: "Kerem Düz | Cyber Security & World Traveler",
@@ -57,14 +43,12 @@ export default async function RootLayout({
     const messages = await getMessages();
 
     return (
-        <html lang={locale} className={`dark ${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
-            <body className="bg-dark-bg text-gray-200 font-sans antialiased" suppressHydrationWarning>
-                {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
-                <NextIntlClientProvider messages={messages}>
-                    <AnalyticsTracker />
-                    {children}
-                </NextIntlClientProvider>
-            </body>
-        </html>
+        <>
+            {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
+            <NextIntlClientProvider messages={messages}>
+                <AnalyticsTracker />
+                {children}
+            </NextIntlClientProvider>
+        </>
     );
 }
