@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, Fragment } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI, timelineAPI, aboutAPI } from "@/lib/api";
 import { Terminal, MapPin, Shield, Coffee, Save } from "lucide-react";
 
@@ -953,12 +954,33 @@ function ContentListView({
 
 // ─── About Form Interface ────────────────────────────
 function AboutForm({ data, onSave }: { data: any, onSave: (data: any) => Promise<void> }) {
+    const t = useTranslations("About");
     const [formData, setFormData] = useState<any>(data || {});
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (data) setFormData(data);
-    }, [data]);
+        if (data && Object.keys(data).length > 0) {
+            setFormData(data);
+        } else {
+            // First time use: preload from static i18n values
+            setFormData({
+                terminal_title: "kerem@portfolio ~ $ cat about.txt",
+                p1_1: t("intro.p1_1"),
+                p1_2: t("intro.p1_2"),
+                p1_3: t("intro.p1_3"),
+                p2: t("intro.p2"),
+                p3: t("intro.p3"),
+                focusLabel: t("stats.focusLabel"),
+                focusValue: t("stats.focusValue"),
+                expertiseLabel: t("stats.expertiseLabel"),
+                expertiseValue: t("stats.expertiseValue"),
+                locationLabel: t("stats.locationLabel"),
+                locationValue: t("stats.locationValue"),
+                fuelLabel: t("stats.fuelLabel"),
+                fuelValue: t("stats.fuelValue"),
+            });
+        }
+    }, [data, t]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
