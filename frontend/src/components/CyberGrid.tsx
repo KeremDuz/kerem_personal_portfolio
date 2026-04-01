@@ -6,6 +6,9 @@ export default function CyberGrid() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
+        if (window.matchMedia("(pointer: coarse)").matches) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -29,7 +32,7 @@ export default function CyberGrid() {
 
         const initParticles = () => {
             particles = [];
-            const count = Math.min(80, Math.floor((canvas.width * canvas.height) / 15000));
+            const count = Math.min(45, Math.floor((canvas.width * canvas.height) / 22000));
             for (let i = 0; i < count; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
@@ -113,14 +116,16 @@ export default function CyberGrid() {
         initParticles();
         animate();
 
-        window.addEventListener("resize", () => {
+        const handleResize = () => {
             resize();
             initParticles();
-        });
+        };
+
+        window.addEventListener("resize", handleResize, { passive: true });
 
         return () => {
             cancelAnimationFrame(animationId);
-            window.removeEventListener("resize", resize);
+            window.removeEventListener("resize", handleResize);
         };
     }, []);
 

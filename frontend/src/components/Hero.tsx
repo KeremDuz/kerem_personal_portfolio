@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import CyberGrid from "./CyberGrid";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -67,35 +66,20 @@ export default function Hero() {
             {/* Content */}
             <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
                 {/* Terminal prefix */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="mb-6"
-                >
+                <div className="mb-6">
                     <span lang="en" className="font-mono text-sm text-cyber-green/60 tracking-widest uppercase">
                         {t("title")}
                     </span>
-                </motion.div>
+                </div>
 
                 {/* Main Heading */}
-                <motion.h1
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight"
-                >
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
                     <span className="text-gray-100">{t("greeting")}</span>
                     <span className="text-gradient-cyber">{t("name")}</span>
-                </motion.h1>
+                </h1>
 
                 {/* Typewriter Subtitle */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
-                    className="flex items-center justify-center gap-2 mb-10"
-                >
+                <div className="flex items-center justify-center gap-2 mb-10">
                     <span className="text-cyber-green font-mono text-base md:text-lg">
                         {"$"}
                     </span>
@@ -103,42 +87,23 @@ export default function Hero() {
                         {displayText}
                         <span className="inline-block w-[3px] h-5 md:h-6 bg-cyber-green ml-0.5 animate-blink align-middle" />
                     </span>
-                </motion.div>
+                </div>
 
                 {/* Decorative Line */}
-                <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 1.2, delay: 1 }}
-                    className="w-32 h-px mx-auto bg-gradient-to-r from-transparent via-cyber-green/50 to-transparent mb-10"
-                />
+                <div className="w-32 h-px mx-auto bg-gradient-to-r from-transparent via-cyber-green/50 to-transparent mb-10" />
 
                 {/* Tagline */}
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 1.2 }}
-                    className="text-gray-400 font-sans text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
-                >
+                <p className="text-gray-400 font-sans text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
                     {t("subtitle")}
-                </motion.p>
+                </p>
             </div>
 
             {/* Scroll indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2, duration: 1 }}
-                className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-            >
-                <motion.div
-                    animate={{ y: [0, 8, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="text-cyber-green/40"
-                >
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+                <div className="text-cyber-green/40 animate-bounce">
                     <ChevronDown size={28} />
-                </motion.div>
-            </motion.div>
+                </div>
+            </div>
         </section>
     );
 }

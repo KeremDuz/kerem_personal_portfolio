@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.keremduz.com";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://antigravitywebsite.onrender.com/api";
 
-const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-inter",
-    display: "swap",
-});
+function getOrigin(url: string): string {
+    try {
+        return new URL(url).origin;
+    } catch {
+        return "https://antigravitywebsite.onrender.com";
+    }
+}
 
-const jetbrainsMono = JetBrains_Mono({
-    subsets: ["latin"],
-    variable: "--font-mono",
-    display: "swap",
-    preload: false,
-});
+const apiOrigin = getOrigin(apiUrl);
 
 export const metadata: Metadata = {
     metadataBase: new URL(siteUrl),
@@ -57,7 +54,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="tr" className={`dark ${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+        <html lang="tr" className="dark" suppressHydrationWarning>
+            <head>
+                <link rel="preconnect" href={apiOrigin} crossOrigin="" />
+                <link rel="dns-prefetch" href={apiOrigin} />
+            </head>
             <body className="bg-dark-bg text-gray-200 font-sans antialiased" suppressHydrationWarning>
                 {children}
             </body>
