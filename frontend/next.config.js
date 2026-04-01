@@ -5,6 +5,9 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 const nextConfig = {
     reactStrictMode: true,
     transpilePackages: ['react-globe.gl', 'three'],
+    experimental: {
+        optimizePackageImports: ['lucide-react'],
+    },
     async headers() {
         return [
             {
