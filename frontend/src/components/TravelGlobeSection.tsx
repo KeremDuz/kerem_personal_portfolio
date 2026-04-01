@@ -41,23 +41,26 @@ export default function TravelGlobeSection() {
             });
     }, []);
 
-    // Background aggressive prefetch of all photos ONLY AFTER the globe starts loading
-    // Using requestIdleCallback to execute the prefetch the exact millisecond the browser finish its main rendering work.
+    // Adaptive prefetch: preload only a limited number of likely-needed images
+    // to avoid saturating bandwidth during first render.
     useEffect(() => {
         if (!shouldLoadGlobe) return;
 
         const prefetchPhotos = () => {
-            const allMediaSrcs: string[] = [];
-            travelData.forEach(pin => {
-                pin.media?.forEach(item => {
-                    if (item.type === "image") {
-                        allMediaSrcs.push(item.src);
-                    }
-                });
-            });
+            const connection = (navigator as any).connection;
+            const isSaveData = Boolean(connection?.saveData);
+            const effectiveType = connection?.effectiveType as string | undefined;
+            const isSlowNetwork = effectiveType === "slow-2g" || effectiveType === "2g";
 
-            // Native browser cache fetching
-            allMediaSrcs.forEach(src => {
+            const maxPrefetch = isSaveData || isSlowNetwork ? 3 : 10;
+
+            const prioritizedSrcs = travelData
+                .flatMap((pin) => pin.media?.filter((item) => item.type === "image").slice(0, 1) ?? [])
+                .map((item) => item.src)
+                .filter(Boolean)
+                .slice(0, maxPrefetch);
+
+            prioritizedSrcs.forEach((src) => {
                 const img = new Image();
                 img.src = src;
             });

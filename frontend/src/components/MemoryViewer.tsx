@@ -52,20 +52,46 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
         }
     }, [currentIndex, current.type]);
 
-    // Preload next images for smoother navigation (Buffer strategy)
+    const getAdaptivePreloadCount = useCallback(() => {
+        if (typeof navigator === "undefined") return 2;
+
+        const connection = (navigator as any).connection;
+        const isSaveData = Boolean(connection?.saveData);
+        const effectiveType = connection?.effectiveType as string | undefined;
+        const isSlowNetwork = effectiveType === "slow-2g" || effectiveType === "2g";
+
+        if (isSaveData || isSlowNetwork) return 1;
+        return 3;
+    }, []);
+
+    // Preload next images for smoother navigation (adaptive + idle strategy)
     useEffect(() => {
-        const PRELOAD_COUNT = 5; // How many future images to preload
+        const preloadCount = getAdaptivePreloadCount();
 
-        for (let i = 1; i <= PRELOAD_COUNT; i++) {
-            const nextIndex = (currentIndex + i) % media.length;
-            const item = media[nextIndex];
+        const preloadTask = () => {
+            for (let i = 1; i <= preloadCount; i++) {
+                const nextIndex = (currentIndex + i) % media.length;
+                const item = media[nextIndex];
 
-            if (item.type === "image") {
-                const img = new Image();
-                img.src = item.src;
+                if (item.type === "image") {
+                    const img = new Image();
+                    img.src = item.src;
+                }
             }
+        };
+
+        if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+            const idleId = (window as any).requestIdleCallback(preloadTask);
+            return () => {
+                if ("cancelIdleCallback" in window) {
+                    (window as any).cancelIdleCallback(idleId);
+                }
+            };
         }
-    }, [currentIndex, media]);
+
+        const timeoutId = setTimeout(preloadTask, 120);
+        return () => clearTimeout(timeoutId);
+    }, [currentIndex, media, getAdaptivePreloadCount]);
 
     // Auto-play slideshow — only for images
     useEffect(() => {
@@ -191,6 +217,9 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                                     alt={pin.label}
                                     className="absolute inset-0 w-full h-full object-contain z-[1]"
                                     onLoad={() => setImageLoaded(true)}
+                                    loading="eager"
+                                    decoding="async"
+                                    fetchPriority="high"
                                     initial={{ scale: 1 }}
                                     animate={
                                         imageLoaded

@@ -15,6 +15,53 @@ interface GalleryPhoto {
 import Image from "next/image";
 import travelData from "@/data/travelData";
 
+const GALLERY_SESSION_SEED_KEY = "gallery_seed_v1";
+
+function hashString(value: string): number {
+    let hash = 2166136261;
+    for (let index = 0; index < value.length; index++) {
+        hash ^= value.charCodeAt(index);
+        hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+}
+
+function mulberry32(seed: number) {
+    let state = seed >>> 0;
+    return () => {
+        state = (state + 0x6D2B79F5) >>> 0;
+        let result = Math.imul(state ^ (state >>> 15), 1 | state);
+        result ^= result + Math.imul(result ^ (result >>> 7), 61 | result);
+        return ((result ^ (result >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function getSessionGallerySeed(): number {
+    if (typeof window === "undefined") return hashString("server-fallback-seed");
+
+    const existing = window.sessionStorage.getItem(GALLERY_SESSION_SEED_KEY);
+    if (existing) {
+        const parsed = Number(existing);
+        if (Number.isFinite(parsed)) return parsed;
+    }
+
+    const created = hashString(`${Date.now()}-${Math.random()}-${navigator.userAgent}`);
+    window.sessionStorage.setItem(GALLERY_SESSION_SEED_KEY, String(created));
+    return created;
+}
+
+function deterministicShuffle<T>(items: T[], seed: number): T[] {
+    const shuffled = [...items];
+    const random = mulberry32(seed);
+
+    for (let index = shuffled.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(random() * (index + 1));
+        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+
+    return shuffled;
+}
+
 export default function PhotoGallery() {
     const t = useTranslations("Gallery");
     const tCities = useTranslations("Cities");
@@ -39,14 +86,26 @@ export default function PhotoGallery() {
             });
         });
 
-        // Shuffle
-        const shuffled = allPhotos.sort(() => 0.5 - Math.random());
+        const seed = getSessionGallerySeed();
+        const shuffled = deterministicShuffle(allPhotos, seed);
         // Take top 9
         setGalleryPhotos(shuffled.slice(0, 9));
     }, []);
 
     const openLightbox = (index: number) => setLightboxIndex(index);
     const closeLightbox = () => setLightboxIndex(null);
+
+    const getAdaptivePreloadCount = useCallback(() => {
+        if (typeof navigator === "undefined") return 2;
+
+        const connection = (navigator as any).connection;
+        const isSaveData = Boolean(connection?.saveData);
+        const effectiveType = connection?.effectiveType as string | undefined;
+        const isSlowNetwork = effectiveType === "slow-2g" || effectiveType === "2g";
+
+        if (isSaveData || isSlowNetwork) return 1;
+        return 2;
+    }, []);
 
     const goNext = useCallback(() => {
         setLightboxIndex((prev) => (prev !== null ? (prev + 1) % galleryPhotos.length : 0));
@@ -57,6 +116,24 @@ export default function PhotoGallery() {
             prev !== null ? (prev - 1 + galleryPhotos.length) % galleryPhotos.length : 0
         );
     }, [galleryPhotos.length]);
+
+    useEffect(() => {
+        if (lightboxIndex === null || galleryPhotos.length === 0) return;
+
+        const preloadCount = getAdaptivePreloadCount();
+        const preloadIndexes = new Set<number>([lightboxIndex]);
+
+        for (let i = 1; i <= preloadCount; i++) {
+            preloadIndexes.add((lightboxIndex + i) % galleryPhotos.length);
+        }
+
+        preloadIndexes.forEach((index) => {
+            const src = galleryPhotos[index]?.src;
+            if (!src) return;
+            const img = new window.Image();
+            img.src = src;
+        });
+    }, [lightboxIndex, galleryPhotos, getAdaptivePreloadCount]);
 
     return (
         <section id="gallery" className="relative py-24 md:py-32">
@@ -165,11 +242,16 @@ export default function PhotoGallery() {
                             className="max-w-5xl max-h-[85vh] px-16"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <img
-                                src={galleryPhotos[lightboxIndex].src}
-                                alt={galleryPhotos[lightboxIndex].caption}
-                                className="max-w-full max-h-[75vh] object-contain rounded-lg mx-auto"
-                            />
+                            <div className="relative w-[min(92vw,1200px)] h-[min(75vh,900px)] mx-auto">
+                                <Image
+                                    src={galleryPhotos[lightboxIndex].src}
+                                    alt={galleryPhotos[lightboxIndex].caption}
+                                    fill
+                                    priority
+                                    sizes="92vw"
+                                    className="object-contain rounded-lg"
+                                />
+                            </div>
                             <div className="text-center mt-4">
                                 <div className="flex items-center justify-center gap-2 mb-1">
                                     <MapPin size={14} className="text-travel-amber" />
