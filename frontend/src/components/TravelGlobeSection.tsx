@@ -54,11 +54,16 @@ export default function TravelGlobeSection() {
 
             const maxPrefetch = isSaveData || isSlowNetwork ? 3 : 10;
 
-            const prioritizedSrcs = travelData
-                .flatMap((pin) => pin.media?.filter((item) => item.type === "image").slice(0, 1) ?? [])
-                .map((item) => item.src)
-                .filter(Boolean)
-                .slice(0, maxPrefetch);
+            const prioritizedSrcs: string[] = [];
+            for (const pin of travelData) {
+                const firstImage = pin.media?.find((item) => item.type === "image");
+                if (firstImage?.src) {
+                    prioritizedSrcs.push(firstImage.src);
+                }
+                if (prioritizedSrcs.length >= maxPrefetch) {
+                    break;
+                }
+            }
 
             prioritizedSrcs.forEach((src) => {
                 const img = new Image();

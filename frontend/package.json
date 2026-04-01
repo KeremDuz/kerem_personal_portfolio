@@ -8,6 +8,20 @@
         "start": "next start",
         "lint": "next lint"
     },
+    "browserslist": {
+        "production": [
+            "chrome >= 111",
+            "edge >= 111",
+            "firefox >= 111",
+            "safari >= 16.4",
+            "ios_saf >= 16.4"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
     "dependencies": {
         "@next/third-parties": "^16.2.1",
         "framer-motion": "^11.15.0",
