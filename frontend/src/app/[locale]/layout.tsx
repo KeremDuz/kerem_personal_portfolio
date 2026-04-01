@@ -4,25 +4,30 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 
-export const metadata: Metadata = {
-    title: "Kerem Düz | Cyber Security & World Traveler",
-    description:
-        "Personal portfolio of Kerem Düz — Computer Engineering Student, Cyber Security Enthusiast, and World Traveler. Explore projects, skills, and travel memories.",
-    keywords: [
-        "Kerem Düz",
-        "Cyber Security",
-        "Computer Engineering",
-        "Portfolio",
-        "Travel",
-        "Developer",
-    ],
-    openGraph: {
-        title: "Kerem Düz | Cyber Security & World Traveler",
-        description:
-            "Computer Engineering Student, Cyber Security Enthusiast, and World Traveler.",
-        type: "website",
-    },
-};
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.keremduz.com";
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+    const { locale } = await params;
+
+    return {
+        alternates: {
+            canonical: `/${locale}`,
+            languages: {
+                "tr-TR": "/tr",
+                "en-US": "/en",
+                "x-default": "/tr",
+            },
+        },
+        openGraph: {
+            url: `${siteUrl}/${locale}`,
+            locale: locale === "tr" ? "tr_TR" : "en_US",
+        },
+    };
+}
 
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import { GoogleAnalytics } from "@next/third-parties/google";

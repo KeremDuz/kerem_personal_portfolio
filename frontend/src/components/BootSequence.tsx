@@ -25,6 +25,16 @@ export default function BootSequence() {
     // Check if already booted this session
     useEffect(() => {
         if (typeof window !== "undefined") {
+            const shouldSkipForPerformance =
+                window.matchMedia("(pointer: coarse)").matches ||
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            if (shouldSkipForPerformance) {
+                setBooted(true);
+                sessionStorage.setItem("portfolio-booted", "true");
+                return;
+            }
+
             const alreadyBooted = sessionStorage.getItem("portfolio-booted");
             if (alreadyBooted) {
                 setBooted(true);

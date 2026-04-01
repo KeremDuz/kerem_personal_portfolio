@@ -16,8 +16,23 @@ export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 50);
-        window.addEventListener("scroll", handleScroll);
+        let ticking = false;
+
+        const updateScrollState = () => {
+            const nextScrolled = window.scrollY > 50;
+            setScrolled((prev) => (prev === nextScrolled ? prev : nextScrolled));
+            ticking = false;
+        };
+
+        const handleScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateScrollState);
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        updateScrollState();
+
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 

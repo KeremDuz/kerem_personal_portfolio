@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.keremduz.com";
+
 const inter = Inter({
     subsets: ["latin"],
     variable: "--font-inter",
@@ -15,8 +17,37 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Kerem Düz",
-    description: "Kerem Düz personal website",
+    metadataBase: new URL(siteUrl),
+    title: {
+        default: "Kerem Düz | Cyber Security & World Traveler",
+        template: "%s | Kerem Düz",
+    },
+    description:
+        "Personal portfolio of Kerem Düz — Computer Engineering Student, Cyber Security Enthusiast, and World Traveler.",
+    keywords: [
+        "Kerem Düz",
+        "Kerem Duz",
+        "Cyber Security",
+        "Computer Engineering",
+        "Portfolio",
+        "Travel",
+        "Developer",
+    ],
+    openGraph: {
+        type: "website",
+        siteName: "Kerem Düz",
+        title: "Kerem Düz | Cyber Security & World Traveler",
+        description:
+            "Computer Engineering Student, Cyber Security Enthusiast, and World Traveler.",
+        url: siteUrl,
+        locale: "tr_TR",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Kerem Düz | Cyber Security & World Traveler",
+        description:
+            "Computer Engineering Student, Cyber Security Enthusiast, and World Traveler.",
+    },
 };
 
 export default function RootLayout({
