@@ -95,6 +95,18 @@ export default function PhotoGallery() {
     const openLightbox = (index: number) => setLightboxIndex(index);
     const closeLightbox = () => setLightboxIndex(null);
 
+    // Lock body scroll when lightbox is open
+    useEffect(() => {
+        if (lightboxIndex !== null) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [lightboxIndex]);
+
     const getAdaptivePreloadCount = useCallback(() => {
         if (typeof navigator === "undefined") return 2;
 
@@ -207,27 +219,31 @@ export default function PhotoGallery() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center"
+                        className="fixed inset-0 z-[2000] bg-black"
                         onClick={closeLightbox}
                     >
                         {/* Close button */}
                         <button
-                            onClick={closeLightbox}
-                            className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white z-10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                closeLightbox();
+                            }}
+                            aria-label="Fotoğrafı kapat"
+                            className="fixed top-4 right-4 md:top-6 md:right-6 w-14 h-14 rounded-full bg-black/70 backdrop-blur-xl border border-white/25 flex items-center justify-center text-white z-[1001] shadow-2xl shadow-black/50 hover:bg-black/80 hover:scale-105 transition-all"
                         >
-                            <X size={20} />
+                            <X size={22} strokeWidth={2.5} />
                         </button>
 
                         {/* Navigation */}
                         <button
                             onClick={(e) => { e.stopPropagation(); goPrev(); }}
-                            className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white z-10"
+                            className="fixed left-4 md:left-6 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 z-[1001]"
                         >
                             <ChevronLeft size={24} />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); goNext(); }}
-                            className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white z-10"
+                            className="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 z-[1001]"
                         >
                             <ChevronRight size={24} />
                         </button>
@@ -235,36 +251,22 @@ export default function PhotoGallery() {
                         {/* Image */}
                         <motion.div
                             key={lightboxIndex}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            transition={{ duration: 0.3 }}
-                            className="max-w-5xl max-h-[85vh] px-16"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute inset-0"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="relative w-[min(92vw,1200px)] h-[min(75vh,900px)] mx-auto">
+                            <div className="relative w-full h-full">
                                 <Image
                                     src={galleryPhotos[lightboxIndex].src}
                                     alt={galleryPhotos[lightboxIndex].caption}
                                     fill
                                     priority
-                                    sizes="92vw"
-                                    className="object-contain rounded-lg"
+                                    sizes="100vw"
+                                    className="object-contain"
                                 />
-                            </div>
-                            <div className="text-center mt-4">
-                                <div className="flex items-center justify-center gap-2 mb-1">
-                                    <MapPin size={14} className="text-travel-amber" />
-                                    <span className="font-mono text-sm text-travel-amber">
-                                        {tCities(galleryPhotos[lightboxIndex].location)}
-                                    </span>
-                                </div>
-                                <p className="text-gray-300 text-sm">
-                                    {tDates(galleryPhotos[lightboxIndex].caption)}
-                                </p>
-                                <span className="text-gray-600 text-xs font-mono mt-1 block">
-                                    {lightboxIndex + 1} / {galleryPhotos.length}
-                                </span>
                             </div>
                         </motion.div>
                     </motion.div>

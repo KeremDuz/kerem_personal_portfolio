@@ -1,25 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import staticTravelData from "@/data/travelData";
 import type { TravelPin } from "@/data/travelData";
 import MemoryViewer from "./MemoryViewer";
+import TravelGlobe from "./TravelGlobe";
 import { useTranslations } from "next-intl";
 import { travelAPI, analyticsAPI } from "@/lib/api";
-
-// Dynamic import with no SSR for the 3D globe
-const TravelGlobe = dynamic(() => import("./TravelGlobe"), {
-    ssr: false,
-    loading: () => (
-        <div className="flex items-center justify-center h-[500px]">
-            <div className="font-mono text-cyber-green/50 text-sm animate-pulse">
-                {">"} Initializing 3D engine...
-            </div>
-        </div>
-    ),
-});
 
 export default function TravelGlobeSection() {
     const t = useTranslations("Travel");
@@ -122,6 +110,14 @@ export default function TravelGlobeSection() {
                         >
                             <TravelGlobe data={travelData} />
                         </motion.div>
+                    )}
+
+                    {!shouldLoadGlobe && (
+                        <div className="flex items-center justify-center h-[500px]">
+                            <div className="font-mono text-cyber-green/50 text-sm animate-pulse">
+                                {">"} Initializing 3D engine...
+                            </div>
+                        </div>
                     )}
                 </div>
 
