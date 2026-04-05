@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import About from "@/components/About";
 import ClientEffects from "@/components/ClientEffects";
 import HomeDeferredSections from "@/components/HomeDeferredSections";
+import AgentAssistantWidget from "@/components/AgentAssistantWidget";
 
 export default function Home() {
     return (
@@ -13,6 +14,7 @@ export default function Home() {
             <About />
 
             <HomeDeferredSections />
+            <AgentAssistantWidget />
         </main >
     );
 }
