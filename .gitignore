@@ -42,7 +42,6 @@ next-env.d.ts
 # Agent / Tooling
 .agent/
 .gemini/
-.run/
 __pycache__/
 *.pyc
 *.pyo
