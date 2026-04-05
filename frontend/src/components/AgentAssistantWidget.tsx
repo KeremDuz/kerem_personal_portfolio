@@ -19,7 +19,7 @@ export default function AgentAssistantWidget() {
     ]);
 
     const apiBaseUrl = useMemo(() => {
-        return process.env.NEXT_PUBLIC_AGENT_API_URL ?? "http://localhost:8000";
+        return process.env.NEXT_PUBLIC_AGENT_API_URL ?? "http://localhost:8010";
     }, []);
 
     const askAssistant = async () => {
@@ -54,7 +54,7 @@ export default function AgentAssistantWidget() {
                 {
                     role: "assistant",
                     content:
-                        "Şu an backend'e bağlanamadım. Lütfen `crewai_api` servisini 8000 portunda çalıştırıp tekrar dene.",
+                        `Şu an backend'e bağlanamadım. API adresi: ${apiBaseUrl}. Lütfen crewai_api servisinin çalıştığını ve URL'nin doğru olduğunu kontrol et.`,
                 },
             ]);
         } finally {
