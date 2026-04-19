@@ -26,10 +26,10 @@ from typing_extensions import TypedDict
 # LangSmith Tracing (opsiyonel – key varsa otomatik aktif)
 # ---------------------------------------------------------------------------
 
-if os.getenv("LANGCHAIN_API_KEY"):
-    os.environ.setdefault("LANGCHAIN_TRACING_V2", "true")
-    os.environ.setdefault("LANGCHAIN_ENDPOINT", "https://eu.api.smith.langchain.com")
-    os.environ.setdefault("LANGCHAIN_PROJECT", "antigravity-langgraph")
+if os.getenv("LANGSMITH_API_KEY"):
+    os.environ.setdefault("LANGSMITH_TRACING", "true")
+    os.environ.setdefault("LANGSMITH_ENDPOINT", "https://eu.api.smith.langchain.com")
+    os.environ.setdefault("LANGSMITH_PROJECT", "langgraph web")
 
 
 
