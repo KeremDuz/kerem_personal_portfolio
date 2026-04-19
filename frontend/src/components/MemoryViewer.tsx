@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { TravelPin } from "@/data/travelData";
@@ -149,13 +150,13 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
         }),
     };
 
-    return (
+    const content = (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[2000] bg-black"
+            className="fixed inset-0 w-screen h-[100dvh] z-[9999] bg-black"
             onClick={(e) => {
                 if (e.target === e.currentTarget) onClose();
             }}
@@ -176,7 +177,7 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                             <>
                                 {/* Blurred background fill */}
                                 <div
-                                    className="absolute inset-0 scale-110 blur-2xl opacity-40"
+                                    className="absolute inset-0 scale-110 blur-2xl opacity-40 pointer-events-none"
                                     style={{
                                         backgroundImage: `url(${current.src})`,
                                         backgroundSize: "cover",
@@ -222,23 +223,28 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                 transition={{ delay: 0.2 }}
                 onClick={onClose}
                 aria-label="Fotoğrafı kapat"
-                className="fixed top-4 right-4 md:top-6 md:right-6 w-14 h-14 rounded-full bg-black/70 backdrop-blur-xl border border-white/25 flex items-center justify-center text-white hover:bg-black/80 transition-all group z-[2001] shadow-2xl shadow-black/50"
+                className="absolute top-4 right-4 md:top-6 md:right-6 w-14 h-14 rounded-full bg-black/70 backdrop-blur-xl border border-white/25 flex items-center justify-center text-white hover:bg-black/80 transition-all group z-[10000] shadow-2xl shadow-black/50"
             >
                 <X size={22} strokeWidth={2.5} className="group-hover:rotate-90 transition-transform duration-300" />
             </motion.button>
+
+            {/* Counter */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/65 border border-white/20 backdrop-blur-md text-white border-white/10 text-sm font-mono tracking-widest z-[10000] pointer-events-none">
+                {currentIndex + 1} / {media.length}
+            </div>
 
             {/* Side navigation arrows */}
             {media.length > 1 && (
                 <>
                     <button
                         onClick={goPrev}
-                        className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[2001] w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all"
+                        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-[10000] w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all"
                     >
                         <ChevronLeft size={24} />
                     </button>
                     <button
                         onClick={goNext}
-                        className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[2001] w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all"
+                        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-[10000] w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all"
                     >
                         <ChevronRight size={24} />
                     </button>
@@ -256,4 +262,7 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
             />
         </motion.div>
     );
+
+    if (typeof document === "undefined") return null;
+    return createPortal(content, document.body);
 }

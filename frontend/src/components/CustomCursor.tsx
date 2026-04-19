@@ -127,7 +127,7 @@ export default function CustomCursor() {
     return (
         <div
             ref={cursorRef}
-            className="fixed pointer-events-none z-[9999] mix-blend-difference"
+            className="fixed pointer-events-none z-[999999]"
             style={{
                 left: 0,
                 top: 0,

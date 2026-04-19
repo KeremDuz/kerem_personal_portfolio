@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -147,6 +148,18 @@ export default function PhotoGallery() {
         });
     }, [lightboxIndex, galleryPhotos, getAdaptivePreloadCount]);
 
+    // Keyboard navigation
+    useEffect(() => {
+        if (lightboxIndex === null) return;
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowRight") goNext();
+            if (e.key === "ArrowLeft") goPrev();
+        };
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [lightboxIndex, goNext, goPrev]);
+
     return (
         <section id="gallery" className="relative py-24 md:py-32">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-travel-amber/15 to-transparent" />
@@ -212,53 +225,27 @@ export default function PhotoGallery() {
                 </div>
             </div>
 
-            {/* Lightbox */}
-            <AnimatePresence>
-                {lightboxIndex !== null && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[2000] bg-black"
-                        onClick={closeLightbox}
-                    >
-                        {/* Close button */}
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                closeLightbox();
-                            }}
-                            aria-label="Fotoğrafı kapat"
-                            className="fixed top-4 right-4 md:top-6 md:right-6 w-14 h-14 rounded-full bg-black/70 backdrop-blur-xl border border-white/25 flex items-center justify-center text-white z-[1001] shadow-2xl shadow-black/50 hover:bg-black/80 hover:scale-105 transition-all"
-                        >
-                            <X size={22} strokeWidth={2.5} />
-                        </button>
-
-                        {/* Navigation */}
-                        <button
-                            onClick={(e) => { e.stopPropagation(); goPrev(); }}
-                            className="fixed left-4 md:left-6 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 z-[1001]"
-                        >
-                            <ChevronLeft size={24} />
-                        </button>
-                        <button
-                            onClick={(e) => { e.stopPropagation(); goNext(); }}
-                            className="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 z-[1001]"
-                        >
-                            <ChevronRight size={24} />
-                        </button>
-
-                        {/* Image */}
+            {/* Lightbox rendered via Portal */}
+            {typeof document !== "undefined" && createPortal(
+                <AnimatePresence>
+                    {lightboxIndex !== null && (
                         <motion.div
-                            key={lightboxIndex}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute inset-0"
-                            onClick={(e) => e.stopPropagation()}
+                            className="fixed inset-0 w-screen h-[100dvh] z-[9999] bg-black"
+                            onClick={closeLightbox}
                         >
-                            <div className="relative w-full h-full">
+                            {/* Image */}
+                            <motion.div
+                                key={lightboxIndex}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute inset-0"
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <Image
                                     src={galleryPhotos[lightboxIndex].src}
                                     alt={galleryPhotos[lightboxIndex].caption}
@@ -267,11 +254,43 @@ export default function PhotoGallery() {
                                     sizes="100vw"
                                     className="object-contain"
                                 />
+                            </motion.div>
+
+                            {/* Close button */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    closeLightbox();
+                                }}
+                                aria-label="Fotoğrafı kapat"
+                                className="absolute top-4 right-4 md:top-6 md:right-6 w-14 h-14 rounded-full bg-black/70 backdrop-blur-xl border border-white/25 flex items-center justify-center text-white z-[10000] shadow-2xl shadow-black/50 hover:bg-black/80 hover:scale-105 transition-all"
+                            >
+                                <X size={22} strokeWidth={2.5} />
+                            </button>
+
+                            {/* Counter */}
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/65 border border-white/20 backdrop-blur-md text-white border-white/10 text-sm font-mono tracking-widest z-[10000] pointer-events-none">
+                                {lightboxIndex + 1} / {galleryPhotos.length}
                             </div>
+
+                            {/* Navigation */}
+                            <button
+                                onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                                className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 z-[10000] transition-all"
+                            >
+                                <ChevronLeft size={24} />
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); goNext(); }}
+                                className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/65 border border-white/20 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 z-[10000] transition-all"
+                            >
+                                <ChevronRight size={24} />
+                            </button>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </section>
     );
 }
