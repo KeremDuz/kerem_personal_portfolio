@@ -14,6 +14,7 @@ export default function AgentAssistantWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [question, setQuestion] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [aiMode, setAiMode] = useState<"langgraph" | "crewai">("langgraph");
     const [messages, setMessages] = useState<ChatMessage[]>([
         { role: "assistant", content: INITIAL_MESSAGE },
     ]);
@@ -21,6 +22,8 @@ export default function AgentAssistantWidget() {
     const apiBaseUrl = useMemo(() => {
         return process.env.NEXT_PUBLIC_AGENT_API_URL ?? "http://localhost:8010";
     }, []);
+
+    const endpoint = aiMode === "langgraph" ? "/ask-langgraph" : "/ask";
 
     const askAssistant = async () => {
         const trimmed = question.trim();
@@ -31,7 +34,7 @@ export default function AgentAssistantWidget() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${apiBaseUrl}/ask-langgraph`, {
+            const response = await fetch(`${apiBaseUrl}${endpoint}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -69,7 +72,28 @@ export default function AgentAssistantWidget() {
                     <div className="flex items-center justify-between px-4 py-3 border-b border-cyber-green/15 bg-black/40">
                         <div>
                             <p className="font-mono text-cyber-green text-sm">Kerem AI Assistant</p>
-                            <p className="text-[10px] font-mono text-cyber-green/60 mt-0.5">Powered by LangGraph</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <button
+                                    onClick={() => setAiMode("langgraph")}
+                                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono transition-colors ${
+                                        aiMode === "langgraph"
+                                            ? "bg-cyber-green/20 text-cyber-green border border-cyber-green/40"
+                                            : "text-gray-500 hover:text-gray-300"
+                                    }`}
+                                >
+                                    LangGraph
+                                </button>
+                                <button
+                                    onClick={() => setAiMode("crewai")}
+                                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono transition-colors ${
+                                        aiMode === "crewai"
+                                            ? "bg-cyber-green/20 text-cyber-green border border-cyber-green/40"
+                                            : "text-gray-500 hover:text-gray-300"
+                                    }`}
+                                >
+                                    CrewAI
+                                </button>
+                            </div>
                         </div>
                         <button
                             aria-label="Chat penceresini kapat"
