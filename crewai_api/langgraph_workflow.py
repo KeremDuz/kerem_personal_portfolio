@@ -28,7 +28,9 @@ from typing_extensions import TypedDict
 
 if os.getenv("LANGCHAIN_API_KEY"):
     os.environ.setdefault("LANGCHAIN_TRACING_V2", "true")
+    os.environ.setdefault("LANGCHAIN_ENDPOINT", "https://eu.api.smith.langchain.com")
     os.environ.setdefault("LANGCHAIN_PROJECT", "antigravity-langgraph")
+
 
 
 
