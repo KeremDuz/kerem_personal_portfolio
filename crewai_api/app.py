@@ -1,9 +1,10 @@
-"""CrewAI + FastAPI mikroservisi.
+"""CrewAI + LangGraph + FastAPI mikroservisi.
 
 Bu dosya:
 - YAML üzerinden ajan ve görev konfigürasyonlarını okur.
 - CrewAI ajanlarını ve görevlerini oluşturur.
-- FastAPI üzerinden `/ask` endpoint'i sağlar.
+- LangGraph iş akışını yükler.
+- FastAPI üzerinden `/ask` (CrewAI) ve `/ask-langgraph` endpoint'lerini sağlar.
 """
 
 from pathlib import Path
@@ -11,6 +12,9 @@ from datetime import datetime
 import os
 from typing import Any
 from zoneinfo import ZoneInfo
+
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 import uvicorn
 import yaml
@@ -233,6 +237,60 @@ def ask_question(data: AskRequest) -> dict[str, str]:
 		return {"result": str(result)}
 	except Exception as error:
 		raise HTTPException(status_code=500, detail=f"Crew çalıştırılamadı: {error}") from error
+
+
+# ---------------------------------------------------------------------------
+# LangGraph endpoint
+# ---------------------------------------------------------------------------
+
+try:
+	from langgraph_workflow import langgraph_app as _lg_app
+	_LANGGRAPH_AVAILABLE = True
+except ImportError:
+	_lg_app = None
+	_LANGGRAPH_AVAILABLE = False
+
+
+@app.post("/ask-langgraph")
+def ask_langgraph(data: AskRequest) -> dict[str, str]:
+	"""LangGraph iş akışı ile soru cevaplar."""
+
+	if not _LANGGRAPH_AVAILABLE:
+		raise HTTPException(
+			status_code=503,
+			detail="LangGraph modülü yüklenemedi. 'pip install langgraph langchain-openai' komutunu çalıştırın.",
+		)
+
+	if not data.question.strip():
+		raise HTTPException(status_code=400, detail="question alanı boş olamaz")
+
+	today_context = get_today_context()
+
+	if is_date_or_day_question(data.question):
+		return {
+			"result": (
+				f"Bugün {today_context['today_text']}, günlerden {today_context['weekday_tr']}."
+			)
+		}
+
+	if not has_openai_key():
+		raise HTTPException(
+			status_code=503,
+			detail="OPENAI_API_KEY bulunamadı.",
+		)
+
+	try:
+		result = _lg_app.invoke({
+			"visitor_question": data.question,
+			"today_iso": today_context["today_iso"],
+			"today_text": today_context["today_text"],
+			"weekday_tr": today_context["weekday_tr"],
+		})
+		return {"result": result["final_answer"]}
+	except Exception as error:
+		raise HTTPException(
+			status_code=500, detail=f"LangGraph çalıştırılamadı: {error}"
+		) from error
 
 
 if __name__ == "__main__":

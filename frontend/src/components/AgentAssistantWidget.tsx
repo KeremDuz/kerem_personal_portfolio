@@ -31,7 +31,7 @@ export default function AgentAssistantWidget() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${apiBaseUrl}/ask`, {
+            const response = await fetch(`${apiBaseUrl}/ask-langgraph`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export default function AgentAssistantWidget() {
                 {
                     role: "assistant",
                     content:
-                        `Şu an backend'e bağlanamadım. API adresi: ${apiBaseUrl}. Lütfen crewai_api servisinin çalıştığını ve URL'nin doğru olduğunu kontrol et.`,
+                        `Şu an backend'e bağlanamadım. API adresi: ${apiBaseUrl}. Lütfen servisin çalıştığını ve URL'nin doğru olduğunu kontrol et.`,
                 },
             ]);
         } finally {
@@ -69,7 +69,7 @@ export default function AgentAssistantWidget() {
                     <div className="flex items-center justify-between px-4 py-3 border-b border-cyber-green/15 bg-black/40">
                         <div>
                             <p className="font-mono text-cyber-green text-sm">Kerem AI Assistant</p>
-                            <p className="text-xs text-gray-400">Profile + CVE Agent</p>
+                            <p className="text-[10px] font-mono text-cyber-green/60 mt-0.5">Powered by LangGraph</p>
                         </div>
                         <button
                             aria-label="Chat penceresini kapat"
