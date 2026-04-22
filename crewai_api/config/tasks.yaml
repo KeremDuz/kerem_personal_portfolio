@@ -8,4 +8,4 @@ cve_search_task:
 
 answer_task:
   description: "Profil araştırmacısından ve CTI uzmanından gelen raporları al. Ziyaretçinin '{visitor_question}' sorusuna tam bir yanıt veren, asistan ağzından yazılmış şık bir metin oluştur. Tarih/gün sorulursa yalnızca verilen bugünkü bilgilere dayan: {today_text} ({weekday_tr}). Tarih uydurma."
-  expected_output: "Nihai, akıcı Türkçe cevap metni."
+  expected_output: "Nihai, akıcı Türkçe, öz ve kısa cevap metni."
