@@ -162,6 +162,38 @@ def get_contact_response() -> str:
 	)
 
 
+def is_private_size_question(question: str) -> bool:
+	"""Mahrem beden ölçüsü sorularını tespit eder."""
+
+	text = question.lower()
+	private_terms = [
+		"penis",
+		"dick",
+		"cock",
+		"pp",
+		"cinsel organ",
+		"genital",
+	]
+	size_terms = [
+		"boy",
+		"uzun",
+		"length",
+		"size",
+		"kaç cm",
+		"kaç km",
+		"cm",
+	]
+	has_private = any(term in text for term in private_terms)
+	has_size = any(term in text for term in size_terms)
+	return has_private and has_size
+
+
+def get_private_size_response() -> str:
+	"""Mahrem beden ölçüsü sorularına sabit cevap döndürür."""
+
+	return "Bu bilgi çok gizli. Sadece müstakbel karım bilebilir."
+
+
 def has_openai_key() -> bool:
 	"""OpenAI anahtarının ortamda tanımlı olup olmadığını kontrol eder."""
 
@@ -251,6 +283,9 @@ def ask_question(data: AskRequest) -> dict[str, str]:
 	if is_contact_question(data.question):
 		return {"result": get_contact_response()}
 
+	if is_private_size_question(data.question):
+		return {"result": get_private_size_response()}
+
 	if not has_openai_key():
 		raise HTTPException(
 			status_code=503,
@@ -306,6 +341,9 @@ def ask_langgraph(data: AskRequest) -> dict[str, str]:
 
 	if is_contact_question(data.question):
 		return {"result": get_contact_response()}
+
+	if is_private_size_question(data.question):
+		return {"result": get_private_size_response()}
 
 	if not _LANGGRAPH_AVAILABLE:
 		raise HTTPException(
