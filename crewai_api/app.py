@@ -132,6 +132,36 @@ def is_date_or_day_question(question: str) -> bool:
 	return any(pattern in text for pattern in patterns)
 
 
+def is_contact_question(question: str) -> bool:
+	"""Sorunun iletişim bilgisi (telefon/mail) isteyip istemediğini tespit eder."""
+
+	text = question.lower()
+	patterns = [
+		"telefon",
+		"numara",
+		"gsm",
+		"mail",
+		"e-posta",
+		"eposta",
+		"iletişim",
+		"iletisim",
+		"contact",
+	]
+	return any(pattern in text for pattern in patterns)
+
+
+def get_contact_response() -> str:
+	"""İletişim bilgilerini tek formatta döndürür."""
+
+	phone = os.getenv("KEREM_PHONE", "0505 991 37 75")
+	email = os.getenv("KEREM_EMAIL", "keremduz0304@gmail.com")
+	return (
+		"Kerem Düz iletişim bilgileri:\n"
+		f"Telefon: {phone}\n"
+		f"E-posta: {email}"
+	)
+
+
 def has_openai_key() -> bool:
 	"""OpenAI anahtarının ortamda tanımlı olup olmadığını kontrol eder."""
 
@@ -218,6 +248,9 @@ def ask_question(data: AskRequest) -> dict[str, str]:
 			)
 		}
 
+	if is_contact_question(data.question):
+		return {"result": get_contact_response()}
+
 	if not has_openai_key():
 		raise HTTPException(
 			status_code=503,
@@ -244,22 +277,20 @@ def ask_question(data: AskRequest) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 
 try:
-	from langgraph_workflow import langgraph_app as _lg_app
+	from crewai_api.langgraph_workflow import langgraph_app as _lg_app
 	_LANGGRAPH_AVAILABLE = True
 except ImportError:
-	_lg_app = None
-	_LANGGRAPH_AVAILABLE = False
+	try:
+		from langgraph_workflow import langgraph_app as _lg_app
+		_LANGGRAPH_AVAILABLE = True
+	except ImportError:
+		_lg_app = None
+		_LANGGRAPH_AVAILABLE = False
 
 
 @app.post("/ask-langgraph")
 def ask_langgraph(data: AskRequest) -> dict[str, str]:
 	"""LangGraph iş akışı ile soru cevaplar."""
-
-	if not _LANGGRAPH_AVAILABLE:
-		raise HTTPException(
-			status_code=503,
-			detail="LangGraph modülü yüklenemedi. 'pip install langgraph langchain-openai' komutunu çalıştırın.",
-		)
 
 	if not data.question.strip():
 		raise HTTPException(status_code=400, detail="question alanı boş olamaz")
@@ -272,6 +303,15 @@ def ask_langgraph(data: AskRequest) -> dict[str, str]:
 				f"Bugün {today_context['today_text']}, günlerden {today_context['weekday_tr']}."
 			)
 		}
+
+	if is_contact_question(data.question):
+		return {"result": get_contact_response()}
+
+	if not _LANGGRAPH_AVAILABLE:
+		raise HTTPException(
+			status_code=503,
+			detail="LangGraph modülü yüklenemedi. 'pip install langgraph langchain-openai' komutunu çalıştırın.",
+		)
 
 	if not has_openai_key():
 		raise HTTPException(
