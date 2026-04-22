@@ -59,8 +59,11 @@ KEREM_PROFILE = """
 - Üniversite: Akdeniz Üniversitesi – Bilgisayar Mühendisliği
 - Topluluk: Akdeniz Siber Güvenlik Topluluğu Başkanı
 - İlgi Alanları: Web sızma testleri, Linux, donanım projeleri
-- Proje: File Upload Detector (açık kaynak)
+- Proje: Son derece gizli bir siber güvenlik projesi üzerinde çalışıyor, detay vermiyor.
 - Web Sitesi: www.keremduz.com
+- Sosyal Medya: instagramda kerem_plain.
+- Telefon numarası: 0505 991 37 75
+- Mail Adresi: keremduz0304@gmail.com
 """
 
 
