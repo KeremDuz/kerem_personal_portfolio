@@ -158,7 +158,7 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 isolate w-screen h-[100dvh] z-[2147483647] bg-black"
+            className="fixed inset-0 isolate w-screen h-[100dvh] z-[2147483000] bg-black"
             onClick={(e) => {
                 if (e.target === e.currentTarget) onClose();
             }}

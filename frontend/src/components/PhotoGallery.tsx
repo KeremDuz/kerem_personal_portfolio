@@ -209,7 +209,7 @@ export default function PhotoGallery() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 isolate w-screen h-[100dvh] z-[2147483647] bg-black"
+                            className="fixed inset-0 isolate w-screen h-[100dvh] z-[2147483000] bg-black"
                             onClick={closeLightbox}
                         >
                             {/* Image */}

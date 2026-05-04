@@ -27,6 +27,9 @@ export default function CustomCursor() {
 
         const host = document.createElement("div");
         host.setAttribute("data-custom-cursor-host", "true");
+        host.style.position = "fixed";
+        host.style.inset = "0";
+        host.style.zIndex = "2147483647";
         host.style.pointerEvents = "none";
         document.body.appendChild(host);
         setCursorHost(host);
@@ -140,10 +143,11 @@ export default function CustomCursor() {
     return createPortal(
         <div
             ref={cursorRef}
-            className="fixed pointer-events-none z-[2147483647]"
+            className="fixed pointer-events-none"
             style={{
                 left: 0,
                 top: 0,
+                zIndex: 2147483647,
                 transform: "translate3d(0, 0, 0)",
                 willChange: "transform",
             }}
