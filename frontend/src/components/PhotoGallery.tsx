@@ -16,47 +16,21 @@ interface GalleryPhoto {
 import Image from "next/image";
 import travelData from "@/data/travelData";
 
-const GALLERY_SESSION_SEED_KEY = "gallery_seed_v1";
-
-function hashString(value: string): number {
-    let hash = 2166136261;
-    for (let index = 0; index < value.length; index++) {
-        hash ^= value.charCodeAt(index);
-        hash = Math.imul(hash, 16777619);
-    }
-    return hash >>> 0;
-}
-
-function mulberry32(seed: number) {
-    let state = seed >>> 0;
-    return () => {
-        state = (state + 0x6D2B79F5) >>> 0;
-        let result = Math.imul(state ^ (state >>> 15), 1 | state);
-        result ^= result + Math.imul(result ^ (result >>> 7), 61 | result);
-        return ((result ^ (result >>> 14)) >>> 0) / 4294967296;
-    };
-}
-
-function getSessionGallerySeed(): number {
-    if (typeof window === "undefined") return hashString("server-fallback-seed");
-
-    const existing = window.sessionStorage.getItem(GALLERY_SESSION_SEED_KEY);
-    if (existing) {
-        const parsed = Number(existing);
-        if (Number.isFinite(parsed)) return parsed;
+function getRandomValue(): number {
+    if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+        const values = new Uint32Array(1);
+        crypto.getRandomValues(values);
+        return values[0] / 4294967296;
     }
 
-    const created = hashString(`${Date.now()}-${Math.random()}-${navigator.userAgent}`);
-    window.sessionStorage.setItem(GALLERY_SESSION_SEED_KEY, String(created));
-    return created;
+    return Math.random();
 }
 
-function deterministicShuffle<T>(items: T[], seed: number): T[] {
+function shufflePhotos<T>(items: T[]): T[] {
     const shuffled = [...items];
-    const random = mulberry32(seed);
 
     for (let index = shuffled.length - 1; index > 0; index--) {
-        const swapIndex = Math.floor(random() * (index + 1));
+        const swapIndex = Math.floor(getRandomValue() * (index + 1));
         [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
     }
 
@@ -87,8 +61,7 @@ export default function PhotoGallery() {
             });
         });
 
-        const seed = getSessionGallerySeed();
-        const shuffled = deterministicShuffle(allPhotos, seed);
+        const shuffled = shufflePhotos(allPhotos);
         // Take top 9
         setGalleryPhotos(shuffled.slice(0, 9));
     }, []);
@@ -100,11 +73,14 @@ export default function PhotoGallery() {
     useEffect(() => {
         if (lightboxIndex !== null) {
             document.body.style.overflow = "hidden";
+            document.body.classList.add("media-viewer-open");
         } else {
             document.body.style.overflow = "";
+            document.body.classList.remove("media-viewer-open");
         }
         return () => {
             document.body.style.overflow = "";
+            document.body.classList.remove("media-viewer-open");
         };
     }, [lightboxIndex]);
 
@@ -189,7 +165,7 @@ export default function PhotoGallery() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {galleryPhotos.map((photo, index) => (
                         <motion.div
-                            key={index}
+                            key={photo.src}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -233,7 +209,7 @@ export default function PhotoGallery() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 w-screen h-[100dvh] z-[9999] bg-black"
+                            className="fixed inset-0 isolate w-screen h-[100dvh] z-[2147483647] bg-black"
                             onClick={closeLightbox}
                         >
                             {/* Image */}

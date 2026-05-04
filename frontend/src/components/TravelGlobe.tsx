@@ -281,7 +281,7 @@ export default function TravelGlobe({ data }: TravelGlobeProps) {
     return (
         <div className="relative" ref={globeContainerRef} id="travel-globe-container">
             {/* Globe */}
-            <div className="flex justify-center items-center">
+            <div className="relative z-0 flex justify-center items-center" data-globe-underlay>
                 <div className="relative">
                     {MemoizedGlobe}
                 </div>

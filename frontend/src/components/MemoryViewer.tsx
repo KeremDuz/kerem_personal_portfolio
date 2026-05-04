@@ -33,8 +33,10 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
     // Lock body scroll
     useEffect(() => {
         document.body.style.overflow = "hidden";
+        document.body.classList.add("media-viewer-open");
         return () => {
             document.body.style.overflow = "";
+            document.body.classList.remove("media-viewer-open");
         };
     }, []);
 
@@ -156,7 +158,7 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 w-screen h-[100dvh] z-[9999] bg-black"
+            className="fixed inset-0 isolate w-screen h-[100dvh] z-[2147483647] bg-black"
             onClick={(e) => {
                 if (e.target === e.currentTarget) onClose();
             }}

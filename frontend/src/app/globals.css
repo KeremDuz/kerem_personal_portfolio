@@ -25,6 +25,12 @@
     overflow-x: hidden;
   }
 
+  body.media-viewer-open #travel-globe-container [data-globe-underlay] {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
