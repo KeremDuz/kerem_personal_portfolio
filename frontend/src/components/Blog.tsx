@@ -2,7 +2,8 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ArrowUpRight, Clock, Tag, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { blogAPI } from "@/lib/api";
 
@@ -225,7 +226,7 @@ const posts: BlogPost[] = [
         category: "security",
         readTime: "15 min",
         tags: ["FUD", "Behavioral Analysis", "Web Security", "Research"],
-        link: "#",
+        link: "https://s4e.io/research-hub/file-upload-detector",
     },
 ];
 
@@ -258,11 +259,66 @@ export default function Blog() {
             .catch(() => { });
     }, []);
 
+    useEffect(() => {
+        if (!selectedPost?.content) return;
+
+        const scrollY = window.scrollY;
+        const previousBodyStyles = {
+            position: document.body.style.position,
+            top: document.body.style.top,
+            width: document.body.style.width,
+            overflow: document.body.style.overflow,
+            overscrollBehavior: document.body.style.overscrollBehavior,
+        };
+
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
+        document.body.style.overscrollBehavior = "none";
+
+        const handleKey = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setSelectedPost(null);
+            }
+        };
+
+        window.addEventListener("keydown", handleKey);
+
+        return () => {
+            document.body.style.position = previousBodyStyles.position;
+            document.body.style.top = previousBodyStyles.top;
+            document.body.style.width = previousBodyStyles.width;
+            document.body.style.overflow = previousBodyStyles.overflow;
+            document.body.style.overscrollBehavior = previousBodyStyles.overscrollBehavior;
+            window.scrollTo(0, scrollY);
+            window.removeEventListener("keydown", handleKey);
+        };
+    }, [selectedPost]);
+
     const categoryConfig = {
         ctf: { color: "#8b5cf6", label: t("cat_ctf") },
         security: { color: "#00ff41", label: t("cat_security") },
         travel: { color: "#f59e0b", label: t("cat_travel") },
         dev: { color: "#00f3ff", label: t("cat_dev") },
+    };
+
+    const hasExternalLink = (post: BlogPost) => Boolean(post.link && post.link !== "#");
+
+    const openPost = (post: BlogPost) => {
+        if (post.content) {
+            setSelectedPost(post);
+            return;
+        }
+
+        if (hasExternalLink(post)) {
+            window.open(post.link, "_blank", "noopener,noreferrer");
+        }
+    };
+
+    const openExternalPost = (event: MouseEvent, post: BlogPost) => {
+        event.stopPropagation();
+        window.open(post.link, "_blank", "noopener,noreferrer");
     };
 
     return (
@@ -298,7 +354,7 @@ export default function Blog() {
                         return (
                             <motion.div
                                 key={post.title}
-                                onClick={() => setSelectedPost(post)}
+                                onClick={() => openPost(post)}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -361,38 +417,51 @@ export default function Blog() {
             </div>
 
             {/* Modal */}
-            <AnimatePresence>
-                {selectedPost && selectedPost.content && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto"
-                        onClick={() => setSelectedPost(null)}
-                    >
+            {typeof document !== "undefined" && createPortal(
+                <AnimatePresence>
+                    {selectedPost && selectedPost.content && (
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="bg-[#0a0a0a] border border-gray-800 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl relative shadow-2xl custom-scrollbar"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[2147483000] h-[100dvh] w-screen overflow-hidden bg-[#050505] text-gray-200"
                         >
+                            {hasExternalLink(selectedPost) && (
+                                <button
+                                    type="button"
+                                    onClick={(event) => openExternalPost(event, selectedPost)}
+                                    className="fixed left-4 top-4 z-20 inline-flex h-12 items-center gap-2 rounded-full border border-white/15 bg-black/70 px-4 font-mono text-xs text-gray-300 shadow-2xl shadow-black/50 backdrop-blur-xl transition-all hover:border-purple-400/50 hover:bg-black/85 hover:text-white md:left-6 md:top-6"
+                                >
+                                    <ArrowUpRight size={16} strokeWidth={2} />
+                                    {t("originalArticle")}
+                                </button>
+                            )}
+
                             {/* Close Button */}
                             <button
                                 onClick={() => setSelectedPost(null)}
-                                className="absolute top-4 right-4 p-2 rounded-full bg-gray-800/50 hover:bg-gray-700/80 text-gray-400 hover:text-white transition-all z-10 backdrop-blur-md"
+                                aria-label="Blog yazısını kapat"
+                                className="fixed right-4 top-4 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-black/70 text-gray-300 shadow-2xl shadow-black/50 backdrop-blur-xl transition-all hover:border-purple-400/50 hover:bg-black/85 hover:text-white md:right-6 md:top-6"
                             >
-                                <X size={24} />
+                                <X size={22} strokeWidth={2.4} />
                             </button>
 
-                            {/* Content Container */}
-                            <div className="p-8 md:p-12 lg:p-16">
-                                {selectedPost.content}
-                            </div>
+                            <motion.article
+                                initial={{ opacity: 0, y: 18 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 18 }}
+                                transition={{ duration: 0.2 }}
+                                className="h-full overflow-y-auto overscroll-contain px-5 py-20 md:px-8 md:py-24 custom-scrollbar"
+                            >
+                                <div className="mx-auto w-full max-w-4xl">
+                                    {selectedPost.content}
+                                </div>
+                            </motion.article>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </section>
     );
 }

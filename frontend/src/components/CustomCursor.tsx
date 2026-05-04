@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 export default function CustomCursor() {
     const [isEnabled, setIsEnabled] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const [cursorHost, setCursorHost] = useState<HTMLDivElement | null>(null);
     const cursorRef = useRef<HTMLDivElement>(null);
     const dotRef = useRef<HTMLDivElement>(null);
     const xRef = useRef(0);
@@ -22,6 +24,12 @@ export default function CustomCursor() {
 
     useEffect(() => {
         if (!isEnabled) return;
+
+        const host = document.createElement("div");
+        host.setAttribute("data-custom-cursor-host", "true");
+        host.style.pointerEvents = "none";
+        document.body.appendChild(host);
+        setCursorHost(host);
 
         const renderCursor = () => {
             animationFrameRef.current = null;
@@ -41,6 +49,9 @@ export default function CustomCursor() {
         const handlePointerMove = (e: PointerEvent) => {
             xRef.current = e.clientX;
             yRef.current = e.clientY;
+            if (host.parentElement === document.body && document.body.lastElementChild !== host) {
+                document.body.appendChild(host);
+            }
             if (!isVisibleRef.current) {
                 isVisibleRef.current = true;
                 setIsVisible(true);
@@ -119,15 +130,17 @@ export default function CustomCursor() {
                 cancelAnimationFrame(animationFrameRef.current);
                 animationFrameRef.current = null;
             }
+            setCursorHost(null);
+            host.remove();
         };
     }, [isEnabled]);
 
-    if (!isEnabled || !isVisible) return null;
+    if (!isEnabled || !isVisible || !cursorHost) return null;
 
-    return (
+    return createPortal(
         <div
             ref={cursorRef}
-            className="fixed pointer-events-none z-[999999]"
+            className="fixed pointer-events-none z-[2147483647]"
             style={{
                 left: 0,
                 top: 0,
@@ -146,6 +159,7 @@ export default function CustomCursor() {
                     transition: "width 0.2s, height 0.2s",
                 }}
             />
-        </div>
+        </div>,
+        cursorHost
     );
 }

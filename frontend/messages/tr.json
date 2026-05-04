@@ -176,7 +176,8 @@
         "cat_ctf": "CTF Writeup",
         "cat_security": "Güvenlik",
         "cat_travel": "Seyahat",
-        "cat_dev": "Geliştirme"
+        "cat_dev": "Geliştirme",
+        "originalArticle": "Orijinal yazı"
     },
     "GitHub": {
         "tag": "// github.activity()",
