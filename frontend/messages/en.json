@@ -93,6 +93,9 @@
         "title2": "&",
         "title3": "Software",
         "desc": "Security-focused projects and software development works",
+        "visitProject": "Open project",
+        "closeProject": "Close project details",
+        "technologies": "Technologies",
         "items": {
             "0": {
                 "title": "WiFi & Bluetooth Jammer",

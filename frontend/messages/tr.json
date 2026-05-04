@@ -93,6 +93,9 @@
         "title2": "&",
         "title3": "Yazılım",
         "desc": "Güvenlik odaklı projeler ve yazılım geliştirme çalışmalarım",
+        "visitProject": "Projeyi aç",
+        "closeProject": "Proje detayını kapat",
+        "technologies": "Teknolojiler",
         "items": {
             "0": {
                 "title": "WiFi & Bluetooth Jammer",
