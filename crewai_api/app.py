@@ -322,6 +322,20 @@ except ImportError:
 		_lg_app = None
 		_LANGGRAPH_AVAILABLE = False
 
+try:
+	from crewai_api.mcp_client_demo import run_mcp_demo as _run_mcp_demo
+	_MCP_AVAILABLE = True
+	_MCP_IMPORT_ERROR = ""
+except ImportError as error:
+	try:
+		from mcp_client_demo import run_mcp_demo as _run_mcp_demo
+		_MCP_AVAILABLE = True
+		_MCP_IMPORT_ERROR = ""
+	except ImportError as fallback_error:
+		_run_mcp_demo = None
+		_MCP_AVAILABLE = False
+		_MCP_IMPORT_ERROR = f"{error}; {fallback_error}"
+
 
 @app.post("/ask-langgraph")
 def ask_langgraph(data: AskRequest) -> dict[str, str]:
@@ -369,6 +383,25 @@ def ask_langgraph(data: AskRequest) -> dict[str, str]:
 		raise HTTPException(
 			status_code=500, detail=f"LangGraph çalıştırılamadı: {error}"
 		) from error
+
+
+@app.post("/mcp-demo")
+async def mcp_demo(data: AskRequest) -> dict[str, Any]:
+	"""MCP server/client akışını görünür biçimde çalıştırır."""
+
+	if not data.question.strip():
+		raise HTTPException(status_code=400, detail="question alanı boş olamaz")
+
+	if not _MCP_AVAILABLE or _run_mcp_demo is None:
+		raise HTTPException(
+			status_code=503,
+			detail=f"MCP demo modülü yüklenemedi. mcp paketini kurun. Hata: {_MCP_IMPORT_ERROR}",
+		)
+
+	try:
+		return await _run_mcp_demo(data.question)
+	except Exception as error:
+		raise HTTPException(status_code=500, detail=f"MCP demo çalıştırılamadı: {error}") from error
 
 
 if __name__ == "__main__":

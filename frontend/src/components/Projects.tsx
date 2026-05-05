@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import { ExternalLink, Shield, Code, Terminal, Wifi, Lock, Database, Globe, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { projectAPI, analyticsAPI } from "@/lib/api";
+import { projectAPI, analyticsAPI, type Project as ApiProject } from "@/lib/api";
 
 const VISIBLE_TAG_COUNT = 6;
 
@@ -85,23 +85,33 @@ const cardVariants = {
     },
 };
 
-export default function Projects() {
+type ProjectsProps = {
+    initialProjects?: ApiProject[];
+};
+
+function normalizeProject(project: ApiProject) {
+    return {
+        _id: project._id,
+        title: project.title,
+        description: project.description,
+        tags: project.tags || [],
+        icon: project.icon || "code",
+        link: project.link || "#",
+    };
+}
+
+export default function Projects({ initialProjects = [] }: ProjectsProps) {
     const t = useTranslations("Projects");
-    const [projects, setProjects] = useState<any[]>(staticProjects);
+    const [projects, setProjects] = useState<any[]>(
+        initialProjects.length > 0 ? initialProjects.map(normalizeProject) : staticProjects
+    );
     const [selectedProject, setSelectedProject] = useState<any | null>(null);
 
     useEffect(() => {
         projectAPI.getAll()
             .then((data) => {
                 if (data && data.length > 0) {
-                    setProjects(data.map((p: any) => ({
-                        _id: p._id,
-                        title: p.title,
-                        description: p.description,
-                        tags: p.tags || [],
-                        icon: p.icon || "code",
-                        link: p.link || "#",
-                    })));
+                    setProjects(data.map(normalizeProject));
                 }
             })
             .catch(() => { });

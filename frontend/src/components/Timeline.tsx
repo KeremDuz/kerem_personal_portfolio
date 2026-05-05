@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { GraduationCap, Briefcase, Award, Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import { timelineAPI } from "@/lib/api";
+import { timelineAPI, type TimelineItem as ApiTimelineItem } from "@/lib/api";
 
 interface TimelineItem {
     year: string;
@@ -68,9 +68,15 @@ const timelineData: TimelineItem[] = [
     },
 ];
 
-export default function Timeline() {
+type TimelineProps = {
+    initialTimelines?: ApiTimelineItem[];
+};
+
+export default function Timeline({ initialTimelines = [] }: TimelineProps) {
     const t = useTranslations("Timeline");
-    const [timelines, setTimelines] = useState<any[]>(timelineData);
+    const [timelines, setTimelines] = useState<any[]>(
+        initialTimelines.length > 0 ? initialTimelines : timelineData
+    );
 
     useEffect(() => {
         timelineAPI.getAll()

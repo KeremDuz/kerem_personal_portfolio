@@ -8,13 +8,20 @@ type ChatMessage = {
     content: string;
 };
 
-const INITIAL_MESSAGE = "Merhaba, ben Kerem'in dijital asistanıyım. Kerem Düz hakkında veya güncel CVE/zafiyet konularında soru sorabilirsin.";
+type AiMode = "langgraph" | "crewai" | "mcp";
+
+type AssistantResponse = {
+    result?: string;
+    trace?: string[];
+};
+
+const INITIAL_MESSAGE = "Merhaba, ben Kerem'in dijital asistanıyım. Kerem Düz hakkında, güncel CVE/zafiyet konularında veya MCP demosu üzerinden soru sorabilirsin.";
 
 export default function AgentAssistantWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [question, setQuestion] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [aiMode, setAiMode] = useState<"langgraph" | "crewai">("langgraph");
+    const [aiMode, setAiMode] = useState<AiMode>("langgraph");
     const [messages, setMessages] = useState<ChatMessage[]>([
         { role: "assistant", content: INITIAL_MESSAGE },
     ]);
@@ -23,7 +30,12 @@ export default function AgentAssistantWidget() {
         return process.env.NEXT_PUBLIC_AGENT_API_URL ?? "http://localhost:8010";
     }, []);
 
-    const endpoint = aiMode === "langgraph" ? "/ask-langgraph" : "/ask";
+    const endpointByMode: Record<AiMode, string> = {
+        langgraph: "/ask-langgraph",
+        crewai: "/ask",
+        mcp: "/mcp-demo",
+    };
+    const endpoint = endpointByMode[aiMode];
 
     const askAssistant = async () => {
         const trimmed = question.trim();
@@ -47,10 +59,13 @@ export default function AgentAssistantWidget() {
                 throw new Error(errorText || `API Error: ${response.status}`);
             }
 
-            const data = (await response.json()) as { result?: string };
+            const data = (await response.json()) as AssistantResponse;
             const assistantText = data.result?.trim() || "Üzgünüm, şu an cevap üretemedim.";
+            const traceText = data.trace?.length
+                ? `\n\nMCP süreci:\n${data.trace.map((step, index) => `${index + 1}. ${step}`).join("\n")}`
+                : "";
 
-            setMessages((prev) => [...prev, { role: "assistant", content: assistantText }]);
+            setMessages((prev) => [...prev, { role: "assistant", content: `${assistantText}${traceText}` }]);
         } catch {
             setMessages((prev) => [
                 ...prev,
@@ -93,6 +108,16 @@ export default function AgentAssistantWidget() {
                                 >
                                     CrewAI
                                 </button>
+                                <button
+                                    onClick={() => setAiMode("mcp")}
+                                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono transition-colors ${
+                                        aiMode === "mcp"
+                                            ? "bg-cyber-green/20 text-cyber-green border border-cyber-green/40"
+                                            : "text-gray-500 hover:text-gray-300"
+                                    }`}
+                                >
+                                    MCP
+                                </button>
                             </div>
                         </div>
                         <button
@@ -125,7 +150,7 @@ export default function AgentAssistantWidget() {
                         {isLoading && (
                             <div className="flex justify-start">
                                 <div className="max-w-[85%] rounded-2xl px-3 py-2 text-sm bg-white/10 text-gray-200 border border-white/15">
-                                    Ajanlar düşünüyor...
+                                    {aiMode === "mcp" ? "MCP server ile konuşuyor..." : "Ajanlar düşünüyor..."}
                                 </div>
                             </div>
                         )}

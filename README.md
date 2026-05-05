@@ -65,6 +65,44 @@ The backend API will run on the port specified in your `backend/.env` file.
 - Zod (Validation)
 - Cloudinary & Multer (Storage)
 
+**AI / Agent Demo**
+- CrewAI
+- LangGraph
+- Model Context Protocol (MCP)
+- FastAPI
+
+## MCP Classroom Demo
+
+This project includes a visible MCP demonstration inside the AI assistant flow.
+The MCP server is defined in `crewai_api/mcp_server.py` and exposes:
+
+- `resource`: `portfolio://kerem/profile`
+- `tool`: `get_contact_info`
+- `tool`: `classify_portfolio_question`
+- `tool`: `answer_from_portfolio_context`
+- `prompt`: `portfolio_assistant_prompt`
+
+The FastAPI endpoint `POST /mcp-demo` acts as an MCP client. It initializes the
+MCP session, lists tools/resources/prompts, reads the portfolio resource, calls
+tools, and returns both the final answer and a step-by-step trace.
+
+Run the agent API:
+
+```bash
+./.venv-crewai/bin/python -m uvicorn crewai_api.app:app --host 0.0.0.0 --port 8010 --reload
+```
+
+Test the MCP endpoint:
+
+```bash
+curl -X POST http://localhost:8010/mcp-demo \
+  -H "Content-Type: application/json" \
+  --data '{"question":"Kerem kimdir ve iletişim bilgisini MCP ile getir."}'
+```
+
+In the website chat widget, select the `MCP` mode to show the same process and
+result in the UI.
+
 ## Planning Document
 The detailed project planning and AI concept architecture can be found in the attached document:
 * **Kerem_Duz_Planning_Document.pdf**

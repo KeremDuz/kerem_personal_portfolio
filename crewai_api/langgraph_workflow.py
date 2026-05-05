@@ -21,6 +21,11 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
 from typing_extensions import TypedDict
 
+try:
+    from crewai_api.portfolio_context import KEREM_PROFILE
+except ImportError:
+    from portfolio_context import KEREM_PROFILE
+
 
 # ---------------------------------------------------------------------------
 # LangSmith Tracing (opsiyonel – key varsa otomatik aktif)
@@ -48,23 +53,6 @@ class AgentState(TypedDict):
     profile_notes: str
     cti_notes: str
     final_answer: str
-
-
-# ---------------------------------------------------------------------------
-# Kerem DÜZ profil bilgisi (ajan hafızası)
-# ---------------------------------------------------------------------------
-
-KEREM_PROFILE = """
-- Ad Soyad: Kerem DÜZ
-- Üniversite: Akdeniz Üniversitesi – Bilgisayar Mühendisliği
-- Topluluk: Akdeniz Siber Güvenlik Topluluğu Başkanı
-- İlgi Alanları: Web sızma testleri, Linux, donanım projeleri
-- Proje: Son derece gizli bir siber güvenlik projesi üzerinde çalışıyor, detay vermiyor.
-- Web Sitesi: www.keremduz.com
-- Sosyal Medya: instagramda kerem_plain.
-- Telefon numarası: 0505 991 37 75
-- Mail Adresi: keremduz0304@gmail.com
-"""
 
 
 # ---------------------------------------------------------------------------

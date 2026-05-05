@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import type { Project, TimelineItem } from "@/lib/api";
 
 const Timeline = dynamic(() => import("@/components/Timeline"), {
     ssr: false,
@@ -38,7 +39,15 @@ const Footer = dynamic(() => import("@/components/Footer"), {
     loading: () => <div className="min-h-[160px]" />,
 });
 
-export default function HomeDeferredSections() {
+type HomeDeferredSectionsProps = {
+    initialProjects?: Project[];
+    initialTimelines?: TimelineItem[];
+};
+
+export default function HomeDeferredSections({
+    initialProjects = [],
+    initialTimelines = [],
+}: HomeDeferredSectionsProps) {
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -64,10 +73,10 @@ export default function HomeDeferredSections() {
     return (
         <>
             <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
-                <Timeline />
+                <Timeline initialTimelines={initialTimelines} />
             </div>
             <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
-                <Projects />
+                <Projects initialProjects={initialProjects} />
             </div>
             <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
                 <Certificates />
