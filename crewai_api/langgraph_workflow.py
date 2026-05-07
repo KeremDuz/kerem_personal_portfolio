@@ -22,9 +22,9 @@ from langgraph.graph import END, StateGraph
 from typing_extensions import TypedDict
 
 try:
-    from crewai_api.portfolio_context import KEREM_PROFILE, classify_portfolio_question
+    from crewai_api.portfolio_context import classify_portfolio_question, get_portfolio_context_text
 except ImportError:
-    from portfolio_context import KEREM_PROFILE, classify_portfolio_question
+    from portfolio_context import classify_portfolio_question, get_portfolio_context_text
 
 
 # ---------------------------------------------------------------------------
@@ -63,10 +63,11 @@ def research_node(state: AgentState) -> dict:
     """Profil araştırmacısı – soruyla ilgili Kerem bilgisi çıkarır."""
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
+    portfolio_context = get_portfolio_context_text()
 
     prompt = f"""Sen Kerem DÜZ'ün dijital hafızasısın.
 Profil bilgileri:
-{KEREM_PROFILE}
+{portfolio_context}
 
 Ziyaretçi sorusu: "{state['visitor_question']}"
 Bugün: {state['today_text']} ({state['weekday_tr']})

@@ -15,17 +15,17 @@ from mcp.server.fastmcp import FastMCP
 
 try:
     from crewai_api.portfolio_context import (
-        KEREM_PROFILE,
         build_portfolio_context_answer,
         classify_portfolio_question,
         format_contact_info,
+        get_portfolio_context_text,
     )
 except ImportError:
     from portfolio_context import (
-        KEREM_PROFILE,
         build_portfolio_context_answer,
         classify_portfolio_question,
         format_contact_info,
+        get_portfolio_context_text,
     )
 
 
@@ -46,9 +46,9 @@ mcp = FastMCP(
     mime_type="text/plain",
 )
 def kerem_profile_resource() -> str:
-    """Expose the portfolio profile as an MCP resource."""
+    """Expose the live website portfolio context as an MCP resource."""
 
-    return KEREM_PROFILE.strip()
+    return get_portfolio_context_text().strip()
 
 
 @mcp.tool(
