@@ -259,7 +259,35 @@ def has_openai_key() -> bool:
 	return bool(os.getenv("OPENAI_API_KEY", "").strip())
 
 
-def build_crew() -> Crew:
+def run_crewai_pipeline(
+	question: str,
+	today_context: dict[str, str],
+	execution_route: str = "crew_full_analysis",
+) -> str:
+	"""CrewAI uzman ajan zincirini çalıştırıp nihai cevabı döndürür."""
+
+	if not has_openai_key():
+		raise HTTPException(
+			status_code=503,
+			detail="OPENAI_API_KEY bulunamadı. Anahtarı ortam değişkeni olarak tanımlayıp API'yi yeniden başlatın.",
+		)
+
+	try:
+		crew = build_crew(execution_route)
+		result = crew.kickoff(
+			inputs={
+				"visitor_question": question,
+				"today_iso": today_context["today_iso"],
+				"today_text": today_context["today_text"],
+				"weekday_tr": today_context["weekday_tr"],
+			}
+		)
+		return str(result)
+	except Exception as error:
+		raise HTTPException(status_code=500, detail=f"Crew çalıştırılamadı: {error}") from error
+
+
+def build_crew(execution_route: str = "crew_full_analysis") -> Crew:
 	"""Ajanları ve görevleri oluşturup Crew nesnesini döndürür."""
 
 	# Araç tanımları
@@ -304,28 +332,55 @@ def build_crew() -> Crew:
 		agent=cv_researcher,
 	)
 
-	cve_search_task = Task(
-		description=tasks_config["cve_search_task"]["description"],
-		expected_output=tasks_config["cve_search_task"]["expected_output"],
-		agent=cti_expert,
-	)
+	agents = [cv_researcher]
+	tasks = [profile_task]
+	answer_context = [profile_task]
 
-	breach_intel_task = Task(
-		description=tasks_config["breach_intel_task"]["description"],
-		expected_output=tasks_config["breach_intel_task"]["expected_output"],
-		agent=breach_intel_expert,
-	)
+	if execution_route in {"crew_cve_analysis", "crew_full_analysis"}:
+		cve_search_task = Task(
+			description=tasks_config["cve_search_task"]["description"],
+			expected_output=tasks_config["cve_search_task"]["expected_output"],
+			agent=cti_expert,
+		)
+		agents.append(cti_expert)
+		tasks.append(cve_search_task)
+		answer_context.append(cve_search_task)
+
+	if execution_route in {"crew_breach_analysis", "crew_full_analysis"}:
+		breach_intel_task = Task(
+			description=tasks_config["breach_intel_task"]["description"],
+			expected_output=tasks_config["breach_intel_task"]["expected_output"],
+			agent=breach_intel_expert,
+		)
+		agents.append(breach_intel_expert)
+		tasks.append(breach_intel_task)
+		answer_context.append(breach_intel_task)
+
+	answer_description = tasks_config["answer_task"]["description"]
+	if execution_route == "crew_cve_analysis":
+		answer_description += (
+			" Bu çalışma sadece CVE/zafiyet analizidir; şirket ihlali veya breach "
+			"intelligence notu yoksa bundan ayrıca bahsetme."
+		)
+	elif execution_route == "crew_breach_analysis":
+		answer_description += (
+			" Bu çalışma sadece şirket ihlali/saldırı vektörü analizidir; güncel CVE "
+			"listesi yoksa bundan ayrıca bahsetme."
+		)
 
 	answer_task = Task(
-		description=tasks_config["answer_task"]["description"],
+		description=answer_description,
 		expected_output=tasks_config["answer_task"]["expected_output"],
 		agent=spokesperson,
-		context=[profile_task, cve_search_task, breach_intel_task],
+		context=answer_context,
 	)
 
+	agents.append(spokesperson)
+	tasks.append(answer_task)
+
 	return Crew(
-		agents=[cv_researcher, cti_expert, breach_intel_expert, spokesperson],
-		tasks=[profile_task, cve_search_task, breach_intel_task, answer_task],
+		agents=agents,
+		tasks=tasks,
 		process=Process.sequential,
 		verbose=True,
 	)
@@ -360,25 +415,7 @@ def ask_question(data: AskRequest) -> dict[str, str]:
 	if is_private_size_question(data.question):
 		return {"result": get_private_size_response()}
 
-	if not has_openai_key():
-		raise HTTPException(
-			status_code=503,
-			detail="OPENAI_API_KEY bulunamadı. Anahtarı ortam değişkeni olarak tanımlayıp API'yi yeniden başlatın.",
-		)
-
-	try:
-		crew = build_crew()
-		result = crew.kickoff(
-			inputs={
-				"visitor_question": data.question,
-				"today_iso": today_context["today_iso"],
-				"today_text": today_context["today_text"],
-				"weekday_tr": today_context["weekday_tr"],
-			}
-		)
-		return {"result": str(result)}
-	except Exception as error:
-		raise HTTPException(status_code=500, detail=f"Crew çalıştırılamadı: {error}") from error
+	return {"result": run_crewai_pipeline(data.question, today_context)}
 
 
 # ---------------------------------------------------------------------------
@@ -386,14 +423,21 @@ def ask_question(data: AskRequest) -> dict[str, str]:
 # ---------------------------------------------------------------------------
 
 try:
-	from crewai_api.langgraph_workflow import langgraph_app as _lg_app
+	from crewai_api.langgraph_workflow import (
+		langgraph_app as _lg_app,
+		unified_router_app as _unified_router_app,
+	)
 	_LANGGRAPH_AVAILABLE = True
 except ImportError:
 	try:
-		from langgraph_workflow import langgraph_app as _lg_app
+		from langgraph_workflow import (
+			langgraph_app as _lg_app,
+			unified_router_app as _unified_router_app,
+		)
 		_LANGGRAPH_AVAILABLE = True
 	except ImportError:
 		_lg_app = None
+		_unified_router_app = None
 		_LANGGRAPH_AVAILABLE = False
 
 try:
@@ -409,6 +453,149 @@ except ImportError as error:
 		_run_mcp_demo = None
 		_MCP_AVAILABLE = False
 		_MCP_IMPORT_ERROR = f"{error}; {fallback_error}"
+
+
+def fallback_unified_route(question: str) -> dict[str, str]:
+	"""LangGraph router yüklenemezse kullanılacak basit rota seçici."""
+
+	text = question.lower()
+	cve_keywords = [
+		"cve",
+		"zafiyet",
+		"vulnerability",
+		"exploit",
+		"zero-day",
+		"zeroday",
+		"kritik açık",
+		"kritik acik",
+	]
+	breach_keywords = [
+		"ransomware",
+		"hack",
+		"hacklendi",
+		"hacklenen",
+		"ihlal",
+		"breach",
+		"sızıntı",
+		"sizinti",
+		"veri sızıntısı",
+		"veri sizintisi",
+		"saldırı vektörü",
+		"saldiri vektoru",
+		"data breach",
+		"hacked company",
+		"hacklenen şirket",
+		"hacklenen sirket",
+		"bildirim",
+		"uyarı",
+		"uyari",
+	]
+
+	has_cve_signal = any(keyword in text for keyword in cve_keywords)
+	has_breach_signal = any(keyword in text for keyword in breach_keywords)
+
+	if has_cve_signal and has_breach_signal:
+		return {
+			"execution_route": "crew_full_analysis",
+			"route_reason": "Fallback router, soruda hem CVE hem şirket ihlali sinyali gördü.",
+		}
+
+	if has_cve_signal:
+		return {
+			"execution_route": "crew_cve_analysis",
+			"route_reason": "Fallback router, soruyu CVE/zafiyet analizi olarak sınıflandırdı.",
+		}
+
+	if has_breach_signal:
+		return {
+			"execution_route": "crew_breach_analysis",
+			"route_reason": "Fallback router, soruyu şirket ihlali analizi olarak sınıflandırdı.",
+		}
+
+	return {
+		"execution_route": "mcp_direct",
+		"route_reason": "Fallback router, sorunun portfolio context'iyle cevaplanabileceğine karar verdi.",
+	}
+
+
+@app.post("/ask-agent")
+async def ask_agent(data: AskRequest) -> dict[str, Any]:
+	"""MCP context + LangGraph router + CrewAI ajanlarını tek pipeline'da çalıştırır."""
+
+	question = data.question.strip()
+	if not question:
+		raise HTTPException(status_code=400, detail="question alanı boş olamaz")
+
+	today_context = get_today_context()
+	trace: list[str] = [
+		"Tek AI pipeline başladı: MCP context, LangGraph router ve CrewAI execution aynı endpoint altında yönetiliyor."
+	]
+
+	if is_date_or_day_question(question):
+		trace.append("Basit tarih sorusu local guard ile cevaplandı.")
+		return {
+			"result": f"Bugün {today_context['today_text']}, günlerden {today_context['weekday_tr']}.",
+			"trace": trace,
+		}
+
+	if is_private_size_question(question):
+		trace.append("Mahrem/uygunsuz soru local guard ile filtrelendi.")
+		return {"result": get_private_size_response(), "trace": trace}
+
+	mcp_result: dict[str, Any] | None = None
+	if _MCP_AVAILABLE and _run_mcp_demo is not None:
+		try:
+			mcp_result = await _run_mcp_demo(question)
+			trace.append("MCP context katmanı çalıştı: resource/tool/prompt keşfi ve context okuma tamamlandı.")
+		except Exception as error:
+			trace.append(f"MCP context katmanı hata aldı, pipeline devam ediyor: {error}")
+	else:
+		trace.append(f"MCP context katmanı kullanılamıyor: {_MCP_IMPORT_ERROR}")
+
+	if _LANGGRAPH_AVAILABLE and _unified_router_app is not None:
+		router_result = _unified_router_app.invoke({
+			"visitor_question": question,
+			"today_iso": today_context["today_iso"],
+			"today_text": today_context["today_text"],
+			"weekday_tr": today_context["weekday_tr"],
+		})
+	else:
+		router_result = fallback_unified_route(question)
+
+	execution_route = str(router_result.get("execution_route", "crew_analysis"))
+	route_reason = str(router_result.get("route_reason", "Rota açıklaması yok."))
+	trace.append(f"LangGraph router kararı: {execution_route}. {route_reason}")
+
+	if execution_route == "mcp_direct" and mcp_result is not None:
+		trace.append("CrewAI çalıştırılmadı; MCP context cevabı yeterli görüldü.")
+		return {
+			"result": str(mcp_result.get("result", "")).strip(),
+			"trace": trace,
+			"mcp": mcp_result.get("mcp"),
+		}
+
+	if execution_route == "mcp_direct":
+		trace.append("MCP cevabı alınamadı; local portfolio/contact fallback kullanıldı.")
+		if is_contact_question(question):
+			return {"result": get_contact_response(), "trace": trace}
+		return {
+			"result": (
+				"Kerem Düz, Akdeniz Üniversitesi Bilgisayar Mühendisliği öğrencisi ve "
+				"Akdeniz Siber Güvenlik Topluluğu Başkanıdır. İlgi alanları web sızma "
+				"testleri, Linux ve donanım projeleridir."
+			),
+			"trace": trace,
+		}
+
+	trace.append(f"CrewAI uzman ajan ekibi çalıştırılıyor: {execution_route}.")
+	crew_answer = run_crewai_pipeline(question, today_context, execution_route)
+	trace.append("CrewAI execution tamamlandı; final cevap üretildi.")
+
+	return {
+		"result": crew_answer,
+		"trace": trace,
+		"mcp": mcp_result.get("mcp") if mcp_result else None,
+	}
 
 
 @app.post("/ask-langgraph")

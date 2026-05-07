@@ -8,20 +8,18 @@ type ChatMessage = {
     content: string;
 };
 
-type AiMode = "langgraph" | "crewai" | "mcp";
-
 type AssistantResponse = {
     result?: string;
     trace?: string[];
 };
 
-const INITIAL_MESSAGE = "Merhaba, ben Kerem'in dijital asistanıyım. Kerem Düz hakkında, güncel CVE/zafiyet konularında veya MCP demosu üzerinden soru sorabilirsin.";
+const INITIAL_MESSAGE = "Merhaba, ben Kerem'in dijital asistanıyım. Kerem Düz, güncel CVE/zafiyetler veya şirket veri ihlalleri hakkında soru sorabilirsin.";
+const AGENT_ENDPOINT = "/ask-agent";
 
 export default function AgentAssistantWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [question, setQuestion] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [aiMode, setAiMode] = useState<AiMode>("langgraph");
     const [messages, setMessages] = useState<ChatMessage[]>([
         { role: "assistant", content: INITIAL_MESSAGE },
     ]);
@@ -29,13 +27,6 @@ export default function AgentAssistantWidget() {
     const apiBaseUrl = useMemo(() => {
         return process.env.NEXT_PUBLIC_AGENT_API_URL ?? "http://localhost:8010";
     }, []);
-
-    const endpointByMode: Record<AiMode, string> = {
-        langgraph: "/ask-langgraph",
-        crewai: "/ask",
-        mcp: "/mcp-demo",
-    };
-    const endpoint = endpointByMode[aiMode];
 
     const askAssistant = async () => {
         const trimmed = question.trim();
@@ -46,7 +37,7 @@ export default function AgentAssistantWidget() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${apiBaseUrl}${endpoint}`, {
+            const response = await fetch(`${apiBaseUrl}${AGENT_ENDPOINT}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +53,7 @@ export default function AgentAssistantWidget() {
             const data = (await response.json()) as AssistantResponse;
             const assistantText = data.result?.trim() || "Üzgünüm, şu an cevap üretemedim.";
             const traceText = data.trace?.length
-                ? `\n\nMCP süreci:\n${data.trace.map((step, index) => `${index + 1}. ${step}`).join("\n")}`
+                ? `\n\nİşlem izi:\n${data.trace.map((step, index) => `${index + 1}. ${step}`).join("\n")}`
                 : "";
 
             setMessages((prev) => [...prev, { role: "assistant", content: `${assistantText}${traceText}` }]);
@@ -87,38 +78,9 @@ export default function AgentAssistantWidget() {
                     <div className="flex items-center justify-between px-4 py-3 border-b border-cyber-green/15 bg-black/40">
                         <div>
                             <p className="font-mono text-cyber-green text-sm">Kerem AI Assistant</p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                                <button
-                                    onClick={() => setAiMode("langgraph")}
-                                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono transition-colors ${
-                                        aiMode === "langgraph"
-                                            ? "bg-cyber-green/20 text-cyber-green border border-cyber-green/40"
-                                            : "text-gray-500 hover:text-gray-300"
-                                    }`}
-                                >
-                                    LangGraph
-                                </button>
-                                <button
-                                    onClick={() => setAiMode("crewai")}
-                                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono transition-colors ${
-                                        aiMode === "crewai"
-                                            ? "bg-cyber-green/20 text-cyber-green border border-cyber-green/40"
-                                            : "text-gray-500 hover:text-gray-300"
-                                    }`}
-                                >
-                                    CrewAI
-                                </button>
-                                <button
-                                    onClick={() => setAiMode("mcp")}
-                                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono transition-colors ${
-                                        aiMode === "mcp"
-                                            ? "bg-cyber-green/20 text-cyber-green border border-cyber-green/40"
-                                            : "text-gray-500 hover:text-gray-300"
-                                    }`}
-                                >
-                                    MCP
-                                </button>
-                            </div>
+                            <p className="mt-0.5 font-mono text-[10px] text-gray-500">
+                                MCP + LangGraph + CrewAI pipeline
+                            </p>
                         </div>
                         <button
                             aria-label="Chat penceresini kapat"
@@ -150,7 +112,7 @@ export default function AgentAssistantWidget() {
                         {isLoading && (
                             <div className="flex justify-start">
                                 <div className="max-w-[85%] rounded-2xl px-3 py-2 text-sm bg-white/10 text-gray-200 border border-white/15">
-                                    {aiMode === "mcp" ? "MCP server ile konuşuyor..." : "Ajanlar düşünüyor..."}
+                                    AI pipeline çalışıyor...
                                 </div>
                             </div>
                         )}

@@ -71,9 +71,16 @@ The backend API will run on the port specified in your `backend/.env` file.
 - Model Context Protocol (MCP)
 - FastAPI
 
-## CrewAI Agent Flow
+## Unified AI Agent Pipeline
 
-The CrewAI endpoint (`POST /ask`) runs a sequential multi-agent workflow:
+The website chat widget calls a single endpoint: `POST /ask-agent`.
+That endpoint combines all three AI concepts in one runtime pipeline:
+
+1. MCP gathers portfolio context, contact tools, prompt context, and a protocol trace.
+2. LangGraph acts as the router and decides whether the MCP answer is enough or deeper analysis is needed.
+3. CrewAI runs the specialist multi-agent workflow for CVE, vulnerability, ransomware, hacked-company, and breach-intelligence questions.
+
+The CrewAI execution layer contains four agents:
 
 - `cv_researcher`: summarizes Kerem Düz profile/CV context.
 - `cti_expert`: searches current CVE and vulnerability topics with DuckDuckGo.
@@ -89,6 +96,10 @@ topic, and set the webhook URL to that topic:
 BREACH_ALERT_WEBHOOK_URL=https://ntfy.sh/your-private-topic-name
 BREACH_ALERT_WEBHOOK_FORMAT=ntfy
 ```
+
+The older classroom endpoints (`POST /ask`, `POST /ask-langgraph`, and
+`POST /mcp-demo`) are still available for isolated demonstrations of each
+technology, but the production chat UI uses the unified `/ask-agent` pipeline.
 
 ## MCP Classroom Demo
 

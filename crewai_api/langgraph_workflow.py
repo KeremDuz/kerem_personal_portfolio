@@ -22,9 +22,9 @@ from langgraph.graph import END, StateGraph
 from typing_extensions import TypedDict
 
 try:
-    from crewai_api.portfolio_context import KEREM_PROFILE
+    from crewai_api.portfolio_context import KEREM_PROFILE, classify_portfolio_question
 except ImportError:
-    from portfolio_context import KEREM_PROFILE
+    from portfolio_context import KEREM_PROFILE, classify_portfolio_question
 
 
 # ---------------------------------------------------------------------------
@@ -150,3 +150,122 @@ def build_langgraph() -> StateGraph:
 
 # Modül seviyesinde derle – her import'ta yeniden kurulmasın
 langgraph_app = build_langgraph()
+
+
+# ---------------------------------------------------------------------------
+# Unified router graph
+# ---------------------------------------------------------------------------
+
+class UnifiedRouterState(TypedDict, total=False):
+    """Tek endpoint için LangGraph router state'i."""
+
+    visitor_question: str
+    today_text: str
+    weekday_tr: str
+    today_iso: str
+    mcp_route: str
+    execution_route: str
+    route_reason: str
+
+
+def unified_mcp_context_node(state: UnifiedRouterState) -> dict:
+    """MCP context sınıflandırmasını LangGraph state'ine taşır."""
+
+    classification = classify_portfolio_question(state["visitor_question"])
+    return {
+        "mcp_route": str(classification["route"]),
+        "route_reason": str(classification["explanation"]),
+    }
+
+
+def unified_route_node(state: UnifiedRouterState) -> dict:
+    """Soruya göre direkt MCP cevabı mı, CrewAI analizi mi gerektiğini seçer."""
+
+    question = state["visitor_question"].lower()
+    cve_keywords = [
+        "cve",
+        "zafiyet",
+        "vulnerability",
+        "exploit",
+        "zero-day",
+        "zeroday",
+        "kritik açık",
+        "kritik acik",
+    ]
+    breach_keywords = [
+        "ransomware",
+        "hack",
+        "hacklendi",
+        "hacklenen",
+        "ihlal",
+        "breach",
+        "sızıntı",
+        "sizinti",
+        "veri sızıntısı",
+        "veri sizintisi",
+        "saldırı vektörü",
+        "saldiri vektoru",
+        "data breach",
+        "hacked company",
+        "hacklenen şirket",
+        "hacklenen sirket",
+        "bildirim",
+        "uyarı",
+        "uyari",
+    ]
+
+    has_cve_signal = any(keyword in question for keyword in cve_keywords)
+    has_breach_signal = any(keyword in question for keyword in breach_keywords)
+
+    if has_cve_signal and has_breach_signal:
+        return {
+            "execution_route": "crew_full_analysis",
+            "route_reason": (
+                "LangGraph router, soruda hem zafiyet/CVE hem de şirket ihlali "
+                "sinyali gördü; CrewAI CTI ve breach ajanları birlikte çalışacak."
+            ),
+        }
+
+    if has_cve_signal:
+        return {
+            "execution_route": "crew_cve_analysis",
+            "route_reason": (
+                "LangGraph router, soruyu güncel CVE/zafiyet analizi olarak gördü; "
+                "CrewAI CTI ajanı devreye alınacak."
+            ),
+        }
+
+    if has_breach_signal:
+        return {
+            "execution_route": "crew_breach_analysis",
+            "route_reason": (
+                "LangGraph router, soruyu şirket ihlali/saldırı vektörü analizi "
+                "olarak gördü; CrewAI breach intelligence ajanı devreye alınacak."
+            ),
+        }
+
+    return {
+        "execution_route": "mcp_direct",
+        "route_reason": (
+            "LangGraph router, sorunun MCP portfolio context'iyle doğrudan "
+            "cevaplanabileceğine karar verdi."
+        ),
+    }
+
+
+def build_unified_router_graph() -> StateGraph:
+    """Tek endpoint için hafif LangGraph router'ını kurar."""
+
+    workflow = StateGraph(UnifiedRouterState)
+
+    workflow.add_node("mcp_context", unified_mcp_context_node)
+    workflow.add_node("route", unified_route_node)
+
+    workflow.set_entry_point("mcp_context")
+    workflow.add_edge("mcp_context", "route")
+    workflow.add_edge("route", END)
+
+    return workflow.compile()
+
+
+unified_router_app = build_unified_router_graph()
