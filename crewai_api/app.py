@@ -8,13 +8,17 @@ Bu dosya:
 """
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
+import html
 import json
 import os
+import re
 from typing import Any
 import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
@@ -121,6 +125,212 @@ class DuckDuckGoCrewTool(BaseTool):
 	def _run(self, query: str) -> str:
 		search_tool = DuckDuckGoSearchRun()
 		return str(search_tool.invoke(query))
+
+
+class CurrentBreachNewsTool(BaseTool):
+	"""Son şirket ihlallerini tarih baskılı sorgularla arayan CrewAI aracı."""
+
+	name: str = "current_breach_news_search"
+	description: str = (
+		"En son/güncel hacklenen şirket, veri ihlali veya ransomware olayı sorularında kullanılır. "
+		"Tek parametre olarak ziyaretçinin sorusunu veya şirket adını alır; güncel yıl ve son günler "
+		"odaklı birden fazla arama yapıp sonuçları döndürür."
+	)
+
+	def _clean_text(self, value: str) -> str:
+		"""RSS açıklamalarındaki HTML kırıntılarını sade metne çevirir."""
+
+		text = html.unescape(value or "")
+		text = re.sub(r"<[^>]+>", " ", text)
+		return re.sub(r"\s+", " ", text).strip()
+
+	def _parse_feed_items(self, source: str, feed_url: str, current_year: str) -> list[dict[str, Any]]:
+		"""RSS feed'inden güncel ihlal/saldırı haberlerini çeker."""
+
+		relevance_terms = [
+			"breach",
+			"breached",
+			"data theft",
+			"data stolen",
+			"stolen data",
+			"stolen",
+			"leak",
+			"leaked",
+			"hack",
+			"hacked",
+			"hacker",
+			"hackers",
+			"compromise",
+			"compromised",
+			"compromises",
+			"ransomware",
+			"supply-chain attack",
+			"supply chain attack",
+			"trojanized",
+			"intrusion",
+			"phishing",
+		]
+		non_incident_terms = [
+			"webinar",
+			"could",
+			"can be",
+			"zero-day",
+			"vulnerability",
+			"vulnerabilities",
+			"patch",
+			"patches",
+			"fixes",
+			"flaw",
+			"bug",
+			"funding",
+			"raises",
+		]
+		score_terms = [
+			("breach", 10),
+			("breached", 10),
+			("data theft", 9),
+			("data stolen", 9),
+			("stolen data", 9),
+			("supply-chain attack", 8),
+			("supply chain attack", 8),
+			("trojanized", 8),
+			("compromise", 7),
+			("compromised", 7),
+			("ransomware", 7),
+			("hackers compromise", 7),
+			("hacked", 6),
+			("phishing", 5),
+			("leak", 5),
+			("leaked", 5),
+			("intrusion", 4),
+			("hackers", 3),
+		]
+
+		request = urllib.request.Request(
+			feed_url,
+			headers={"User-Agent": "kerem-portfolio-breach-agent/1.0"},
+		)
+		with urllib.request.urlopen(request, timeout=8) as response:
+			feed_xml = response.read()
+
+		root = ET.fromstring(feed_xml)
+		items: list[dict[str, Any]] = []
+
+		for item in root.findall(".//item"):
+			title = self._clean_text(item.findtext("title", ""))
+			link = self._clean_text(item.findtext("link", ""))
+			description = self._clean_text(item.findtext("description", ""))
+			published = self._clean_text(item.findtext("pubDate", ""))
+			title_text = title.lower()
+			search_text = f"{title} {description}".lower()
+
+			if not any(term in search_text for term in relevance_terms):
+				continue
+			if any(term in title_text for term in non_incident_terms):
+				continue
+			if current_year not in published and current_year not in search_text:
+				continue
+
+			incident_score = sum(score for term, score in score_terms if term in search_text)
+			if incident_score <= 0:
+				continue
+
+			try:
+				published_dt = parsedate_to_datetime(published)
+			except (TypeError, ValueError):
+				published_dt = datetime.min.replace(tzinfo=timezone.utc)
+			if published_dt.tzinfo is None:
+				published_dt = published_dt.replace(tzinfo=timezone.utc)
+
+			items.append(
+				{
+					"source": source,
+					"title": title,
+					"link": link,
+					"description": description,
+					"published": published,
+					"published_dt": published_dt,
+					"incident_score": incident_score,
+				}
+			)
+
+		return items
+
+	def _current_feed_results(self, current_year: str) -> str:
+		"""Güvenilir RSS kaynaklarından tarih sıralı güncel haber özeti üretir."""
+
+		feed_urls = {
+			"BleepingComputer": "https://www.bleepingcomputer.com/feed/",
+			"The Record": "https://therecord.media/feed",
+			"SecurityWeek": "https://www.securityweek.com/feed/",
+			"Cybersecurity Dive": "https://www.cybersecuritydive.com/feeds/news/",
+		}
+		items: list[dict[str, Any]] = []
+		errors: list[str] = []
+
+		for source, feed_url in feed_urls.items():
+			try:
+				items.extend(self._parse_feed_items(source, feed_url, current_year))
+			except Exception as error:
+				errors.append(f"{source}: {error}")
+
+		items.sort(key=lambda row: (row["incident_score"], row["published_dt"]), reverse=True)
+		if not items:
+			error_text = f" Feed errors: {' | '.join(errors)}" if errors else ""
+			return (
+				"RSS CURRENT NEWS: Güncel yıl için feed kaynaklarında ilgili ihlal/hack "
+				f"haberi bulunamadı.{error_text}"
+			)
+
+		lines = ["RSS CURRENT NEWS (relevance-ranked current-year items; prefer these over generic search snippets):"]
+		for item in items[:10]:
+			lines.extend(
+				[
+					f"- Source: {item['source']}",
+					f"  Published: {item['published']}",
+					f"  Title: {item['title']}",
+					f"  Link: {item['link']}",
+					f"  Summary: {item['description'][:400]}",
+				]
+			)
+
+		if errors:
+			lines.append(f"Feed errors: {' | '.join(errors)}")
+
+		return "\n".join(lines)
+
+	def _run(self, topic: str) -> str:
+		search_tool = DuckDuckGoSearchRun()
+		today_context = get_today_context()
+		current_year = today_context["today_iso"][:4]
+		topic_text = topic.strip() or "latest hacked company"
+		queries = [
+			f"{topic_text} latest data breach hacked company {current_year}",
+			f"latest company data breach ransomware cyber attack {current_year}",
+			f"latest breached company cyberattack {current_year} security news",
+			f"site:bleepingcomputer.com latest data breach company {current_year}",
+			f"site:therecord.media latest data breach company {current_year}",
+			f"site:securityweek.com latest data breach ransomware company {current_year}",
+		]
+		results: list[str] = [
+			f"Today/context date: {today_context['today_iso']} ({today_context['today_text']}, {today_context['weekday_tr']})",
+			"Use only current-year/recent results as latest. Do not present older incidents as latest unless no newer source is found.",
+			self._current_feed_results(current_year),
+		]
+
+		if "Güncel yıl için feed kaynaklarında ilgili" in results[-1]:
+			search_queries = queries
+		else:
+			search_queries = queries[:2]
+
+		for query in search_queries:
+			try:
+				search_result = search_tool.invoke(query)
+			except Exception as error:
+				search_result = f"Search failed: {error}"
+			results.append(f"QUERY: {query}\nRESULTS:\n{search_result}")
+
+		return "\n\n".join(results)
 
 
 class BreachAlertNotificationTool(BaseTool):
@@ -292,6 +502,7 @@ def build_crew(execution_route: str = "crew_full_analysis") -> Crew:
 
 	# Araç tanımları
 	ddg_tool = DuckDuckGoCrewTool()
+	current_breach_news_tool = CurrentBreachNewsTool()
 	alert_tool = BreachAlertNotificationTool()
 
 	# Ajanlar
@@ -314,7 +525,7 @@ def build_crew(execution_route: str = "crew_full_analysis") -> Crew:
 		role=agents_config["breach_intel_expert"]["role"],
 		goal=agents_config["breach_intel_expert"]["goal"],
 		backstory=agents_config["breach_intel_expert"]["backstory"],
-		tools=[ddg_tool, alert_tool],
+		tools=[current_breach_news_tool, ddg_tool, alert_tool],
 		verbose=True,
 	)
 
@@ -480,9 +691,15 @@ def fallback_unified_route(question: str) -> dict[str, str]:
 		"sizinti",
 		"veri sızıntısı",
 		"veri sizintisi",
+		"veri ihlali",
 		"saldırı vektörü",
 		"saldiri vektoru",
+		"siber saldırı",
+		"siber saldiri",
+		"cyberattack",
+		"cyber attack",
 		"data breach",
+		"son ihlal",
 		"hacked company",
 		"hacklenen şirket",
 		"hacklenen sirket",

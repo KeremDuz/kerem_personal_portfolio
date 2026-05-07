@@ -7,9 +7,34 @@ cve_search_task:
   expected_output: "Güncel CVE kodları veya 'Soru zafiyetlerle ilgili değil' notu."
 
 breach_intel_task:
-  description: "Ziyaretçinin '{visitor_question}' sorusunu analiz et. Sadece soru hacklenen şirketler, veri ihlali, ransomware, sızıntı, saldırı vektörü veya 'şirket nasıl hacklendi' bağlamındaysa DuckDuckGo aracını kullanarak güncel ve ilgili kaynakları ara. Soru yalnızca CVE/zafiyet listesi istiyorsa arama yapma ve 'Soru şirket ihlalleriyle ilgili değil' yaz. Sorguyu şirket adı ve konuya göre üret; örnek: '<company> data breach how hacked attack vector', '<company> ransomware breach report' veya 'recent major company data breaches {today_iso}'. Çıktıda şirket/olay, tarih veya yıl, saldırı vektörü, etki, sızdırılan veri türü, güvenilirlik notu ve savunma dersi ver. Eğer ziyaretçi açıkça bildirim/uyarı istiyorsa ve ciddi bir ihlal bulduysan send_breach_alert aracına tek paragraflık kısa bir uyarı metni gönder. Soru alakasızsa 'Soru şirket ihlalleriyle ilgili değil' yaz."
+  description: >-
+    Ziyaretçinin '{visitor_question}' sorusunu analiz et. Bugün tarihi: {today_text}
+    ({weekday_tr}), ISO: {today_iso}. Sadece soru hacklenen şirketler, veri ihlali,
+    ransomware, sızıntı, saldırı vektörü veya 'şirket nasıl hacklendi' bağlamındaysa
+    arama araçlarını kullan. Soru yalnızca CVE/zafiyet listesi istiyorsa arama yapma
+    ve 'Soru şirket ihlalleriyle ilgili değil' yaz. Eğer soru 'en son', 'son',
+    'güncel', 'bugün', 'bu hafta', 'bu ay', 'latest', 'recent' veya 'newest'
+    anlamı taşıyorsa önce current_breach_news_search aracını çalıştır ve yalnızca
+    güncel yıl/son günler kaynaklarını 'en güncel' olarak kabul et. 2024 veya daha
+    eski olayları, kullanıcı açıkça tarihçe/örnek istemedikçe 'en son hacklenen
+    şirket' diye sunma; güncel doğrulama bulamazsan bunu dürüstçe belirt. Belirli
+    bir şirket soruluyorsa duckduckgo_search ile '<company> data breach how hacked
+    attack vector {today_iso}' veya '<company> ransomware breach report {today_iso}'
+    gibi şirket odaklı arama yap. Çıktıda şirket/olay, yayın/olay tarihi, saldırı
+    vektörü, etki, sızdırılan veri türü, kaynak/güvenilirlik notu ve savunma dersi
+    ver. Eğer ziyaretçi açıkça bildirim/uyarı istiyorsa ve ciddi, yeni bir ihlal
+    bulduysan send_breach_alert aracına tek paragraflık kısa bir uyarı metni gönder.
+    Soru alakasızsa 'Soru şirket ihlalleriyle ilgili değil' yaz.
   expected_output: "Şirket ihlali istihbarat özeti, saldırı vektörü analizi, savunma dersi ve varsa bildirim durumu; alakasızsa 'Soru şirket ihlalleriyle ilgili değil' notu."
 
 answer_task:
-  description: "Profil araştırmacısından, CTI uzmanından ve şirket ihlali analistinden gelen raporları al. Ziyaretçinin '{visitor_question}' sorusuna tam bir yanıt veren, asistan ağzından yazılmış şık bir metin oluştur. Eğer breach intelligence notu varsa cevabı şirket, saldırı yöntemi, etki ve alınacak ders şeklinde yapılandır. Tarih/gün sorulursa yalnızca verilen bugünkü bilgilere dayan: {today_text} ({weekday_tr}). Tarih uydurma."
+  description: >-
+    Profil araştırmacısından, CTI uzmanından ve şirket ihlali analistinden gelen
+    raporları al. Ziyaretçinin '{visitor_question}' sorusuna tam bir yanıt veren,
+    asistan ağzından yazılmış şık bir metin oluştur. Eğer breach intelligence notu
+    varsa cevabı şirket, saldırı yöntemi, etki ve alınacak ders şeklinde yapılandır.
+    Soru güncel/en son olay istiyorsa bugün tarihi olan {today_text} ({weekday_tr})
+    bağlamına göre cevap ver; eski olayları 'en son' diye sunma. Güncel kaynak
+    doğrulanamadıysa açıkça 'güncel doğrulanmış olay bulamadım' de. Tarih/gün
+    sorulursa yalnızca verilen bugünkü bilgilere dayan. Tarih uydurma.
   expected_output: "Nihai, akıcı Türkçe, öz ve kısa cevap metni."
