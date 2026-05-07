@@ -6,6 +6,10 @@ cve_search_task:
   description: "Ziyaretçinin '{visitor_question}' sorusunu analiz et. Eğer soru güncel zafiyetler veya CVE'ler hakkında ise, hemen arama aracını kullanarak 'latest critical CVEs today {today_iso}' araması yap ve özet çıkar. Bugün tarihi: {today_text} ({weekday_tr})."
   expected_output: "Güncel CVE kodları veya 'Soru zafiyetlerle ilgili değil' notu."
 
+breach_intel_task:
+  description: "Ziyaretçinin '{visitor_question}' sorusunu analiz et. Eğer soru hacklenen şirketler, veri ihlali, ransomware, sızıntı, saldırı yöntemi veya 'şirket nasıl hacklendi' bağlamındaysa DuckDuckGo aracını kullanarak güncel ve ilgili kaynakları ara. Sorguyu şirket adı ve konuya göre üret; örnek: '<company> data breach how hacked attack vector', '<company> ransomware breach report' veya 'recent major company data breaches {today_iso}'. Çıktıda şirket/olay, tarih veya yıl, saldırı vektörü, etki, sızdırılan veri türü, güvenilirlik notu ve savunma dersi ver. Eğer ziyaretçi açıkça bildirim/uyarı istiyorsa ve ciddi bir ihlal bulduysan send_breach_alert aracına tek paragraflık kısa bir uyarı metni gönder. Soru alakasızsa 'Soru şirket ihlalleriyle ilgili değil' yaz."
+  expected_output: "Şirket ihlali istihbarat özeti, saldırı vektörü analizi, savunma dersi ve varsa bildirim durumu; alakasızsa 'Soru şirket ihlalleriyle ilgili değil' notu."
+
 answer_task:
-  description: "Profil araştırmacısından ve CTI uzmanından gelen raporları al. Ziyaretçinin '{visitor_question}' sorusuna tam bir yanıt veren, asistan ağzından yazılmış şık bir metin oluştur. Tarih/gün sorulursa yalnızca verilen bugünkü bilgilere dayan: {today_text} ({weekday_tr}). Tarih uydurma."
+  description: "Profil araştırmacısından, CTI uzmanından ve şirket ihlali analistinden gelen raporları al. Ziyaretçinin '{visitor_question}' sorusuna tam bir yanıt veren, asistan ağzından yazılmış şık bir metin oluştur. Eğer breach intelligence notu varsa cevabı şirket, saldırı yöntemi, etki ve alınacak ders şeklinde yapılandır. Tarih/gün sorulursa yalnızca verilen bugünkü bilgilere dayan: {today_text} ({weekday_tr}). Tarih uydurma."
   expected_output: "Nihai, akıcı Türkçe, öz ve kısa cevap metni."

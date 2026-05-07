@@ -71,6 +71,25 @@ The backend API will run on the port specified in your `backend/.env` file.
 - Model Context Protocol (MCP)
 - FastAPI
 
+## CrewAI Agent Flow
+
+The CrewAI endpoint (`POST /ask`) runs a sequential multi-agent workflow:
+
+- `cv_researcher`: summarizes Kerem Düz profile/CV context.
+- `cti_expert`: searches current CVE and vulnerability topics with DuckDuckGo.
+- `breach_intel_expert`: researches hacked companies, breach timelines, attack vectors, impact, leaked data types, and defensive lessons.
+- `spokesperson`: combines the previous agent outputs into a visitor-friendly Turkish answer.
+
+The breach intelligence agent can optionally send alerts through a webhook. Set
+`BREACH_ALERT_WEBHOOK_URL` in the root `.env` file to enable notifications.
+For phone push notifications, install the ntfy mobile app, subscribe to a private
+topic, and set the webhook URL to that topic:
+
+```env
+BREACH_ALERT_WEBHOOK_URL=https://ntfy.sh/your-private-topic-name
+BREACH_ALERT_WEBHOOK_FORMAT=ntfy
+```
+
 ## MCP Classroom Demo
 
 This project includes a visible MCP demonstration inside the AI assistant flow.

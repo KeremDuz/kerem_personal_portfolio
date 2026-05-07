@@ -9,8 +9,12 @@ Bu dosya:
 
 from pathlib import Path
 from datetime import datetime
+import json
 import os
 from typing import Any
+import urllib.error
+import urllib.parse
+import urllib.request
 from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
@@ -67,6 +71,47 @@ class AskRequest(BaseModel):
 	question: str
 
 
+def send_breach_alert(alert: str) -> str:
+	"""Breach uyarısını webhook'a gönderir."""
+
+	webhook_url = os.getenv("BREACH_ALERT_WEBHOOK_URL", "").strip()
+	if not webhook_url:
+		return "Bildirim gönderilmedi: BREACH_ALERT_WEBHOOK_URL tanımlı değil."
+
+	webhook_format = os.getenv("BREACH_ALERT_WEBHOOK_FORMAT", "").strip().lower()
+	parsed_url = urllib.parse.urlparse(webhook_url)
+
+	if webhook_format == "ntfy" or parsed_url.netloc.endswith("ntfy.sh"):
+		payload = alert.encode("utf-8")
+		headers = {
+			"Content-Type": "text/plain; charset=utf-8",
+			"Title": "Breach Intel Alert",
+		}
+	else:
+		payload = json.dumps(
+			{
+				"text": alert,
+				"content": alert,
+				"source": "kerem-portfolio-breach-agent",
+			},
+			ensure_ascii=False,
+		).encode("utf-8")
+		headers = {"Content-Type": "application/json"}
+
+	request = urllib.request.Request(
+		webhook_url,
+		data=payload,
+		headers=headers,
+		method="POST",
+	)
+
+	try:
+		with urllib.request.urlopen(request, timeout=8) as response:
+			return f"Bildirim gönderildi. HTTP {response.status}"
+	except urllib.error.URLError as error:
+		return f"Bildirim gönderilemedi: {error}"
+
+
 class DuckDuckGoCrewTool(BaseTool):
 	"""CrewAI ile uyumlu DuckDuckGo arama aracı."""
 
@@ -76,6 +121,20 @@ class DuckDuckGoCrewTool(BaseTool):
 	def _run(self, query: str) -> str:
 		search_tool = DuckDuckGoSearchRun()
 		return str(search_tool.invoke(query))
+
+
+class BreachAlertNotificationTool(BaseTool):
+	"""Ciddi ihlal özetlerini opsiyonel webhook'a bildiren CrewAI aracı."""
+
+	name: str = "send_breach_alert"
+	description: str = (
+		"Ciddi şirket ihlali veya veri sızıntısı özeti için bildirim gönderir. "
+		"Tek parametre olarak kısa ve net bir uyarı metni alır. "
+		"BREACH_ALERT_WEBHOOK_URL tanımlı değilse bildirim göndermez."
+	)
+
+	def _run(self, alert: str) -> str:
+		return send_breach_alert(alert)
 
 
 def get_today_context() -> dict[str, str]:
@@ -203,8 +262,9 @@ def has_openai_key() -> bool:
 def build_crew() -> Crew:
 	"""Ajanları ve görevleri oluşturup Crew nesnesini döndürür."""
 
-	# Araç tanımı (özellikle cti_expert için zorunlu)
+	# Araç tanımları
 	ddg_tool = DuckDuckGoCrewTool()
+	alert_tool = BreachAlertNotificationTool()
 
 	# Ajanlar
 	cv_researcher = Agent(
@@ -219,6 +279,14 @@ def build_crew() -> Crew:
 		goal=agents_config["cti_expert"]["goal"],
 		backstory=agents_config["cti_expert"]["backstory"],
 		tools=[ddg_tool],
+		verbose=True,
+	)
+
+	breach_intel_expert = Agent(
+		role=agents_config["breach_intel_expert"]["role"],
+		goal=agents_config["breach_intel_expert"]["goal"],
+		backstory=agents_config["breach_intel_expert"]["backstory"],
+		tools=[ddg_tool, alert_tool],
 		verbose=True,
 	)
 
@@ -242,16 +310,22 @@ def build_crew() -> Crew:
 		agent=cti_expert,
 	)
 
+	breach_intel_task = Task(
+		description=tasks_config["breach_intel_task"]["description"],
+		expected_output=tasks_config["breach_intel_task"]["expected_output"],
+		agent=breach_intel_expert,
+	)
+
 	answer_task = Task(
 		description=tasks_config["answer_task"]["description"],
 		expected_output=tasks_config["answer_task"]["expected_output"],
 		agent=spokesperson,
-		context=[profile_task, cve_search_task],
+		context=[profile_task, cve_search_task, breach_intel_task],
 	)
 
 	return Crew(
-		agents=[cv_researcher, cti_expert, spokesperson],
-		tasks=[profile_task, cve_search_task, answer_task],
+		agents=[cv_researcher, cti_expert, breach_intel_expert, spokesperson],
+		tasks=[profile_task, cve_search_task, breach_intel_task, answer_task],
 		process=Process.sequential,
 		verbose=True,
 	)
