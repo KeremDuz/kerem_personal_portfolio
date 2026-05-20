@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import staticTravelData from "@/data/travelData";
+import staticTravelData, { mergeUpcomingTravelPins } from "@/data/travelData";
 import type { TravelPin } from "@/data/travelData";
 import MemoryViewer from "./MemoryViewer";
 import TravelGlobe from "./TravelGlobe";
@@ -21,7 +21,7 @@ export default function TravelGlobeSection() {
         travelAPI.getAll()
             .then((data) => {
                 if (data && data.length > 0) {
-                    setTravelData(data as TravelPin[]);
+                    setTravelData(mergeUpcomingTravelPins(data as TravelPin[]));
                 }
             })
             .catch(() => {
@@ -136,7 +136,7 @@ export default function TravelGlobeSection() {
                                 analyticsAPI.track("click_city", pin.label);
                                 setSelectedPin(pin);
                             }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark-surface/50 border border-gray-800/50 hover:border-gray-600 hover:bg-dark-surface transition-all duration-200 cursor-pointer group"
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark-surface/50 border hover:border-gray-600 hover:bg-dark-surface transition-all duration-200 cursor-pointer group ${pin.status === "upcoming" ? "border-dashed border-gray-700/70" : "border-gray-800/50"}`}
                         >
                             <div
                                 className="w-2.5 h-2.5 rounded-full group-hover:scale-125 transition-transform"

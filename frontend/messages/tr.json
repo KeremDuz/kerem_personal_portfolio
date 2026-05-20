@@ -205,11 +205,15 @@
         "title5": ")",
         "desc": "Dünyayı döndür, anılarıma dokun. Her pin bir hikaye barındırır.",
         "loading": "> Initializing 3D engine...",
-        "globeOverlay": "Döndürmek için tıkla..."
+        "globeOverlay": "Döndürmek için tıkla...",
+        "clickMemories": "Tıkla ve anıları yaşa",
+        "comingSoonHint": "Çok yakında"
     },
     "MemoryViewer": {
         "play": "Oynat",
-        "pause": "Durdur"
+        "pause": "Durdur",
+        "comingSoon": "Çok Yakında",
+        "comingSoonDesc": "Bu şehir için anılar yakında burada olacak."
     },
     "Footer": {
         "tag": "// connect.init()",
@@ -229,7 +233,9 @@
         "Brno": "Brno",
         "Gobustan": "Gobustan",
         "Prag": "Prag",
-        "Ústí nad Orlicí": "Ústí nad Orlicí"
+        "Ústí nad Orlicí": "Ústí nad Orlicí",
+        "Kopenhag": "Kopenhag",
+        "Stokholm": "Stokholm"
     },
     "Dates": {
         "Mart 2025": "Mart 2025",
@@ -243,6 +249,8 @@
         "Macaristan": "Macaristan",
         "Slovakya": "Slovakya",
         "Azerbaycan": "Azerbaycan",
-        "Çek Cumhuriyeti": "Çek Cumhuriyeti"
+        "Çek Cumhuriyeti": "Çek Cumhuriyeti",
+        "Danimarka": "Danimarka",
+        "İsveç": "İsveç"
     }
 }

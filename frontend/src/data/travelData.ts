@@ -14,6 +14,8 @@ export interface TravelPin {
     image: string; // Thumbnail for globe popup preview
     color: string;
     media: MediaItem[]; // Full gallery of photos & videos
+    status?: "visited" | "upcoming";
+    comingSoonText?: string;
 }
 
 const travelData: TravelPin[] = [
@@ -380,6 +382,44 @@ const travelData: TravelPin[] = [
             { type: "video", src: "/travel/usti_nad_orlici/VID_20250916_223334.webm" }
         ],
     },
+    {
+        lat: 55.6761,
+        lng: 12.5683,
+        label: "Kopenhag",
+        country: "Danimarka",
+        description: "Yakında",
+        image: "",
+        color: "#38bdf8",
+        media: [],
+        status: "upcoming",
+    },
+    {
+        lat: 59.3293,
+        lng: 18.0686,
+        label: "Stokholm",
+        country: "İsveç",
+        description: "Yakında",
+        image: "",
+        color: "#facc15",
+        media: [],
+        status: "upcoming",
+    },
 ];
+
+export const upcomingTravelData = travelData.filter(
+    (pin) => pin.status === "upcoming"
+);
+
+export function mergeUpcomingTravelPins(pins: TravelPin[]) {
+    const existingPins = new Set(
+        pins.map((pin) => `${pin.label}:${pin.lat}:${pin.lng}`)
+    );
+
+    const missingUpcomingPins = upcomingTravelData.filter(
+        (pin) => !existingPins.has(`${pin.label}:${pin.lat}:${pin.lng}`)
+    );
+
+    return [...pins, ...missingUpcomingPins];
+}
 
 export default travelData;

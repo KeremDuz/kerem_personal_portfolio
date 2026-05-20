@@ -5,12 +5,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MapPin } from "lucide-react";
 import type { TravelPin } from "@/data/travelData";
 import MemoryViewer from "./MemoryViewer";
+import { useTranslations } from "next-intl";
 
 interface TravelGlobeProps {
     data: TravelPin[];
 }
 
+const isUpcomingPin = (pin: TravelPin | null) =>
+    Boolean(pin && (pin.status === "upcoming" || pin.media.length === 0));
+
 export default function TravelGlobe({ data }: TravelGlobeProps) {
+    const t = useTranslations("Travel");
+    const tCities = useTranslations("Cities");
     const globeContainerRef = useRef<HTMLDivElement>(null);
     const globeRef = useRef<any>(null);
     const [GlobeModule, setGlobeModule] = useState<any>(null);
@@ -164,6 +170,8 @@ export default function TravelGlobe({ data }: TravelGlobeProps) {
                     const offsetX = d.offsetX || 0;
                     const offsetY = d.offsetY || 0;
                     const zIndex = d.isCluster ? 10 - d.clusterIndex : 10;
+                    const labelBorderStyle = d.status === "upcoming" || d.media?.length === 0 ? "dashed" : "solid";
+                    const displayLabel = d._id ? d.label : tCities(d.label);
 
                     el.innerHTML = `
                         <div class="group" style="
@@ -216,7 +224,7 @@ export default function TravelGlobe({ data }: TravelGlobeProps) {
                                 font-weight: 600;
                                 color: #fff;
                                 background: rgba(10, 10, 10, 0.7);
-                                border: 1px solid ${d.color}50;
+                                border: 1px ${labelBorderStyle} ${d.color}50;
                                 padding: 3px 8px;
                                 border-radius: 4px;
                                 white-space: nowrap;
@@ -226,7 +234,7 @@ export default function TravelGlobe({ data }: TravelGlobeProps) {
                                 opacity: 0.9;
                                 box-shadow: 0 4px 6px rgba(0,0,0,0.5);
                             " class="group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
-                                ${d.label}
+                                ${displayLabel}
                             </div>
                             
                             <!-- Invisible Hitbox covering the dot to ensure easy hovering -->
@@ -266,7 +274,7 @@ export default function TravelGlobe({ data }: TravelGlobeProps) {
                 onGlobeReady={handleGlobeReady}
             />
         );
-    }, [GlobeModule, dimensions, processedData, handleGlobeReady, handlePinClick]);
+    }, [GlobeModule, dimensions, processedData, handleGlobeReady, handlePinClick, tCities]);
 
     if (!GlobeModule) {
         return (
@@ -299,10 +307,10 @@ export default function TravelGlobe({ data }: TravelGlobeProps) {
                         <div className="glass-card px-4 py-2 flex items-center gap-2">
                             <MapPin size={14} style={{ color: hoveredPin.color }} />
                             <span className="font-mono text-sm text-gray-200">
-                                {hoveredPin.label}
+                                {hoveredPin._id ? hoveredPin.label : tCities(hoveredPin.label)}
                             </span>
                             <span className="text-gray-500 text-xs">
-                                — Tıkla ve anıları yaşa
+                                — {isUpcomingPin(hoveredPin) ? t("comingSoonHint") : t("clickMemories")}
                             </span>
                         </div>
                     </motion.div>

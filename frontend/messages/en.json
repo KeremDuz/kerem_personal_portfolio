@@ -205,11 +205,15 @@
         "title5": ")",
         "desc": "Spin the globe, touch my memories. Every pin holds a story.",
         "loading": "> Initializing 3D engine...",
-        "globeOverlay": "Click to spin the globe..."
+        "globeOverlay": "Click to spin the globe...",
+        "clickMemories": "Click to relive the memories",
+        "comingSoonHint": "Coming soon"
     },
     "MemoryViewer": {
         "play": "Play",
-        "pause": "Pause"
+        "pause": "Pause",
+        "comingSoon": "Coming Soon",
+        "comingSoonDesc": "Memories for this city will land here soon."
     },
     "Footer": {
         "tag": "// connect.init()",
@@ -229,7 +233,9 @@
         "Brno": "Brno",
         "Gobustan": "Gobustan",
         "Prag": "Prague",
-        "Ústí nad Orlicí": "Ústí nad Orlicí"
+        "Ústí nad Orlicí": "Ústí nad Orlicí",
+        "Kopenhag": "Copenhagen",
+        "Stokholm": "Stockholm"
     },
     "Dates": {
         "Mart 2025": "March 2025",
@@ -243,6 +249,8 @@
         "Macaristan": "Hungary",
         "Slovakya": "Slovakia",
         "Azerbaycan": "Azerbaijan",
-        "Çek Cumhuriyeti": "Czech Republic"
+        "Çek Cumhuriyeti": "Czech Republic",
+        "Danimarka": "Denmark",
+        "İsveç": "Sweden"
     }
 }

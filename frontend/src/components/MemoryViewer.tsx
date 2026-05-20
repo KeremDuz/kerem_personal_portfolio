@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, CalendarClock } from "lucide-react";
 import type { TravelPin } from "@/data/travelData";
 import { analyticsAPI } from "@/lib/api";
+import { useTranslations } from "next-intl";
 
 interface MemoryViewerProps {
     pin: TravelPin;
@@ -14,7 +15,90 @@ interface MemoryViewerProps {
 
 const IMAGE_DURATION = 4.5; // seconds per image
 
-export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
+function ComingSoonViewer({ pin, onClose }: MemoryViewerProps) {
+    const t = useTranslations("MemoryViewer");
+    const tCities = useTranslations("Cities");
+    const tCountries = useTranslations("Countries");
+    const cityLabel = pin._id ? pin.label : tCities(pin.label);
+    const countryLabel = pin._id ? pin.country : tCountries(pin.country);
+
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+        document.body.classList.add("media-viewer-open");
+        return () => {
+            document.body.style.overflow = "";
+            document.body.classList.remove("media-viewer-open");
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [onClose]);
+
+    const content = (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 isolate w-screen h-[100dvh] z-[2147483000] bg-black"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
+        >
+            <div className="absolute inset-0 opacity-35 bg-[linear-gradient(rgba(34,197,94,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(34,197,94,0.08)_1px,transparent_1px)] bg-[size:42px_42px]" />
+
+            <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15 }}
+                onClick={onClose}
+                aria-label="Fotoğrafı kapat"
+                className="absolute top-4 right-4 md:top-6 md:right-6 w-14 h-14 rounded-full bg-black/70 backdrop-blur-xl border border-white/25 flex items-center justify-center text-white hover:bg-black/80 transition-all group z-[10000] shadow-2xl shadow-black/50"
+            >
+                <X size={22} strokeWidth={2.5} className="group-hover:rotate-90 transition-transform duration-300" />
+            </motion.button>
+
+            <div className="absolute inset-0 flex items-center justify-center px-6">
+                <motion.div
+                    initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="w-full max-w-md rounded-lg border border-cyber-green/25 bg-black/75 px-7 py-9 text-center shadow-2xl shadow-black/60 backdrop-blur-xl"
+                >
+                    <div
+                        className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border"
+                        style={{ borderColor: pin.color, color: pin.color }}
+                    >
+                        <CalendarClock size={26} strokeWidth={2} />
+                    </div>
+                    <p className="font-mono text-xs uppercase tracking-[0.24em] text-gray-500">
+                        {countryLabel}
+                    </p>
+                    <h2 className="mt-3 text-3xl font-semibold text-white md:text-4xl">
+                        {cityLabel}
+                    </h2>
+                    <p className="mt-4 font-mono text-lg text-cyber-green">
+                        {pin.comingSoonText || t("comingSoon")}
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-gray-400">
+                        {t("comingSoonDesc")}
+                    </p>
+                </motion.div>
+            </div>
+        </motion.div>
+    );
+
+    if (typeof document === "undefined") return null;
+    return createPortal(content, document.body);
+}
+
+function MemoryGallery({ pin, onClose }: MemoryViewerProps) {
+    const tCities = useTranslations("Cities");
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [direction, setDirection] = useState(1);
@@ -24,11 +108,12 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
 
     const media = pin.media;
     const current = media[currentIndex];
+    const cityLabel = pin._id ? pin.label : tCities(pin.label);
 
     // Analytics: View Photo
     useEffect(() => {
-        analyticsAPI.track("view_photo", `${pin.label} (${currentIndex + 1}/${media.length})`);
-    }, [currentIndex, pin.label, media.length]);
+        analyticsAPI.track("view_photo", `${cityLabel} (${currentIndex + 1}/${media.length})`);
+    }, [currentIndex, cityLabel, media.length]);
 
     // Lock body scroll
     useEffect(() => {
@@ -189,7 +274,7 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
                                 {/* Main image with Ken Burns effect */}
                                 <motion.img
                                     src={current.src}
-                                    alt={pin.label}
+                                    alt={cityLabel}
                                     className="absolute inset-0 w-full h-full object-contain z-[1]"
                                     onLoad={() => setImageLoaded(true)}
                                     loading="eager"
@@ -267,4 +352,12 @@ export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
 
     if (typeof document === "undefined") return null;
     return createPortal(content, document.body);
+}
+
+export default function MemoryViewer({ pin, onClose }: MemoryViewerProps) {
+    if (pin.status === "upcoming" || pin.media.length === 0) {
+        return <ComingSoonViewer pin={pin} onClose={onClose} />;
+    }
+
+    return <MemoryGallery pin={pin} onClose={onClose} />;
 }
