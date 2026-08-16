@@ -25,6 +25,7 @@ export const upsertAbout = async (req: Request, res: Response): Promise<void> =>
             res.status(201).json(savedAbout);
         }
     } catch (error) {
-        res.status(400).json({ error: "Geçersiz veri", details: error });
+        console.error("About upsert error:", error);
+        res.status(400).json({ error: "Geçersiz veri" });
     }
 };

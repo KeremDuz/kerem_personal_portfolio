@@ -1,109 +1,103 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import CyberGrid from "./CyberGrid";
-import { ChevronDown } from "lucide-react";
+import { useMemo } from "react";
+import { ArrowDown, Globe2, MapPin, Terminal } from "lucide-react";
 import { useTranslations } from "next-intl";
+import CyberGrid from "./CyberGrid";
+import HeroPortrait from "./HeroPortrait";
+import RoleTypewriter from "./RoleTypewriter";
 
 export default function Hero() {
     const t = useTranslations("Hero");
 
-    const titles = [
-        t("roles.0"),
-        t("roles.1"),
-        t("roles.2"),
-        t("roles.3"),
-    ];
-
-    const [titleIndex, setTitleIndex] = useState(0);
-    const [displayText, setDisplayText] = useState("");
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [charIndex, setCharIndex] = useState(0);
-
-    const currentTitle = titles[titleIndex];
-
-    const typeEffect = useCallback(() => {
-        if (!isDeleting) {
-            // Typing
-            if (charIndex < currentTitle.length) {
-                setDisplayText(currentTitle.substring(0, charIndex + 1));
-                setCharIndex((prev) => prev + 1);
-            } else {
-                // Pause at end
-                setTimeout(() => setIsDeleting(true), 2000);
-                return;
-            }
-        } else {
-            // Deleting
-            if (charIndex > 0) {
-                setDisplayText(currentTitle.substring(0, charIndex - 1));
-                setCharIndex((prev) => prev - 1);
-            } else {
-                setIsDeleting(false);
-                setTitleIndex((prev) => (prev + 1) % titles.length);
-                return;
-            }
-        }
-    }, [charIndex, currentTitle, isDeleting]);
-
-    useEffect(() => {
-        const speed = isDeleting ? 40 : 80;
-        const timer = setTimeout(typeEffect, speed);
-        return () => clearTimeout(timer);
-    }, [typeEffect, isDeleting]);
+    // Stable reference so the memoized typewriter is not remounted on re-render.
+    const roles = useMemo(
+        () => [t("roles.0"), t("roles.1"), t("roles.2"), t("roles.3")],
+        [t]
+    );
 
     return (
         <section
             id="hero"
-            className="relative min-h-screen flex items-center justify-center overflow-hidden"
+            // Mobile stacks: photo band on top, copy flowing underneath it.
+            // From `lg` the copy is vertically centred beside the photo column.
+            className="relative flex min-h-[100svh] flex-col overflow-hidden pb-16 pt-24 lg:justify-center lg:pb-20"
         >
-            {/* Cyber Grid Background */}
+            {/* Ambient background, painted under the photograph */}
+            <div aria-hidden="true" className="absolute inset-0 z-0 aurora" />
+            <div aria-hidden="true" className="absolute inset-0 z-0 grid-lines mask-fade-radial" />
+
+            {/* The photograph itself — full-bleed against the right edge */}
+            <HeroPortrait alt={t("photoAlt")} />
+
+            {/* Particles drift over the photo, tying it into the background */}
             <CyberGrid />
 
-            {/* Radial gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark-bg/50 to-dark-bg z-[1]" />
+            {/* Scrim: guarantees text contrast wherever the copy meets the photo.
+                Vertical on mobile (copy sits under the band), horizontal from
+                `lg` up (copy sits to the left of the column). */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-0 z-[2] bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent lg:bg-gradient-to-r lg:from-dark-bg lg:via-dark-bg/45 lg:to-transparent"
+            />
+            <div
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-b from-transparent to-dark-bg"
+            />
 
-            {/* Content */}
-            <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-                {/* Terminal prefix */}
-                <div className="mb-6">
-                    <span lang="en" className="font-mono text-sm text-cyber-green/60 tracking-widest uppercase">
-                        {t("title")}
-                    </span>
+            {/* Reserves the photo band on mobile so the copy starts below it
+                rather than on top of his face. Collapses at `lg`, where the
+                photo moves to its own column. */}
+            <div aria-hidden="true" className="h-[34vh] shrink-0 lg:hidden" />
+
+            <div className="relative z-10 mx-auto w-full max-w-6xl px-6">
+                <div className="max-w-xl lg:max-w-2xl">
+                    <h1 className="mb-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl">
+                        <span className="text-gray-100">{t("greeting")}</span>
+                        <span className="text-gradient-cyber">{t("name")}</span>
+                    </h1>
+
+                    <div className="mb-6 flex min-h-[1.9em] items-center gap-2">
+                        <span aria-hidden="true" className="font-mono text-base text-cyber-green md:text-lg">
+                            $
+                        </span>
+                        <RoleTypewriter roles={roles} />
+                    </div>
+
+                    <p className="mb-8 max-w-lg text-base leading-relaxed text-gray-400 md:text-lg">
+                        {t("subtitle")}
+                    </p>
+
+                    <div className="mb-8 flex flex-wrap gap-3">
+                        <a href="#projects" className="btn btn-primary">
+                            <Terminal size={16} strokeWidth={1.75} />
+                            {t("ctaProjects")}
+                        </a>
+                        <a href="#travel" className="btn btn-ghost">
+                            <Globe2 size={16} strokeWidth={1.75} />
+                            {t("ctaTravel")}
+                        </a>
+                    </div>
                 </div>
-
-                {/* Main Heading */}
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight">
-                    <span className="text-gray-100">{t("greeting")}</span>
-                    <span className="text-gradient-cyber">{t("name")}</span>
-                </h1>
-
-                {/* Typewriter Subtitle */}
-                <div className="flex items-center justify-center gap-2 mb-10">
-                    <span className="text-cyber-green font-mono text-base md:text-lg">
-                        {"$"}
-                    </span>
-                    <span className="font-mono text-lg md:text-xl text-gray-300 min-h-[1.5em]">
-                        {displayText}
-                        <span className="inline-block w-[3px] h-5 md:h-6 bg-cyber-green ml-0.5 animate-blink align-middle" />
-                    </span>
-                </div>
-
-                {/* Decorative Line */}
-                <div className="w-32 h-px mx-auto bg-gradient-to-r from-transparent via-cyber-green/50 to-transparent mb-10" />
-
-                {/* Tagline */}
-                <p className="text-gray-400 font-sans text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-                    {t("subtitle")}
-                </p>
             </div>
 
-            {/* Scroll indicator */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-                <div className="text-cyber-green/40 animate-bounce">
-                    <ChevronDown size={28} />
-                </div>
-            </div>
+            {/* Where the photo was taken. Sits above the chat launcher, which is
+                fixed to the bottom-right corner. */}
+            <p className="absolute bottom-28 right-7 z-10 hidden items-center gap-1.5 font-mono text-[11px] tracking-wide text-gray-500 lg:flex">
+                <MapPin size={12} className="text-cyber-green/60" strokeWidth={2} />
+                {t("photoLocation")}
+                <span className="text-gray-700">&mdash;</span>
+                <span className="text-gray-700">2025</span>
+            </p>
+
+            <a
+                href="#about"
+                aria-label={t("scroll")}
+                className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-cyber-green/40 transition-colors hover:text-cyber-green lg:flex"
+            >
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em]">{t("scroll")}</span>
+                <ArrowDown size={16} className="animate-bounce" />
+            </a>
         </section>
     );
 }

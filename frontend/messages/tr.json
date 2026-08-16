@@ -4,13 +4,18 @@
         "about": "Hakkımda",
         "experience": "Deneyim",
         "projects": "Projeler",
+        "travel": "Seyahat",
         "blog": "Blog"
     },
     "Hero": {
-        "title": "// portfolyo başlatılıyor...",
         "greeting": "Merhaba, Ben ",
-        "name": "Kerem.",
+        "name": "Kerem Düz.",
         "subtitle": "Kod satırları arasında güvenlik açıkları arıyor, dünya haritasında yeni rotalar çiziyorum.",
+        "ctaProjects": "Projelerimi Gör",
+        "ctaTravel": "Dünyayı Keşfet",
+        "scroll": "Aşağı kaydır",
+        "photoAlt": "Kerem Düz, arkasında Bakü silueti ile",
+        "photoLocation": "Bakü, Azerbaycan",
         "roles": {
             "0": "Bilgisayar Mühendisliği Öğrencisi",
             "1": "Siber Güvenlik Meraklısı",
@@ -50,40 +55,36 @@
         "education": "Eğitim",
         "work": "Deneyim",
         "certification": "Sertifika",
+        "swipeHint": "Diğer kartlar için yana kaydır",
         "items": {
             "0": {
-                "title": "Stajyer",
-                "subtitle": "S4E",
-                "desc": "Şirket bünyesinde staj deneyimi.",
+                "title": "Siber Güvenlik Stajyeri",
+                "subtitle": "Anex Tour",
+                "desc": "Siber güvenlik ekibinde stajyer olarak görev aldım.",
                 "tags": [
-                    "Staj",
-                    "Siber Güvenlik"
+                    "Siber Güvenlik",
+                    "Staj"
                 ]
             },
             "1": {
+                "title": "Siber Güvenlik Ürün Satışı",
+                "subtitle": "S4E",
+                "desc": "Siber güvenlik ürünlerinin satış süreçlerinde görev aldım."
+            },
+            "2": {
+                "title": "Siber Güvenlik Stajyeri",
+                "subtitle": "S4E",
+                "desc": "Siber güvenlik alanında stajyer olarak görev aldım."
+            },
+            "3": {
+                "title": "Topluluk Başkanı",
+                "subtitle": "Akdeniz Siber Güvenlik Topluluğu",
+                "desc": "2026 döneminde topluluğun başkanlık görevini üstlendim."
+            },
+            "4": {
                 "title": "Bilgisayar Mühendisliği",
                 "subtitle": "Akdeniz Üniversitesi",
                 "desc": "Bilgisayar Mühendisliği lisans programı. Ağ güvenliği, yazılım geliştirme ve sistem yönetimi üzerine odaklanma."
-            },
-            "2": {
-                "title": "12. Sınıf (2. Dönem)",
-                "subtitle": "Açık Öğretim Lisesi",
-                "desc": "Lise eğitimimin son dönemini Açık Öğretim Lisesi'nde tamamladım."
-            },
-            "3": {
-                "title": "12. Sınıf (1. Dönem)",
-                "subtitle": "Gelibolu Amerikan Kültür Koleji",
-                "desc": "Lise son sınıf eğitiminin ilk dönemi."
-            },
-            "4": {
-                "title": "10. ve 11. Sınıf",
-                "subtitle": "Hayat Koleji",
-                "desc": "Lise eğitimimin orta dönemi."
-            },
-            "5": {
-                "title": "9. Sınıf",
-                "subtitle": "Kars Harakani Anadolu Lisesi",
-                "desc": "Lise eğitimime Kars'ta başladım."
             }
         }
     },
@@ -98,28 +99,40 @@
         "technologies": "Teknolojiler",
         "items": {
             "0": {
-                "title": "WiFi & Bluetooth Jammer",
-                "desc": "ESP32 mikrodenetleyicisi ile 2.4GHz WiFi ve Bluetooth frekanslarını analiz eden çift modlu cihaz. Arduino IDE ve C++ ile geliştirildi."
+                "title": "PhishCatch — AI Destekli Phishing Tespit Sistemi",
+                "desc": "Flutter ve FastAPI mimarisiyle şüpheli URL ve QR kodlarını analiz eden; makine öğrenimi ve tehdit istihbaratı servisleriyle dinamik risk skoru üreten güvenlik uygulaması."
             },
             "1": {
-                "title": "WiFi Deauthenticator",
-                "desc": "ESP8266 ile WiFi trafiğini izleyen ve güvenlik açıklarını test eden (Packet Monitoring/Deauth) sistem."
+                "title": "WiFi & Bluetooth Jammer",
+                "desc": "ESP32 tabanlı, 2.4 GHz Wi-Fi ve Bluetooth frekanslarında kontrollü kablosuz güvenlik analizleri gerçekleştiren çift modlu cihaz."
             },
             "2": {
+                "title": "WiFi Deauthenticator",
+                "desc": "ESP8266 ile Wi-Fi trafiğini izleyen ve kontrollü laboratuvar ortamında deauthentication senaryolarıyla ağ güvenliğini test eden sistem."
+            },
+            "3": {
+                "title": "File Upload Detector",
+                "desc": "Statik HTML ve sonradan oluşan dinamik içerikteki dosya yükleme alanlarını analiz eden, elle hazırlanmış veri kümesiyle desteklenen güvenlik aracı."
+            },
+            "4": {
+                "title": "Personal Website & AI Assistant",
+                "desc": "Next.js, Express.js ve FastAPI tabanlı mikroservis mimarisi; yönetim paneli, 3D seyahat görselleştirmeleri ve OpenAI destekli asistan içeren portfolyo platformu."
+            },
+            "5": {
+                "title": "OrduCep — Askerî Sosyal Tesis Yönetim Platformu",
+                "desc": "Angular, Flutter ve ASP.NET Core ile askerî misafirhane ve sosyal tesislerin keşif ve rezervasyon süreçlerini yöneten full-stack platform."
+            },
+            "6": {
+                "title": "Akdeniz Siber Güvenlik Topluluğu Web Platformu",
+                "desc": "Angular, RxJS ve Spring Boot ile etkinlik, eğitim, proje, başvuru ve ekip iş akışlarını merkezileştiren kurumsal topluluk platformu."
+            },
+            "7": {
                 "title": "E-Ticaret Sitesi",
                 "desc": "Angular ve Spring Boot tabanlı kapsamlı alışveriş sitesi. JWT ile güvenli giriş, ürün ve sepet yönetimi özellikleri."
             },
-            "3": {
+            "8": {
                 "title": "Kitap Envanter Sistemi",
-                "desc": "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları (Design Patterns) kullanılarak geliştirildi."
-            },
-            "4": {
-                "title": "File Upload Detector",
-                "desc": "Web sitelerinde file upload noktalarını tespit eden ve potansiyel güvenlik açıklarını analiz eden Python aracı."
-            },
-            "5": {
-                "title": "Portfolio Website",
-                "desc": "Bu web sitesi! Next.js, Tailwind CSS ve Three.js ile geliştirilmiş, siber güvenlik temalı kişisel portfolyo."
+                "desc": "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları kullanılarak geliştirildi."
             }
         }
     },
@@ -128,6 +141,10 @@
         "title1": "Sertifikalar",
         "title2": "&",
         "title3": "Rozetler",
+        "desc": "Üzerine geldiğin sertifika öne çıkar. Tıkla, tam boyutta incele.",
+        "hint": "← Yana kaydır · tıklayınca açılır →",
+        "prev": "Önceki sertifikalar",
+        "next": "Sonraki sertifikalar",
         "items": {
             "0": {
                 "title": "Cyber Heroes 2.0 Czechia",
@@ -183,7 +200,9 @@
         "tag": "// github.activity()",
         "title1": "GitHub",
         "title2": "Aktivitesi",
-        "graphLabel": "Contribution Graph",
+        "graphLabel": "Katkı grafiği yükleniyor...",
+        "lastYear": "katkı — son bir yıl",
+        "contributionsOn": "{date} · {count} katkı",
         "less": "Az",
         "more": "Çok",
         "fallbackDesc1": "Python ile yazılmış ağ güvenlik tarayıcısı",
@@ -235,7 +254,10 @@
         "Prag": "Prag",
         "Ústí nad Orlicí": "Ústí nad Orlicí",
         "Kopenhag": "Kopenhag",
-        "Stokholm": "Stokholm"
+        "Malmö": "Malmö",
+        "Stokholm": "Stokholm",
+        "Bükreş": "Bükreş",
+        "Braşov": "Braşov"
     },
     "Dates": {
         "Mart 2025": "Mart 2025",
@@ -251,6 +273,7 @@
         "Azerbaycan": "Azerbaycan",
         "Çek Cumhuriyeti": "Çek Cumhuriyeti",
         "Danimarka": "Danimarka",
-        "İsveç": "İsveç"
+        "İsveç": "İsveç",
+        "Romanya": "Romanya"
     }
 }

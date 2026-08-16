@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, CalendarClock } from "lucide-react";
 import type { TravelPin } from "@/data/travelData";
 import { analyticsAPI } from "@/lib/api";
+import { thumbnailFor } from "@/lib/media";
 import { useTranslations } from "next-intl";
 
 interface MemoryViewerProps {
@@ -166,19 +167,6 @@ function MemoryGallery({ pin, onClose }: MemoryViewerProps) {
         return () => clearTimeout(timeoutId);
     }, [currentIndex, media, getAdaptivePreloadCount]);
 
-    // Auto-play slideshow — only for images
-    useEffect(() => {
-        if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
-        if (isAutoPlaying && current.type === "image") {
-            autoPlayRef.current = setTimeout(() => {
-                goNext();
-            }, IMAGE_DURATION * 1000);
-        }
-        return () => {
-            if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
-        };
-    }, [currentIndex, isAutoPlaying, current.type]);
-
     const navigateTo = useCallback(
         (index: number, dir: number) => {
             setDirection(dir);
@@ -195,6 +183,18 @@ function MemoryGallery({ pin, onClose }: MemoryViewerProps) {
     const goPrev = useCallback(() => {
         navigateTo((currentIndex - 1 + media.length) % media.length, -1);
     }, [currentIndex, media.length, navigateTo]);
+
+    // Auto-play slideshow — only for images. This effect follows the callback
+    // declaration so React's compiler can safely preserve its memoization.
+    useEffect(() => {
+        if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+        if (isAutoPlaying && current.type === "image") {
+            autoPlayRef.current = setTimeout(goNext, IMAGE_DURATION * 1000);
+        }
+        return () => {
+            if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+        };
+    }, [isAutoPlaying, current.type, goNext]);
 
     // Keyboard navigation
     useEffect(() => {
@@ -262,11 +262,14 @@ function MemoryGallery({ pin, onClose }: MemoryViewerProps) {
                     >
                         {current.type === "image" ? (
                             <>
-                                {/* Blurred background fill */}
+                                {/* Blurred background fill. Uses the thumbnail —
+                                    it is blurred to oblivion anyway, so pulling
+                                    the multi-megabyte original for it was pure
+                                    waste. */}
                                 <div
                                     className="absolute inset-0 scale-110 blur-2xl opacity-40 pointer-events-none"
                                     style={{
-                                        backgroundImage: `url(${current.src})`,
+                                        backgroundImage: `url(${thumbnailFor(current.src)})`,
                                         backgroundSize: "cover",
                                         backgroundPosition: "center",
                                     }}

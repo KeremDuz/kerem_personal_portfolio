@@ -1,8 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import BootSequence from "@/components/BootSequence";
 
-const BootSequence = dynamic(() => import("@/components/BootSequence"), { ssr: false });
 const ScrollProgress = dynamic(() => import("@/components/ScrollProgress"), { ssr: false });
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"), { ssr: false });
 

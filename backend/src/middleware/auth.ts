@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { adminSessionCookieName } from "../config/auth";
 
 export interface AuthRequest extends Request {
     userId?: string;
@@ -7,7 +8,12 @@ export interface AuthRequest extends Request {
 
 const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
     try {
-        const token = req.header("Authorization")?.replace("Bearer ", "");
+        const bearerToken = req.header("Authorization")?.replace(/^Bearer\s+/i, "");
+        const cookieToken = req.headers.cookie
+            ?.split(";")
+            .map((part) => part.trim().split("="))
+            .find(([name]) => name === adminSessionCookieName())?.[1];
+        const token = bearerToken || (cookieToken ? decodeURIComponent(cookieToken) : undefined);
 
         if (!token) {
             res.status(401).json({ error: "Erişim reddedildi. Token bulunamadı." });

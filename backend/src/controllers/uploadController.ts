@@ -33,7 +33,11 @@ export const uploadFile = async (req: Request, res: Response): Promise<void> => 
             return;
         }
 
-        const folder = req.body.folder || "portfolio";
+        const folder = String(req.body.folder || "portfolio")
+            .toLowerCase()
+            .replace(/[^a-z0-9_-]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .slice(0, 50) || "portfolio";
         const resourceType = req.file.mimetype.startsWith("video") ? "video" : "image";
 
         // Stream buffer to Cloudinary
@@ -75,8 +79,13 @@ export const uploadFile = async (req: Request, res: Response): Promise<void> => 
 // DELETE /api/admin/upload/:publicId — Admin: Delete file from Cloudinary
 export const deleteFile = async (req: Request, res: Response): Promise<void> => {
     try {
-        const publicId = req.params.publicId as string;
-        const resourceType = (req.query.type as string) || "image";
+        const publicId = decodeURIComponent(req.params.publicId as string);
+        if (!publicId.startsWith("antigravity/")) {
+            res.status(400).json({ error: "Geçersiz medya kimliği." });
+            return;
+        }
+
+        const resourceType = req.query.type === "video" ? "video" : "image";
 
         await cloudinary.uploader.destroy(publicId, {
             resource_type: resourceType,

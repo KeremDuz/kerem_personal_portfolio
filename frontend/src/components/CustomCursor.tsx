@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { accent } from "@/lib/theme";
 
 export default function CustomCursor() {
     const [isEnabled, setIsEnabled] = useState(false);
@@ -158,7 +159,7 @@ export default function CustomCursor() {
                 style={{
                     width: 6,
                     height: 6,
-                    backgroundColor: "#00ff41",
+                    backgroundColor: accent.green,
                     boxShadow: "0 0 6px rgba(0,255,65,0.8), 0 0 12px rgba(0,255,65,0.4)",
                     transition: "width 0.2s, height 0.2s",
                 }}

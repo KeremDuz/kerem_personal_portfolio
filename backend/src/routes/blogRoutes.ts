@@ -10,12 +10,13 @@ import {
 import auth from "../middleware/auth";
 import validate from "../middleware/validate";
 import { createBlogSchema, updateBlogSchema } from "../middleware/schemas";
+import publicCache from "../middleware/publicCache";
 
 const router = Router();
 
 // Public routes
-router.get("/", getAllBlogs);
-router.get("/:id", getBlogById);
+router.get("/", publicCache(), getAllBlogs);
+router.get("/:id", publicCache(), getBlogById);
 
 // Admin routes (protected)
 router.get("/admin/all", auth, getAllBlogsAdmin);

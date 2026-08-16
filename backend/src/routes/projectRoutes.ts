@@ -9,11 +9,12 @@ import {
 import auth from "../middleware/auth";
 import validate from "../middleware/validate";
 import { createProjectSchema, updateProjectSchema } from "../middleware/schemas";
+import publicCache from "../middleware/publicCache";
 
 const router = Router();
 
 // Public routes
-router.get("/", getAllProjects);
+router.get("/", publicCache(), getAllProjects);
 
 // Admin routes (protected)
 router.get("/admin/all", auth, getAllProjectsAdmin);

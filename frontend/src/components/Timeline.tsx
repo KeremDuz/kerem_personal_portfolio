@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GraduationCap, Briefcase, Award, Calendar } from "lucide-react";
+import { GraduationCap, Briefcase, Award, ArrowLeftRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import { timelineAPI, type TimelineItem as ApiTimelineItem } from "@/lib/api";
+import SectionHeading from "./SectionHeading";
+import { accent } from "@/lib/theme";
 
 interface TimelineItem {
     year: string;
@@ -17,13 +19,36 @@ interface TimelineItem {
 
 const timelineData: TimelineItem[] = [
     {
-        year: "2026",
-        title: "Stajyer",
-        subtitle: "S4E",
-        description:
-            "Şirket bünyesinde staj deneyimi.",
+        year: "Haziran — Ağustos 2026",
+        title: "Siber Güvenlik Stajyeri",
+        subtitle: "Anex Tour",
+        description: "Siber güvenlik ekibinde stajyer olarak görev aldım.",
         type: "work",
-        tags: ["Staj", "Siber Güvenlik"],
+        tags: ["Siber Güvenlik", "Staj"],
+    },
+    {
+        year: "Şubat — Haziran 2026",
+        title: "Siber Güvenlik Ürün Satışı",
+        subtitle: "S4E",
+        description: "Siber güvenlik ürünlerinin satış süreçlerinde görev aldım.",
+        type: "work",
+        tags: ["Siber Güvenlik", "Ürün Satışı"],
+    },
+    {
+        year: "Ocak — Şubat 2026",
+        title: "Siber Güvenlik Stajyeri",
+        subtitle: "S4E",
+        description: "Siber güvenlik alanında stajyer olarak görev aldım.",
+        type: "work",
+        tags: ["Siber Güvenlik", "Staj"],
+    },
+    {
+        year: "2026 Dönemi",
+        title: "Topluluk Başkanı",
+        subtitle: "Akdeniz Siber Güvenlik Topluluğu",
+        description: "2026 döneminde topluluğun başkanlık görevini üstlendim.",
+        type: "work",
+        tags: ["Liderlik", "Siber Güvenlik", "Topluluk"],
     },
     {
         year: "2022 — Devam",
@@ -33,38 +58,6 @@ const timelineData: TimelineItem[] = [
             "Bilgisayar Mühendisliği lisans programı. Ağ güvenliği, yazılım geliştirme ve sistem yönetimi üzerine odaklanma.",
         type: "education",
         tags: ["C/C++", "Java", "Data Structures", "Algorithms"],
-    },
-    {
-        year: "2022",
-        title: "12. Sınıf (2. Dönem)",
-        subtitle: "Açık Öğretim Lisesi",
-        description:
-            "Lise eğitimimin son dönemini Açık Öğretim Lisesi'nde tamamladım.",
-        type: "education",
-    },
-    {
-        year: "2021",
-        title: "12. Sınıf (1. Dönem)",
-        subtitle: "Gelibolu Amerikan Kültür Koleji",
-        description:
-            "Lise son sınıf eğitiminin ilk dönemi.",
-        type: "education",
-    },
-    {
-        year: "2019 — 2021",
-        title: "10. ve 11. Sınıf",
-        subtitle: "Hayat Koleji",
-        description:
-            "Lise eğitimimin orta dönemi.",
-        type: "education",
-    },
-    {
-        year: "2018 — 2019",
-        title: "9. Sınıf",
-        subtitle: "Kars Harakani Anadolu Lisesi",
-        description:
-            "Lise eğitimime Kars'ta başladım.",
-        type: "education",
     },
 ];
 
@@ -79,22 +72,21 @@ export default function Timeline({ initialTimelines = [] }: TimelineProps) {
     );
 
     useEffect(() => {
-        timelineAPI.getAll()
-            .then(data => {
-                if (data && data.length > 0) {
-                    setTimelines(data);
-                }
+        timelineAPI
+            .getAll()
+            .then((data) => {
+                if (data && data.length > 0) setTimelines(data);
             })
-            .catch(() => {});
+            .catch(() => { });
     }, []);
 
     const typeConfig: Record<string, any> = {
-        education: { icon: GraduationCap, color: "#00ff41", label: t("education") },
-        work: { icon: Briefcase, color: "#00f3ff", label: t("work") },
-        certification: { icon: Award, color: "#f59e0b", label: t("certification") },
+        education: { icon: GraduationCap, color: accent.green, label: t("education") },
+        work: { icon: Briefcase, color: accent.blue, label: t("work") },
+        certification: { icon: Award, color: accent.amber, label: t("certification") },
     };
 
-    const localizedTimelineData = timelines.map((item, index) => ({
+    const items = timelines.map((item, index) => ({
         ...item,
         title: item._id ? item.title : t(`items.${index}.title`),
         subtitle: item._id ? item.subtitle : t(`items.${index}.subtitle`),
@@ -103,119 +95,107 @@ export default function Timeline({ initialTimelines = [] }: TimelineProps) {
 
     return (
         <section id="timeline" className="relative py-24 md:py-32">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyber-blue/15 to-transparent" />
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyber-blue/15 to-transparent" />
 
-            <div className="max-w-4xl mx-auto px-6">
-                {/* Section Title */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-16 text-center"
-                >
-                    <span lang="en" className="font-mono text-sm text-cyber-blue/50 tracking-wider uppercase block mb-3">
-                        {t("tag")}
+            <div className="mx-auto max-w-6xl px-6">
+                <SectionHeading
+                    eyebrow={t("tag")}
+                    title={
+                        <>
+                            {t("title1")} <span className="text-gradient-cyber">{t("title2")}</span>{" "}
+                            {t("title3")}
+                        </>
+                    }
+                />
+
+                <div className="mb-3 flex items-center gap-2 text-gray-600 md:hidden">
+                    <ArrowLeftRight size={14} strokeWidth={1.6} aria-hidden="true" />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.14em]">
+                        {t("swipeHint")}
                     </span>
-                    <h2 className="section-title">
-                        <span className="text-gray-100">{t("title1")}</span>{" "}
-                        <span className="text-gradient-cyber">{t("title2")}</span>{" "}
-                        <span className="text-gray-100">{t("title3")}</span>
-                    </h2>
-                </motion.div>
+                </div>
 
-                {/* Timeline */}
-                <div className="relative">
-                    {/* Vertical line */}
-                    <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyber-green/30 via-cyber-blue/20 to-transparent md:-translate-x-px" />
+                {/* Compact horizontal summaries on phones; concise grid cards on larger screens. */}
+                <div className="-mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-2 md:gap-4 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-3">
+                    {items.map((item, index) => {
+                        const config = typeConfig[item.type] ?? typeConfig.work;
+                        const Icon = config.icon;
 
-                    <div className="space-y-12">
-                        {localizedTimelineData.map((item, index) => {
-                            const config = typeConfig[item.type];
-                            const Icon = config.icon;
-                            const isLeft = index % 2 === 0;
+                        return (
+                            <motion.article
+                                key={item._id || `${item.title}-${index}`}
+                                initial={{ opacity: 0, y: 18 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-60px" }}
+                                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: index * 0.08 }}
+                                className="glass-card group relative w-[74vw] max-w-[280px] shrink-0 snap-start overflow-hidden p-4 md:w-auto md:max-w-none md:shrink md:p-5"
+                            >
+                                {/* Colour wash keyed to the entry type */}
+                                <div
+                                    aria-hidden="true"
+                                    className="pointer-events-none absolute -right-14 -top-14 h-36 w-36 rounded-full opacity-[0.07] blur-2xl transition-opacity duration-500 group-hover:opacity-[0.14]"
+                                    style={{ backgroundColor: config.color }}
+                                />
 
-                            return (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "-50px" }}
-                                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                                    className={`relative flex items-start gap-6 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"
-                                        }`}
-                                >
-                                    {/* Dot on line */}
-                                    <div className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full border-2 -translate-x-1/2 z-10 mt-6"
-                                        style={{
-                                            borderColor: config.color,
-                                            backgroundColor: "#0a0a0a",
-                                            boxShadow: `0 0 8px ${config.color}50`,
-                                        }}
-                                    />
-
-                                    {/* Spacer for mobile */}
-                                    <div className="w-12 shrink-0 md:hidden" />
-
-                                    {/* Card */}
-                                    <div className={`flex-1 ${isLeft ? "md:pr-12" : "md:pl-12"} md:w-1/2`}>
-                                        <div className="glass-card p-5 group">
-                                            {/* Header */}
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <div
-                                                    className="w-8 h-8 rounded-lg flex items-center justify-center"
-                                                    style={{
-                                                        backgroundColor: `${config.color}15`,
-                                                        border: `1px solid ${config.color}25`,
-                                                    }}
-                                                >
-                                                    <Icon size={16} style={{ color: config.color }} strokeWidth={1.5} />
-                                                </div>
-                                                <div>
-                                                    <span
-                                                        className="text-[10px] font-mono uppercase tracking-widest"
-                                                        style={{ color: config.color }}
-                                                    >
-                                                        {config.label}
-                                                    </span>
-                                                </div>
-                                                <div className="ml-auto flex items-center gap-1.5 text-gray-600">
-                                                    <Calendar size={12} />
-                                                    <span className="font-mono text-xs">{item.year}</span>
-                                                </div>
+                                <div className="relative">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex min-w-0 items-center gap-2.5">
+                                            <div
+                                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                                                style={{
+                                                    backgroundColor: `${config.color}18`,
+                                                    border: `1px solid ${config.color}35`,
+                                                }}
+                                            >
+                                                <Icon size={16} strokeWidth={1.6} style={{ color: config.color }} />
                                             </div>
-
-                                            {/* Content */}
-                                            <h3 className="font-mono font-semibold text-gray-100 mb-1 group-hover:text-cyber-green transition-colors">
-                                                {item.title}
-                                            </h3>
-                                            <p className="text-sm text-gray-500 mb-2">{item.subtitle}</p>
-                                            <p className="text-sm text-gray-400 leading-relaxed mb-3">
-                                                {item.description}
-                                            </p>
-
-                                            {/* Tags */}
-                                            {item.tags && (
-                                                <div className="flex flex-wrap gap-1.5">
-                                                    {item.tags.map((tag: string) => (
-                                                        <span
-                                                            key={tag}
-                                                            className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-dark-surface/80 border border-gray-800 text-gray-500"
-                                                        >
-                                                            {tag}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
+                                            <span
+                                                className="truncate font-mono text-[9px] uppercase tracking-[0.17em]"
+                                                style={{ color: config.color }}
+                                            >
+                                                {config.label}
+                                            </span>
                                         </div>
+                                        <time className="max-w-[48%] shrink-0 text-right font-mono text-[9px] font-normal leading-[1.35] tracking-[0.02em] text-gray-500 md:text-[10px]">
+                                            {item.year}
+                                        </time>
                                     </div>
 
-                                    {/* Empty space for alternating layout */}
-                                    <div className="hidden md:block flex-1 md:w-1/2" />
-                                </motion.div>
-                            );
-                        })}
-                    </div>
+                                    <h3 className="mt-4 font-display text-base font-semibold leading-snug text-gray-100 md:text-[17px]">
+                                        {item.title}
+                                    </h3>
+                                    <p
+                                        className="mt-1 truncate font-mono text-xs"
+                                        style={{ color: config.color }}
+                                    >
+                                        {item.subtitle}
+                                    </p>
+
+                                    <p className="mt-2 line-clamp-2 text-[13px] leading-5 text-gray-400 md:line-clamp-3">
+                                        {item.description}
+                                    </p>
+
+                                    {item.tags && item.tags.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-1.5">
+                                            {item.tags.map((tag: string, tagIndex: number) => (
+                                                <span
+                                                    key={tag}
+                                                    className={`${tagIndex > 1 ? "hidden md:inline-flex" : "inline-flex"} rounded-md border border-white/[0.07] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-gray-500 md:px-2 md:text-[10px]`}
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                            {item.tags.length > 2 && (
+                                                <span className="inline-flex rounded-md border border-white/[0.07] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-gray-600 md:hidden">
+                                                    +{item.tags.length - 2}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.article>
+                        );
+                    })}
                 </div>
             </div>
         </section>

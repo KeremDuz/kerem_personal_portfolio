@@ -83,7 +83,7 @@ export default function BootSequence() {
                     animate={{ opacity: exiting ? 0 : 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="fixed inset-0 z-[200] bg-[#0a0a0a] flex items-center justify-center cursor-pointer"
+                    className="fixed inset-0 z-[200] bg-dark-bg flex items-center justify-center cursor-pointer"
                     onClick={skipBoot}
                 >
                     {/* Scanline effect */}

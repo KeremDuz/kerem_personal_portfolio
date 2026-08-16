@@ -69,3 +69,6 @@ _YEDEKLER/
 
 # Certificates folder (large files)
 Sertifikalar/
+
+# Local database data
+backend/.mongo-data/

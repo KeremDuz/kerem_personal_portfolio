@@ -1,11 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @layer base {
   :root {
-    --font-inter: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    /* --font-inter / --font-display / --font-mono are injected by next/font
+       in app/layout.tsx; the stacks below are only the fallbacks. */
+
+    /* Accent palette.
+       The old scheme was pure #00ff41 matrix green on #0a0a0a — maximum
+       saturation against maximum contrast, which vibrates and reads dated.
+       These are pulled back toward emerald and sky: same energy, far easier
+       to look at, and they leave headroom for a genuine highlight. */
+    --c-green: 52 231 143;
+    --c-blue: 56 199 255;
+    --c-amber: 251 176 64;
+
+    /* Surfaces. Very slightly blue-tinted rather than neutral black, so the
+       greens read cool instead of muddy. */
+    --s-bg: 8 10 14;
+    --s-raised: 17 21 29;
+    --s-line: 255 255 255;
+
+    /* Motion */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   * {
@@ -16,13 +33,47 @@
 
   html {
     scroll-behavior: smooth;
+    /* Keep anchored sections clear of the fixed header. */
+    scroll-padding-top: 6rem;
   }
 
   body {
-    background-color: #0a0a0a;
-    color: #e5e7eb;
-    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: rgb(var(--s-bg));
+    color: #dfe4ec;
+    font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Space Grotesk carries the headings; slight negative tracking keeps the
+     large display sizes from looking loose. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-green));
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   body.media-viewer-open #travel-globe-container [data-globe-underlay] {
@@ -37,99 +88,190 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #0a0a0a;
+    background: rgb(var(--s-bg));
   }
 
+  /* Neutral by default — a full-height neon bar down the edge of every page
+     was competing with the content for attention. */
   ::-webkit-scrollbar-thumb {
-    background: #00ff41;
+    background: rgb(var(--s-line) / 0.14);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #00f3ff;
+    background: rgb(var(--c-green) / 0.55);
   }
 
   ::selection {
-    background: rgba(0, 255, 65, 0.3);
-    color: #00ff41;
+    background: rgb(var(--c-green) / 0.25);
+    color: #ecfff5;
   }
 }
-
 @layer components {
+  /* Cards read as raised surfaces rather than glowing outlines: a neutral
+     hairline, a single soft shadow for depth, and a lit top edge. The accent
+     only appears on hover, which is what makes it feel like an accent. */
   .glass-card {
-    background: rgba(26, 26, 46, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(0, 255, 65, 0.15);
-    border-radius: 16px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    background: linear-gradient(180deg, rgb(var(--s-raised) / 0.9), rgb(var(--s-raised) / 0.55));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgb(var(--s-line) / 0.07);
+    border-radius: 18px;
+    box-shadow: 0 1px 0 0 rgb(var(--s-line) / 0.05) inset, 0 18px 40px -28px rgb(0 0 0 / 0.9);
+    transition: border-color 0.35s var(--ease-out-expo), box-shadow 0.35s var(--ease-out-expo),
+      transform 0.35s var(--ease-out-expo);
   }
 
   .glass-card:hover {
-    border-color: rgba(0, 255, 65, 0.4);
+    border-color: rgb(var(--c-green) / 0.28);
     box-shadow:
-      0 0 20px rgba(0, 255, 65, 0.15),
-      0 0 40px rgba(0, 255, 65, 0.05),
-      inset 0 0 20px rgba(0, 255, 65, 0.03);
-    transform: translateY(-4px);
+      0 1px 0 0 rgb(var(--c-green) / 0.12) inset,
+      0 24px 50px -30px rgb(0 0 0 / 0.95),
+      0 0 34px -16px rgb(var(--c-green) / 0.45);
+    transform: translateY(-3px);
   }
 
   .neon-text {
-    text-shadow:
-      0 0 7px rgba(0, 255, 65, 0.7),
-      0 0 10px rgba(0, 255, 65, 0.5),
-      0 0 21px rgba(0, 255, 65, 0.3);
+    text-shadow: 0 0 18px rgb(var(--c-green) / 0.45);
   }
 
   .neon-text-blue {
-    text-shadow:
-      0 0 7px rgba(0, 243, 255, 0.7),
-      0 0 10px rgba(0, 243, 255, 0.5),
-      0 0 21px rgba(0, 243, 255, 0.3);
+    text-shadow: 0 0 18px rgb(var(--c-blue) / 0.45);
   }
 
   .neon-border {
-    box-shadow:
-      0 0 5px rgba(0, 255, 65, 0.3),
-      0 0 10px rgba(0, 255, 65, 0.1),
-      inset 0 0 5px rgba(0, 255, 65, 0.05);
+    box-shadow: 0 0 0 1px rgb(var(--c-green) / 0.25), 0 0 24px -8px rgb(var(--c-green) / 0.4);
   }
 
   .cyber-grid-bg {
     background-image:
-      linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
+      linear-gradient(rgb(var(--c-green) / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--c-green) / 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
   }
 
   .travel-card {
-    background: rgba(26, 26, 46, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-    border-radius: 16px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(180deg, rgb(var(--s-raised) / 0.95), rgb(var(--s-raised) / 0.7));
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgb(var(--c-amber) / 0.18);
+    border-radius: 18px;
+    transition: border-color 0.35s var(--ease-out-expo), box-shadow 0.35s var(--ease-out-expo);
   }
 
   .travel-card:hover {
-    border-color: rgba(245, 158, 11, 0.5);
-    box-shadow:
-      0 0 20px rgba(245, 158, 11, 0.15),
-      0 0 40px rgba(245, 158, 11, 0.05);
+    border-color: rgb(var(--c-amber) / 0.45);
+    box-shadow: 0 0 34px -14px rgb(var(--c-amber) / 0.5);
   }
 
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-medium;
-    background: rgba(0, 255, 65, 0.1);
-    border: 1px solid rgba(0, 255, 65, 0.2);
-    color: #00ff41;
+    @apply inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-mono font-medium;
+    background: rgb(var(--c-green) / 0.08);
+    border: 1px solid rgb(var(--c-green) / 0.18);
+    color: rgb(var(--c-green));
   }
 
   .section-title {
-    @apply font-mono text-2xl md:text-3xl lg:text-4xl font-bold;
+    @apply font-display text-3xl md:text-4xl lg:text-5xl font-bold;
+  }
+
+  /* ---------- Buttons ---------- */
+
+  .btn {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-mono text-[13px] font-medium sm:px-5 sm:py-3 sm:text-sm;
+    transition: transform 0.25s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo),
+      background-color 0.25s var(--ease-out-expo), border-color 0.25s var(--ease-out-expo), color 0.25s ease;
+    will-change: transform;
+  }
+
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* The primary action is the one solid, fully-saturated element on the page.
+     Everything else is an outline, so this reads as the obvious next step. */
+  .btn-primary {
+    background: linear-gradient(135deg, rgb(var(--c-green)), rgb(var(--c-blue) / 0.85));
+    border: 1px solid transparent;
+    color: rgb(var(--s-bg));
+    font-weight: 600;
+    box-shadow: 0 10px 30px -14px rgb(var(--c-green) / 0.7);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -14px rgb(var(--c-green) / 0.85);
+    filter: brightness(1.06);
+  }
+
+  .btn-ghost {
+    border: 1px solid rgb(var(--s-line) / 0.12);
+    color: #aab3c0;
+    background: rgb(var(--s-line) / 0.025);
+  }
+
+  .btn-ghost:hover {
+    transform: translateY(-2px);
+    color: #eef2f7;
+    border-color: rgb(var(--c-blue) / 0.45);
+    background: rgb(var(--c-blue) / 0.07);
+  }
+
+  /* ---------- Pills / chips ---------- */
+
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-xs;
+    background: rgb(var(--s-line) / 0.04);
+    border: 1px solid rgb(var(--s-line) / 0.09);
+    color: #aab3c0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Eyebrow above every section heading — the `// tag()` line. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em];
+    color: rgb(var(--c-green) / 0.75);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(var(--c-green) / 0.7));
+  }
+
+  /* ---------- Hero photograph ---------- */
+
+  /* No frame by design. Two masks are intersected so the photo dissolves on
+     every edge at once — a long horizontal fade into the headline column, and
+     shorter fades at the top and bottom — leaving no visible boundary between
+     the image and the page behind it. */
+  .hero-photo {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.35) 22%, #000 52%),
+      linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%);
+    mask-image:
+      linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.35) 22%, #000 52%),
+      linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Below `lg` the photo is a band across the top rather than a right-hand
+     column, so it fades downward into the copy and inward from both sides. */
+  @media (max-width: 1023px) {
+    .hero-photo {
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, #000 20%, #000 56%, transparent 100%);
+      mask-image:
+        linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, #000 20%, #000 56%, transparent 100%);
+    }
   }
 }
-
 @layer utilities {
   .text-gradient-cyber {
     background: linear-gradient(135deg, #00ff41, #00f3ff);
@@ -143,5 +285,50 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  /* Static ambient wash. Pure CSS gradients — no canvas, no paint per frame. */
+  .aurora {
+    background-image:
+      radial-gradient(55% 45% at 12% 8%, rgb(var(--c-green) / 0.10), transparent 60%),
+      radial-gradient(45% 40% at 88% 18%, rgb(var(--c-blue) / 0.10), transparent 62%),
+      radial-gradient(60% 50% at 50% 100%, rgb(var(--c-amber) / 0.06), transparent 65%);
+  }
+
+  /* Star layer behind the globe. Painted once as a tiled background — no DOM
+     nodes, no per-star animation. */
+  .starfield {
+    background-repeat: repeat;
+    background-size: 340px 340px;
+    background-image:
+      radial-gradient(1.4px 1.4px at 18% 12%, rgb(255 255 255 / 0.7), transparent 100%),
+      radial-gradient(1px 1px at 62% 8%, rgb(255 255 255 / 0.5), transparent 100%),
+      radial-gradient(1.2px 1.2px at 84% 26%, rgb(var(--c-blue) / 0.55), transparent 100%),
+      radial-gradient(1px 1px at 33% 38%, rgb(255 255 255 / 0.45), transparent 100%),
+      radial-gradient(1.6px 1.6px at 8% 58%, rgb(255 255 255 / 0.6), transparent 100%),
+      radial-gradient(1px 1px at 72% 52%, rgb(var(--c-green) / 0.4), transparent 100%),
+      radial-gradient(1.1px 1.1px at 46% 68%, rgb(255 255 255 / 0.5), transparent 100%),
+      radial-gradient(1px 1px at 92% 74%, rgb(255 255 255 / 0.4), transparent 100%),
+      radial-gradient(1.3px 1.3px at 24% 88%, rgb(255 255 255 / 0.55), transparent 100%),
+      radial-gradient(1px 1px at 58% 94%, rgb(var(--c-blue) / 0.4), transparent 100%);
+  }
+
+  .grid-lines {
+    background-image:
+      linear-gradient(rgb(var(--c-green) / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--c-green) / 0.045) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* For horizontal rails, where a visible scrollbar would cut across the
+     design. Arrows, edge fades and snap points carry the affordance instead. */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Fades an overlay towards its edges so grids never end on a hard line. */
+  .mask-fade-radial {
+    -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 40%, #000 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 75% 60% at 50% 40%, #000 40%, transparent 100%);
   }
 }

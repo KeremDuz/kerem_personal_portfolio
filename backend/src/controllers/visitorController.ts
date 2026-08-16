@@ -4,8 +4,8 @@ import Visitor from "../models/Visitor";
 // GET /api/admin/visitors — Admin: Get visitors with pagination
 export const getVisitors = async (req: Request, res: Response): Promise<void> => {
     try {
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 50;
+        const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
+        const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 50));
         const skip = (page - 1) * limit;
 
         const [visitors, uniqueIps] = await Promise.all([
@@ -117,7 +117,7 @@ export const getVisitorStats = async (_req: Request, res: Response): Promise<voi
 // DELETE /api/admin/visitors — Admin: Clear old visitors
 export const clearOldVisitors = async (req: Request, res: Response): Promise<void> => {
     try {
-        const days = parseInt(req.query.days as string) || 90;
+        const days = Math.min(3_650, Math.max(1, parseInt(req.query.days as string, 10) || 90));
         const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
         const result = await Visitor.deleteMany({ visitedAt: { $lt: cutoff } });

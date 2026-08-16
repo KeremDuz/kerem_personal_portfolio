@@ -4,9 +4,10 @@ import { useState, useEffect, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
-import { ExternalLink, Shield, Code, Terminal, Wifi, Lock, Database, Globe, X } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Shield, Code, Terminal, Wifi, Lock, Database, Globe, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { projectAPI, analyticsAPI, type Project as ApiProject } from "@/lib/api";
+import SectionHeading from "./SectionHeading";
 
 const VISIBLE_TAG_COUNT = 6;
 
@@ -17,19 +18,59 @@ const iconMap: Record<string, any> = {
 
 const staticProjects = [
     {
+        title: "PhishCatch — AI Destekli Phishing Tespit Sistemi",
+        description:
+            "Flutter ve FastAPI mimarisiyle şüpheli URL ve QR kodlarını analiz ederek oltalama saldırılarını tespit eden yapay zekâ destekli güvenlik uygulaması. Python, Pandas ve Scikit-learn ile eğitilen modeller; PhishTank, URLhaus, Google Safe Browsing ve VirusTotal istihbaratıyla birlikte dinamik risk skoru ve ayrıntılı rapor üretir.",
+        tags: ["Flutter", "FastAPI", "Python", "Scikit-learn", "Machine Learning", "Threat Intelligence"],
+        icon: "shield",
+        link: "#",
+    },
+    {
         title: "WiFi & Bluetooth Jammer",
         description:
-            "ESP32 mikrodenetleyicisi ile 2.4GHz WiFi ve Bluetooth frekanslarını analiz eden çift modlu cihaz. Arduino IDE ve C++ ile geliştirildi.",
-        tags: ["ESP32", "C++", "Arduino", "IoT Security"],
+            "ESP32 tabanlı, 2.4 GHz Wi-Fi ve Bluetooth frekanslarında kablosuz güvenlik analizleri gerçekleştiren çift modlu cihaz. Arduino IDE üzerinden entegre edilen C++ tabanlı açık kaynak yazılımla kontrollü test ortamları için geliştirildi.",
+        tags: ["ESP32", "C++", "Arduino", "Wireless Security", "IoT Security"],
         icon: "wifi",
         link: "#",
     },
     {
         title: "WiFi Deauthenticator",
         description:
-            "ESP8266 ile WiFi trafiğini izleyen ve güvenlik açıklarını test eden (Packet Monitoring/Deauth) sistem.",
-        tags: ["ESP8266", "Network Security", "C++", "Packet Sniffing"],
+            "ESP8266 ile ortamdaki Wi-Fi trafiğini izleyen ve kontrollü laboratuvar ortamında deauthentication senaryolarıyla ağ güvenliğini test eden sistem. C++ tabanlı yazılım Arduino IDE üzerinden karta aktarıldı.",
+        tags: ["ESP8266", "C++", "Arduino", "Network Security", "Packet Monitoring"],
         icon: "shield",
+        link: "#",
+    },
+    {
+        title: "File Upload Detector",
+        description:
+            "Web uygulamalarındaki dosya yükleme alanlarını belirleyen; statik HTML'nin yanı sıra sayfa yüklendikten sonra oluşan dinamik içeriği de analiz eden güvenlik aracı. Makine öğrenimi için elle hazırlanmış veri kümesiyle desteklendi.",
+        tags: ["Python", "Web Security", "Dynamic Analysis", "Machine Learning", "Dataset"],
+        icon: "lock",
+        link: "#",
+    },
+    {
+        title: "Personal Website & AI Assistant",
+        description:
+            "Next.js, Express.js ve FastAPI tabanlı mikroservis mimarisiyle geliştirilen siber güvenlik temalı portfolyo ve içerik yönetim platformu. JWT korumalı yönetim paneli, Three.js seyahat görselleştirmeleri, OpenAI tabanlı AI asistanı, çoklu dil, ziyaretçi analitiği, Cloudinary ve MongoDB entegrasyonlarını içerir.",
+        tags: ["Next.js", "Express.js", "FastAPI", "OpenAI", "Three.js", "MongoDB", "Cloudinary", "LangChain"],
+        icon: "code",
+        link: "https://www.keremduz.com",
+    },
+    {
+        title: "OrduCep — Askerî Sosyal Tesis Yönetim Platformu",
+        description:
+            "Angular web, Flutter mobil ve ASP.NET Core Web API (.NET 8) ile Türkiye'deki askerî misafirhane ve sosyal tesislerin keşif ve rezervasyon yönetimini sağlayan full-stack platform. EF Core ve MySQL, JWT rol yönetimi, Google Maps/Places, yönetim paneli ve Azure DevOps/Render dağıtım süreçlerini içerir.",
+        tags: ["Angular", "Flutter", ".NET 8", "EF Core", "MySQL", "JWT", "Google Maps", "Azure DevOps"],
+        icon: "globe",
+        link: "#",
+    },
+    {
+        title: "Akdeniz Siber Güvenlik Topluluğu Web Platformu",
+        description:
+            "Angular, RxJS ve Spring Boot ile topluluğun etkinlik, eğitim, proje ve ekip iş akışlarını yöneten kurumsal web platformu. Spring Security/JWT, PostgreSQL, Spring Data JPA, başvuru onay süreçleri, otomatik e-posta, dosya yükleme ve istatistik modüllerini içerir.",
+        tags: ["Angular", "RxJS", "Spring Boot", "Spring Security", "PostgreSQL", "JWT", "Spring Mail"],
+        icon: "globe",
         link: "#",
     },
     {
@@ -43,25 +84,9 @@ const staticProjects = [
     {
         title: "Kitap Envanter Sistemi",
         description:
-            "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları (Design Patterns) kullanılarak geliştirildi.",
+            "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları kullanılarak geliştirildi.",
         tags: ["Java", "Design Patterns", "OOP", "Automation"],
         icon: "database",
-        link: "#",
-    },
-    {
-        title: "File Upload Detector",
-        description:
-            "Web sitelerinde file upload noktalarını tespit eden ve potansiyel güvenlik açıklarını analiz eden Python aracı.",
-        tags: ["Python", "Web Security", "Vulnerability Scanning"],
-        icon: "lock",
-        link: "#",
-    },
-    {
-        title: "Portfolio Website",
-        description:
-            "Bu web sitesi! Next.js, Tailwind CSS ve Three.js ile geliştirilmiş, siber güvenlik temalı kişisel portfolyo.",
-        tags: ["Next.js", "React", "TypeScript", "Three.js"],
-        icon: "code",
         link: "#",
     },
 ];
@@ -162,99 +187,100 @@ export default function Projects({ initialProjects = [] }: ProjectsProps) {
             {/* Section divider gradient */}
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyber-green/20 to-transparent" />
 
-            <div className="max-w-7xl mx-auto px-6">
-                {/* Section Title */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-16 text-center"
-                >
-                    <span lang="en" className="font-mono text-sm text-cyber-green/50 tracking-wider uppercase block mb-3">
-                        {t("tag")}
-                    </span>
-                    <h2 className="section-title">
-                        <span className="text-gray-100">{t("title1")}</span>{" "}
-                        <span className="text-gradient-cyber">{t("title2")}</span>{" "}
-                        <span className="text-gray-100">{t("title3")}</span>
-                    </h2>
-                    <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        {t("desc")}
-                    </p>
-                </motion.div>
+            <div className="max-w-4xl mx-auto px-6">
+                <SectionHeading
+                    eyebrow={t("tag")}
+                    title={
+                        <>
+                            {t("title1")} <span className="text-gradient-cyber">{t("title2")}</span>{" "}
+                            {t("title3")}
+                        </>
+                    }
+                    description={t("desc")}
+                />
 
-                {/* Cards Grid */}
-                <motion.div
+                {/* An index, not a card wall. Six 290px-tall cards stacked to
+                    well over 2000px on a phone; these rows say the same thing in
+                    a fraction of the height, and the detail lives in the modal. */}
+                <motion.ul
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-50px" }}
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    className="glass-card divide-y divide-white/[0.06] overflow-hidden !p-0"
                 >
-                    {localizedProjects.map((project) => {
+                    {localizedProjects.map((project, index) => {
                         const visibleTags = project.tags.slice(0, VISIBLE_TAG_COUNT);
-                        const hiddenTagCount = Math.max(project.tags.length - VISIBLE_TAG_COUNT, 0);
 
                         return (
-                            <motion.div
-                                key={project._id || project.title}
-                                variants={cardVariants}
-                                className="glass-card group relative flex h-full min-h-[292px] cursor-pointer flex-col overflow-hidden p-6"
-                                onClick={() => openProjectDetails(project)}
-                            >
-                                {/* Top glow line */}
-                                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyber-green/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <motion.li key={project._id || project.title} variants={cardVariants}>
+                                <div
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => openProjectDetails(project)}
+                                    onKeyDown={(event) => {
+                                        if (event.key === "Enter" || event.key === " ") {
+                                            event.preventDefault();
+                                            openProjectDetails(project);
+                                        }
+                                    }}
+                                    className="group relative flex cursor-pointer items-center gap-4 px-5 py-4 transition-colors duration-300 hover:bg-white/[0.03] focus-visible:bg-white/[0.03] focus-visible:outline-none md:gap-5 md:px-7 md:py-5"
+                                >
+                                    {/* Accent that slides in from the left edge */}
+                                    <span
+                                        aria-hidden="true"
+                                        className="absolute inset-y-0 left-0 w-[2px] origin-top scale-y-0 bg-cyber-green transition-transform duration-300 group-hover:scale-y-100"
+                                    />
 
-                                {/* Icon */}
-                                <div className="mb-4 flex items-center gap-3">
-                                    <div className="w-10 h-10 shrink-0 rounded-lg bg-cyber-green/10 flex items-center justify-center border border-cyber-green/20 group-hover:border-cyber-green/40 transition-colors duration-300">
-                                        <project.IconComponent
-                                            size={20}
-                                            className="text-cyber-green"
-                                            strokeWidth={1.5}
-                                        />
-                                    </div>
-                                    {hasProjectLink(project) && (
-                                        <motion.button
+                                    <span className="hidden w-6 shrink-0 font-mono text-xs text-gray-700 sm:block">
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+
+                                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyber-green/20 bg-cyber-green/10 transition-colors duration-300 group-hover:border-cyber-green/45">
+                                        <project.IconComponent size={18} className="text-cyber-green" strokeWidth={1.5} />
+                                    </span>
+
+                                    <span className="min-w-0 flex-1">
+                                        <span className="block truncate font-display text-[15px] font-semibold text-gray-100 transition-colors duration-300 group-hover:text-cyber-green md:text-base">
+                                            {project.title}
+                                        </span>
+                                        <span className="mt-0.5 block truncate text-[13px] text-gray-500">
+                                            {project.description}
+                                        </span>
+                                    </span>
+
+                                    <span className="hidden shrink-0 items-center gap-1.5 lg:flex">
+                                        {visibleTags.slice(0, 3).map((tag: string) => (
+                                            <span
+                                                key={tag}
+                                                className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] text-gray-500"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </span>
+
+                                    {hasProjectLink(project) ? (
+                                        <button
                                             type="button"
                                             aria-label={t("visitProject")}
-                                            className="ml-auto text-gray-500 hover:text-cyber-green transition-colors"
-                                            whileHover={{ scale: 1.1 }}
                                             onClick={(event) => openProjectLink(event, project)}
+                                            className="shrink-0 rounded-lg p-2 text-gray-600 transition-colors hover:text-cyber-green"
                                         >
-                                            <ExternalLink size={16} strokeWidth={1.5} />
-                                        </motion.button>
+                                            <ExternalLink size={15} strokeWidth={1.6} />
+                                        </button>
+                                    ) : (
+                                        <ArrowUpRight
+                                            size={16}
+                                            aria-hidden="true"
+                                            className="shrink-0 text-gray-700 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-cyber-green"
+                                        />
                                     )}
                                 </div>
-
-                                {/* Title */}
-                                <h3 className="font-mono text-lg font-semibold text-gray-100 mb-2 line-clamp-2 group-hover:text-cyber-green transition-colors duration-300">
-                                    {project.title}
-                                </h3>
-
-                                {/* Description */}
-                                <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-4">
-                                    {project.description}
-                                </p>
-
-                                {/* Tags */}
-                                <div className="mt-auto flex flex-wrap gap-2 pt-2">
-                                    {visibleTags.map((tag: string) => (
-                                        <span key={tag} className="badge text-[11px]">
-                                            {tag}
-                                        </span>
-                                    ))}
-                                    {hiddenTagCount > 0 && (
-                                        <span className="badge text-[11px] text-cyber-green/80">
-                                            +{hiddenTagCount}
-                                        </span>
-                                    )}
-                                </div>
-                            </motion.div>
+                            </motion.li>
                         );
                     })}
-                </motion.div>
+                </motion.ul>
 
                 {typeof document !== "undefined" && createPortal(
                     <AnimatePresence>

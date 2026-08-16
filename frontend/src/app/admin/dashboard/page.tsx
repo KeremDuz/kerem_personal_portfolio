@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, Fragment } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI, timelineAPI, aboutAPI } from "@/lib/api";
+import { ApiError, authAPI, visitorAPI, travelAPI, blogAPI, projectAPI, certificateAPI, uploadAPI, timelineAPI, aboutAPI } from "@/lib/api";
 import { Terminal, MapPin, Shield, Coffee, Save, GraduationCap, Briefcase, Award, Calendar, Plus, Trash2 } from "lucide-react";
+import { accent } from "@/lib/theme";
 
 // ─── Types ──────────────────────────────────────────
 interface Stats {
@@ -46,16 +48,7 @@ export default function DashboardPage() {
     const [timelines, setTimelines] = useState<any[]>([]);
     const [aboutData, setAboutData] = useState<any>(null);
 
-    // ─── Auth Check ─────────────────────────────────
-    useEffect(() => {
-        if (!authAPI.isAuthenticated()) {
-            router.push("/admin");
-            return;
-        }
-        loadDashboard();
-    }, []);
-
-    const loadDashboard = async () => {
+    const loadDashboard = useCallback(async () => {
         try {
             const [statsData, travelsData, blogsData, projectsData, certsData, timelinesData, aboutRes] = await Promise.all([
                 visitorAPI.getStats(),
@@ -74,7 +67,6 @@ export default function DashboardPage() {
             setTimelines(timelinesData);
             setAboutData(aboutRes);
             setCounts({
-                ...counts,
                 travels: travelsData.length,
                 blogs: blogsData.length,
                 projects: projectsData.length,
@@ -82,12 +74,28 @@ export default function DashboardPage() {
             });
         } catch (err) {
             console.error("Dashboard load error:", err);
-            authAPI.logout();
-            router.push("/admin");
+            if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+                void authAPI.logout();
+                router.replace("/admin");
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [router]);
+
+    // ─── Auth Check ─────────────────────────────────
+    useEffect(() => {
+        const initialize = async () => {
+            try {
+                await authAPI.getMe();
+                await loadDashboard();
+            } catch {
+                router.replace("/admin");
+            }
+        };
+
+        void initialize();
+    }, [loadDashboard, router]);
 
     const loadVisitors = useCallback(async (page: number) => {
         try {
@@ -106,9 +114,9 @@ export default function DashboardPage() {
         }
     }, [activeTab, loadVisitors]);
 
-    const handleLogout = () => {
-        authAPI.logout();
-        router.push("/admin");
+    const handleLogout = async () => {
+        await authAPI.logout().catch(() => undefined);
+        router.replace("/admin");
     };
 
     const handleDelete = async (type: string, id: string) => {
@@ -636,16 +644,17 @@ function ContentListView({
         setUploadingField(fieldKey);
         setError("");
         try {
-            const uploadedMedia = [...(formData[fieldKey] || [])];
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
+            const uploadedMedia = await Promise.all(files.map(async (file) => {
                 const data = await uploadAPI.upload(file, type);
-                uploadedMedia.push({
+                return {
                     type: file.type.startsWith("video/") ? "video" : "image",
                     src: data.url
-                });
-                setFormData(prev => ({ ...prev, [fieldKey]: [...uploadedMedia] }));
-            }
+                };
+            }));
+            setFormData(prev => ({
+                ...prev,
+                [fieldKey]: [...(prev[fieldKey] || []), ...uploadedMedia],
+            }));
         } catch (err: any) {
             setError(err.message || "Çoklu yükleme sırasında bir hata oluştu.");
         } finally {
@@ -795,7 +804,13 @@ function ContentListView({
                                             {formData[field.key]?.map((m: any, idx: number) => (
                                                 <div key={idx} className="w-12 h-12 rounded border border-gray-700 bg-gray-900 overflow-hidden relative group">
                                                     {m.type === "image" ? (
-                                                        <img src={m.src} alt="preview" className="w-full h-full object-cover" />
+                                                        <Image
+                                                            src={m.src}
+                                                            alt="Yüklenen medya önizlemesi"
+                                                            fill
+                                                            sizes="48px"
+                                                            className="object-cover"
+                                                        />
                                                     ) : (
                                                         <div className="flex items-center justify-center w-full h-full text-[10px] text-gray-400">🎬</div>
                                                     )}
@@ -1089,28 +1104,28 @@ function AboutForm({ data, onSave }: { data: any, onSave: (data: any) => Promise
                             icon: Terminal,
                             labelKey: "focusLabel",
                             valueKey: "focusValue",
-                            color: "#00ff41",
+                            color: accent.green,
                         },
                         {
                             id: "expertise",
                             icon: Shield,
                             labelKey: "expertiseLabel",
                             valueKey: "expertiseValue",
-                            color: "#00f3ff",
+                            color: accent.blue,
                         },
                         {
                             id: "location",
                             icon: MapPin,
                             labelKey: "locationLabel",
                             valueKey: "locationValue",
-                            color: "#f59e0b",
+                            color: accent.amber,
                         },
                         {
                             id: "fuel",
                             icon: Coffee,
                             labelKey: "fuelLabel",
                             valueKey: "fuelValue",
-                            color: "#f97316",
+                            color: accent.orange,
                         },
                     ].map((item, i) => (
                         <div
@@ -1247,9 +1262,9 @@ function TimelineVisualEditor({ items, onSave, onDelete }: { items: any[], onSav
     }, [items]);
 
     const typeConfig: Record<string, any> = {
-        education: { icon: GraduationCap, color: "#00ff41", label: "EĞİTİM" },
-        work: { icon: Briefcase, color: "#00f3ff", label: "İŞ/STAJ" },
-        certification: { icon: Award, color: "#f59e0b", label: "SERTİFİKA" },
+        education: { icon: GraduationCap, color: accent.green, label: "EĞİTİM" },
+        work: { icon: Briefcase, color: accent.blue, label: "İŞ/STAJ" },
+        certification: { icon: Award, color: accent.amber, label: "SERTİFİKA" },
     };
 
     const handleAdd = () => {
@@ -1347,7 +1362,7 @@ function TimelineVisualEditor({ items, onSave, onDelete }: { items: any[], onSav
                                 <div className="absolute left-6 md:left-1/2 w-3 h-3 rounded-full border-2 -translate-x-1/2 z-10 mt-6"
                                     style={{
                                         borderColor: tConfig.color,
-                                        backgroundColor: "#0a0a0a",
+                                        backgroundColor: accent.bg,
                                         boxShadow: `0 0 8px ${tConfig.color}50`,
                                     }}
                                 />

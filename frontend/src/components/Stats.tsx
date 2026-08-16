@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Globe, Code, Shield, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { accent } from "@/lib/theme";
 
 const stats = [
     {
@@ -11,28 +12,28 @@ const stats = [
         value: 5,
         suffix: "+",
         label: "Ülke Gezildi",
-        color: "#f59e0b",
+        color: accent.amber,
     },
     {
         icon: Code,
         value: 20,
         suffix: "+",
         label: "Proje Tamamlandı",
-        color: "#00ff41",
+        color: accent.green,
     },
     {
         icon: Shield,
         value: 15,
         suffix: "+",
         label: "Güvenlik Analizi",
-        color: "#00f3ff",
+        color: accent.blue,
     },
     {
         icon: MapPin,
         value: 30,
         suffix: "+",
         label: "Anı Biriktirdi",
-        color: "#f97316",
+        color: accent.orange,
     },
 ];
 

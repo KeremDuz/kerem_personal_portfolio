@@ -302,16 +302,61 @@ const travelData = [
             { type: "video", src: "/travel/usti_nad_orlici/VID_20250916_223334.webm" },
         ],
     },
+    {
+        lat: 44.4268, lng: 26.1025, label: "Bükreş", country: "Romanya",
+        description: "Temmuz 2026", image: "/travel/bucharest/bucharest-01.webp",
+        color: "#3b82f6", order: 10,
+        media: [
+            { type: "image", src: "/travel/bucharest/bucharest-01.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-02.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-03.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-04.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-05.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-06.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-07.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-08.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-09.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-10.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-11.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-12.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-13.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-14.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-15.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-16.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-17.webp" },
+        ],
+    },
+    {
+        lat: 45.6427, lng: 25.5887, label: "Braşov", country: "Romanya",
+        description: "Temmuz 2026", image: "/travel/brasov/brasov-03.webp",
+        color: "#f59e0b", order: 11,
+        media: [
+            { type: "image", src: "/travel/brasov/brasov-01.webp" },
+            { type: "image", src: "/travel/brasov/brasov-02.webp" },
+            { type: "image", src: "/travel/brasov/brasov-03.webp" },
+            { type: "image", src: "/travel/brasov/brasov-04.webp" },
+            { type: "image", src: "/travel/brasov/brasov-05.webp" },
+            { type: "image", src: "/travel/brasov/brasov-06.webp" },
+            { type: "image", src: "/travel/brasov/brasov-07.webp" },
+            { type: "image", src: "/travel/brasov/brasov-08.webp" },
+            { type: "image", src: "/travel/brasov/brasov-10.webp" },
+            { type: "image", src: "/travel/brasov/brasov-11.webp" },
+            { type: "image", src: "/travel/brasov/brasov-12.webp" },
+        ],
+    },
 ];
 
 // ─── Projects Data ──────────────────────────────────
 const projectsData = [
-    { title: "WiFi & Bluetooth Jammer", description: "ESP32 mikrodenetleyicisi ile 2.4GHz WiFi ve Bluetooth frekanslarını analiz eden çift modlu cihaz. Arduino IDE ve C++ ile geliştirildi.", tags: ["ESP32", "C++", "Arduino", "IoT Security"], icon: "wifi", link: "#", order: 0 },
-    { title: "WiFi Deauthenticator", description: "ESP8266 ile WiFi trafiğini izleyen ve güvenlik açıklarını test eden (Packet Monitoring/Deauth) sistem.", tags: ["ESP8266", "Network Security", "C++", "Packet Sniffing"], icon: "shield", link: "#", order: 1 },
-    { title: "E-Ticaret Sitesi", description: "Angular ve Spring Boot tabanlı kapsamlı alışveriş sitesi. JWT ile güvenli giriş, ürün ve sepet yönetimi özellikleri.", tags: ["Angular", "Spring Boot", "Java", "JWT"], icon: "globe", link: "#", order: 2 },
-    { title: "Kitap Envanter Sistemi", description: "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları (Design Patterns) kullanılarak geliştirildi.", tags: ["Java", "Design Patterns", "OOP", "Automation"], icon: "database", link: "#", order: 3 },
-    { title: "File Upload Detector", description: "Web sitelerinde file upload noktalarını tespit eden ve potansiyel güvenlik açıklarını analiz eden Python aracı.", tags: ["Python", "Web Security", "Vulnerability Scanning"], icon: "lock", link: "#", order: 4 },
-    { title: "Portfolio Website", description: "Bu web sitesi! Next.js, Tailwind CSS ve Three.js ile geliştirilmiş, siber güvenlik temalı kişisel portfolyo.", tags: ["Next.js", "React", "TypeScript", "Three.js"], icon: "code", link: "#", order: 5 },
+    { title: "PhishCatch — AI Destekli Phishing Tespit Sistemi", description: "Flutter ve FastAPI mimarisiyle şüpheli URL ve QR kodlarını analiz ederek oltalama saldırılarını tespit eden yapay zekâ destekli güvenlik uygulaması. Python, Pandas ve Scikit-learn ile eğitilen modeller; PhishTank, URLhaus, Google Safe Browsing ve VirusTotal istihbaratıyla birlikte dinamik risk skoru ve ayrıntılı rapor üretir.", tags: ["Flutter", "FastAPI", "Python", "Scikit-learn", "Machine Learning", "Threat Intelligence"], icon: "shield", link: "#", order: 0 },
+    { title: "WiFi & Bluetooth Jammer", description: "ESP32 tabanlı, 2.4 GHz Wi-Fi ve Bluetooth frekanslarında kablosuz güvenlik analizleri gerçekleştiren çift modlu cihaz. Arduino IDE üzerinden entegre edilen C++ tabanlı açık kaynak yazılımla kontrollü test ortamları için geliştirildi.", tags: ["ESP32", "C++", "Arduino", "Wireless Security", "IoT Security"], icon: "wifi", link: "#", order: 1 },
+    { title: "WiFi Deauthenticator", description: "ESP8266 ile ortamdaki Wi-Fi trafiğini izleyen ve kontrollü laboratuvar ortamında deauthentication senaryolarıyla ağ güvenliğini test eden sistem. C++ tabanlı yazılım Arduino IDE üzerinden karta aktarıldı.", tags: ["ESP8266", "C++", "Arduino", "Network Security", "Packet Monitoring"], icon: "shield", link: "#", order: 2 },
+    { title: "File Upload Detector", description: "Web uygulamalarındaki dosya yükleme alanlarını belirleyen; statik HTML'nin yanı sıra sayfa yüklendikten sonra oluşan dinamik içeriği de analiz eden güvenlik aracı. Makine öğrenimi için elle hazırlanmış veri kümesiyle desteklendi.", tags: ["Python", "Web Security", "Dynamic Analysis", "Machine Learning", "Dataset"], icon: "lock", link: "#", order: 3 },
+    { title: "Personal Website & AI Assistant", description: "Next.js, Express.js ve FastAPI tabanlı mikroservis mimarisiyle geliştirilen siber güvenlik temalı portfolyo ve içerik yönetim platformu. JWT korumalı yönetim paneli, Three.js seyahat görselleştirmeleri, OpenAI tabanlı AI asistanı, çoklu dil, ziyaretçi analitiği, Cloudinary ve MongoDB entegrasyonlarını içerir.", tags: ["Next.js", "Express.js", "FastAPI", "OpenAI", "Three.js", "MongoDB", "Cloudinary", "LangChain"], icon: "code", link: "https://www.keremduz.com", order: 4 },
+    { title: "OrduCep — Askerî Sosyal Tesis Yönetim Platformu", description: "Angular web, Flutter mobil ve ASP.NET Core Web API (.NET 8) ile Türkiye'deki askerî misafirhane ve sosyal tesislerin keşif ve rezervasyon yönetimini sağlayan full-stack platform. EF Core ve MySQL, JWT rol yönetimi, Google Maps/Places, yönetim paneli ve Azure DevOps/Render dağıtım süreçlerini içerir.", tags: ["Angular", "Flutter", ".NET 8", "EF Core", "MySQL", "JWT", "Google Maps", "Azure DevOps"], icon: "globe", link: "#", order: 5 },
+    { title: "Akdeniz Siber Güvenlik Topluluğu Web Platformu", description: "Angular, RxJS ve Spring Boot ile topluluğun etkinlik, eğitim, proje ve ekip iş akışlarını yöneten kurumsal web platformu. Spring Security/JWT, PostgreSQL, Spring Data JPA, başvuru onay süreçleri, otomatik e-posta, dosya yükleme ve istatistik modüllerini içerir.", tags: ["Angular", "RxJS", "Spring Boot", "Spring Security", "PostgreSQL", "JWT", "Spring Mail"], icon: "globe", link: "#", order: 6 },
+    { title: "E-Ticaret Sitesi", description: "Angular ve Spring Boot tabanlı kapsamlı alışveriş sitesi. JWT ile güvenli giriş, ürün ve sepet yönetimi özellikleri.", tags: ["Angular", "Spring Boot", "Java", "JWT"], icon: "globe", link: "#", order: 7 },
+    { title: "Kitap Envanter Sistemi", description: "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları kullanılarak geliştirildi.", tags: ["Java", "Design Patterns", "OOP", "Automation"], icon: "database", link: "#", order: 8 },
 ];
 
 // ─── Certificates Data ──────────────────────────────
@@ -342,13 +387,13 @@ const blogsData = [
 ];
 
 // ─── Timeline Data ──────────────────────────────────
+// Professional experience plus the current degree, newest first.
 const timelineData = [
-    { year: "2026", title: "Stajyer", subtitle: "S4E", description: "Şirket bünyesinde staj deneyimi.", type: "work", tags: ["Staj", "Siber Güvenlik"], order: 10 },
-    { year: "2022 — Devam", title: "Bilgisayar Mühendisliği", subtitle: "Akdeniz Üniversitesi", description: "Bilgisayar Mühendisliği lisans programı. Ağ güvenliği, yazılım geliştirme ve sistem yönetimi üzerine odaklanma.", type: "education", tags: ["C/C++", "Java", "Data Structures", "Algorithms"], order: 20 },
-    { year: "2022", title: "12. Sınıf (2. Dönem)", subtitle: "Açık Öğretim Lisesi", description: "Lise eğitimimin son dönemini Açık Öğretim Lisesi'nde tamamladım.", type: "education", tags: [], order: 30 },
-    { year: "2021", title: "12. Sınıf (1. Dönem)", subtitle: "Gelibolu Amerikan Kültür Koleji", description: "Lise son sınıf eğitiminin ilk dönemi.", type: "education", tags: [], order: 40 },
-    { year: "2019 — 2021", title: "10. ve 11. Sınıf", subtitle: "Hayat Koleji", description: "Lise eğitimimin orta dönemi.", type: "education", tags: [], order: 50 },
-    { year: "2018 — 2019", title: "9. Sınıf", subtitle: "Kars Harakani Anadolu Lisesi", description: "Lise eğitimime Kars'ta başladım.", type: "education", tags: [], order: 60 },
+    { year: "Haziran — Ağustos 2026", title: "Siber Güvenlik Stajyeri", subtitle: "Anex Tour", description: "Siber güvenlik ekibinde stajyer olarak görev aldım.", type: "work", tags: ["Siber Güvenlik", "Staj"], order: 10 },
+    { year: "Şubat — Haziran 2026", title: "Siber Güvenlik Ürün Satışı", subtitle: "S4E", description: "Siber güvenlik ürünlerinin satış süreçlerinde görev aldım.", type: "work", tags: ["Siber Güvenlik", "Ürün Satışı"], order: 20 },
+    { year: "Ocak — Şubat 2026", title: "Siber Güvenlik Stajyeri", subtitle: "S4E", description: "Siber güvenlik alanında stajyer olarak görev aldım.", type: "work", tags: ["Siber Güvenlik", "Staj"], order: 30 },
+    { year: "2026 Dönemi", title: "Topluluk Başkanı", subtitle: "Akdeniz Siber Güvenlik Topluluğu", description: "2026 döneminde topluluğun başkanlık görevini üstlendim.", type: "work", tags: ["Liderlik", "Siber Güvenlik", "Topluluk"], order: 35 },
+    { year: "2022 — Devam", title: "Bilgisayar Mühendisliği", subtitle: "Akdeniz Üniversitesi", description: "Bilgisayar Mühendisliği lisans programı. Ağ güvenliği, yazılım geliştirme ve sistem yönetimi üzerine odaklanma.", type: "education", tags: ["C/C++", "Java", "Data Structures", "Algorithms"], order: 40 },
 ];
 
 // ─── Seed All Data ──────────────────────────────────

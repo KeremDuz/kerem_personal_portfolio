@@ -6,13 +6,21 @@
     "scripts": {
         "dev:frontend": "cd frontend && npm run dev",
         "dev:backend": "cd backend && npm run dev",
-        "dev": "concurrently --kill-others --kill-others-on-fail -n FE,BE -c green,cyan \"npm run dev:frontend\" \"npm run dev:backend\"",
+        "dev:db": "cd backend && npm run dev:db",
+        "dev": "concurrently --kill-others --kill-others-on-fail -n DB,BE,FE -c magenta,cyan,green \"npm run dev:db\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "seed": "cd backend && npm run seed && npm run seed:all",
         "build:frontend": "cd frontend && npm run build",
         "build:backend": "cd backend && npm run build",
         "build": "npm run build:frontend && npm run build:backend",
+        "lint": "npm --prefix frontend run lint",
+        "typecheck": "npm --prefix frontend run typecheck && npm --prefix backend run typecheck",
+        "test": "npm --prefix backend test",
+        "check": "npm run lint && npm run typecheck && npm test",
+        "media:audit": "node scripts/audit-media.mjs",
         "start:frontend": "cd frontend && npm start",
         "start:backend": "cd backend && npm start",
-        "install:all": "cd frontend && npm install && cd ../backend && npm install"
+        "install:all": "cd frontend && npm install && cd ../backend && npm install",
+        "setup": "npm run install:all && npm run seed"
     },
     "devDependencies": {
         "concurrently": "^9.1.0"

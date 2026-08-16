@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 import { AuthRequest } from "../middleware/auth";
+import {
+    adminSessionCookieName,
+    clearSessionCookieOptions,
+    sessionCookieOptions,
+} from "../config/auth";
 
 // POST /api/auth/login
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -38,11 +43,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         const token = jwt.sign(
             { userId: user._id },
             jwtSecret,
-            { expiresIn: "7d" }
+            { expiresIn: "12h" }
         );
 
+        res.cookie(adminSessionCookieName(), token, sessionCookieOptions());
         res.json({
-            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -53,6 +58,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         console.error("Login error:", error);
         res.status(500).json({ error: "Giriş sırasında hata oluştu." });
     }
+};
+
+// POST /api/auth/logout
+export const logout = (_req: Request, res: Response): void => {
+    res.clearCookie(adminSessionCookieName(), clearSessionCookieOptions());
+    res.json({ message: "Oturum kapatıldı." });
 };
 
 // GET /api/auth/me

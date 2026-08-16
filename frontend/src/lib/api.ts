@@ -1,5 +1,11 @@
-// ─── API Configuration ──────────────────────────────
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { browserApiBase } from "@/lib/config";
+
+export class ApiError extends Error {
+    constructor(message: string, public readonly status: number) {
+        super(message);
+        this.name = "ApiError";
+    }
+}
 
 // ─── Shared Types ───────────────────────────────────
 export interface Travel {
@@ -33,7 +39,7 @@ export interface Certificate {
     issuer: string;
     date: string;
     color: string;
-    icon: string;
+    icon: "shield" | "code" | "globe" | "award";
     image?: string;
     link?: string;
     order: number;
@@ -114,65 +120,74 @@ export interface PaginatedVisitors {
     };
 }
 
-// ─── Token Management ───────────────────────────────
-function getToken(): string | null {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("admin_token");
-}
-
-function setToken(token: string): void {
-    localStorage.setItem("admin_token", token);
-}
-
-function removeToken(): void {
-    localStorage.removeItem("admin_token");
-}
-
 // ─── Generic Fetch ──────────────────────────────────
 async function apiFetch<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    timeoutMs = 15_000
 ): Promise<T> {
     const headers: Record<string, string> = {
+        "X-Requested-With": "XMLHttpRequest",
         ...(options.headers as Record<string, string>),
     };
-
-    const token = getToken();
-    if (token) {
-        headers.Authorization = `Bearer ${token}`;
-    }
 
     // Only set Content-Type for non-FormData bodies
     if (!(options.body instanceof FormData)) {
         headers["Content-Type"] = "application/json";
     }
 
-    const res = await fetch(`${API_BASE}${endpoint}`, {
-        ...options,
-        headers,
-    });
+    const controller = new AbortController();
+    const timeout = globalThis.setTimeout(() => controller.abort(), timeoutMs);
+    const abortFromCaller = () => controller.abort();
+    options.signal?.addEventListener("abort", abortFromCaller, { once: true });
+
+    let res: Response;
+    try {
+        res = await fetch(`${browserApiBase}${endpoint}`, {
+            ...options,
+            headers,
+            credentials: "include",
+            signal: controller.signal,
+        });
+    } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+            throw new Error("İstek zaman aşımına uğradı. Lütfen tekrar deneyin.");
+        }
+        throw error;
+    } finally {
+        globalThis.clearTimeout(timeout);
+        options.signal?.removeEventListener("abort", abortFromCaller);
+    }
 
     if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `HTTP ${res.status}`);
+        throw new ApiError(data.error || `HTTP ${res.status}`, res.status);
     }
 
     return res.json();
 }
 
 // ─── Auth API ───────────────────────────────────────
+function clearLegacyAdminToken(): void {
+    if (typeof window !== "undefined") {
+        localStorage.removeItem("admin_token");
+    }
+}
+
 export const authAPI = {
     login: async (username: string, password: string) => {
-        const data = await apiFetch<{ token: string; user: { id: string; username: string } }>("/auth/login", {
+        const result = await apiFetch<{ user: { id: string; username: string; role: "admin" } }>("/auth/login", {
             method: "POST",
             body: JSON.stringify({ username, password }),
         });
-        setToken(data.token);
-        return data;
+        clearLegacyAdminToken();
+        return result;
     },
     getMe: () => apiFetch<{ id: string; username: string }>("/auth/me"),
-    logout: () => removeToken(),
-    isAuthenticated: () => !!getToken(),
+    logout: async () => {
+        clearLegacyAdminToken();
+        return apiFetch<{ message: string }>("/auth/logout", { method: "POST" });
+    },
 };
 
 // ─── Travel API ─────────────────────────────────────
@@ -212,7 +227,7 @@ export const blogAPI = {
 
 // ─── Project API ────────────────────────────────────
 export const projectAPI = {
-    getAll: () => apiFetch<Project[]>("/projects"),
+    getAll: () => apiFetch<Project[]>("/projects", { cache: "no-store" }),
     getAllAdmin: () => apiFetch<Project[]>("/projects/admin/all"),
     create: (data: Partial<Project>) => apiFetch<Project>("/projects/admin", {
         method: "POST",
@@ -246,7 +261,7 @@ export const certificateAPI = {
 
 // ─── Timeline API ───────────────────────────────────
 export const timelineAPI = {
-    getAll: () => apiFetch<TimelineItem[]>("/timeline"),
+    getAll: () => apiFetch<TimelineItem[]>("/timeline", { cache: "no-store" }),
     getAllAdmin: () => apiFetch<TimelineItem[]>("/timeline/admin/all"),
     create: (data: Partial<TimelineItem>) => apiFetch<TimelineItem>("/timeline/admin", {
         method: "POST",
@@ -262,6 +277,26 @@ export const timelineAPI = {
 };
 
 // ─── About API ──────────────────────────────────────
+export interface ContributionDay {
+    date: string;
+    /** GitHub's own 0-4 intensity bucket. */
+    level: number;
+    count: number;
+}
+
+export interface ContributionCalendar {
+    username: string;
+    total: number;
+    /** Grid columns; each holds 7 slots, Sunday first. `null` = no such day. */
+    weeks: (ContributionDay | null)[][];
+    from: string;
+    to: string;
+}
+
+export const githubAPI = {
+    contributions: () => apiFetch<ContributionCalendar>("/github/contributions"),
+};
+
 export const aboutAPI = {
     get: () => apiFetch<AboutData>("/about"),
     upsert: (data: Partial<AboutData>) => apiFetch<AboutData>("/about/admin", {
@@ -290,7 +325,7 @@ export const uploadAPI = {
         return apiFetch<{ url: string; publicId: string }>("/admin/upload", {
             method: "POST",
             body: formData,
-        });
+        }, 120_000);
     },
     delete: (publicId: string) =>
         apiFetch<{ message: string }>(`/admin/upload/${encodeURIComponent(publicId)}`, {
@@ -301,6 +336,11 @@ export const uploadAPI = {
 // ─── Analytics API ────────────────────────────────────
 export const analyticsAPI = {
     track: async (action: string, details: string) => {
+        const privacyNavigator = navigator as Navigator & { globalPrivacyControl?: boolean };
+        if (navigator.doNotTrack === "1" || privacyNavigator.globalPrivacyControl) {
+            return;
+        }
+
         try {
             await apiFetch<{ status: string }>("/track", {
                 method: "POST",

@@ -387,22 +387,139 @@ const travelData: TravelPin[] = [
         lng: 12.5683,
         label: "Kopenhag",
         country: "Danimarka",
-        description: "Yakında",
-        image: "",
+        description: "Mayıs 2026",
+        image: "/travel/kopenhag/kopenhag-18.webp",
         color: "#38bdf8",
-        media: [],
-        status: "upcoming",
+        media: [
+            { type: "image", src: "/travel/kopenhag/kopenhag-01.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-02.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-03.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-04.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-05.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-06.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-07.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-08.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-09.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-10.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-11.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-12.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-13.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-14.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-15.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-16.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-17.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-18.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-19.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-20.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-21.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-22.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-23.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-24.webp" },
+            { type: "image", src: "/travel/kopenhag/kopenhag-25.webp" },
+        ],
+        status: "visited",
+    },
+    {
+        lat: 55.605,
+        lng: 13.0038,
+        label: "Malmö",
+        country: "İsveç",
+        description: "Mayıs 2026",
+        image: "/travel/malmo/malmo-09.webp",
+        color: "#38bdf8",
+        media: [
+            { type: "image", src: "/travel/malmo/malmo-01.webp" },
+            { type: "image", src: "/travel/malmo/malmo-02.webp" },
+            { type: "image", src: "/travel/malmo/malmo-03.webp" },
+            { type: "image", src: "/travel/malmo/malmo-04.webp" },
+            { type: "image", src: "/travel/malmo/malmo-05.webp" },
+            { type: "image", src: "/travel/malmo/malmo-06.webp" },
+            { type: "image", src: "/travel/malmo/malmo-07.webp" },
+            { type: "image", src: "/travel/malmo/malmo-08.webp" },
+            { type: "image", src: "/travel/malmo/malmo-09.webp" },
+            { type: "image", src: "/travel/malmo/malmo-10.webp" },
+            { type: "image", src: "/travel/malmo/malmo-11.webp" },
+        ],
+        status: "visited",
     },
     {
         lat: 59.3293,
         lng: 18.0686,
         label: "Stokholm",
         country: "İsveç",
-        description: "Yakında",
-        image: "",
+        description: "Mayıs 2026",
+        image: "/travel/stockholm/stockholm-13.webp",
         color: "#facc15",
-        media: [],
-        status: "upcoming",
+        media: [
+            { type: "image", src: "/travel/stockholm/stockholm-01.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-02.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-03.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-04.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-05.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-06.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-07.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-08.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-09.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-10.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-11.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-12.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-13.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-14.webp" },
+            { type: "image", src: "/travel/stockholm/stockholm-15.webp" },
+        ],
+        status: "visited",
+    },
+    {
+        lat: 44.4268,
+        lng: 26.1025,
+        label: "Bükreş",
+        country: "Romanya",
+        description: "Temmuz 2026",
+        image: "/travel/bucharest/bucharest-01.webp",
+        color: "#3b82f6",
+        media: [
+            { type: "image", src: "/travel/bucharest/bucharest-01.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-02.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-03.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-04.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-05.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-06.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-07.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-08.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-09.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-10.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-11.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-12.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-13.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-14.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-15.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-16.webp" },
+            { type: "image", src: "/travel/bucharest/bucharest-17.webp" },
+        ],
+        status: "visited",
+    },
+    {
+        lat: 45.6427,
+        lng: 25.5887,
+        label: "Braşov",
+        country: "Romanya",
+        description: "Temmuz 2026",
+        image: "/travel/brasov/brasov-03.webp",
+        color: "#f59e0b",
+        media: [
+            { type: "image", src: "/travel/brasov/brasov-01.webp" },
+            { type: "image", src: "/travel/brasov/brasov-02.webp" },
+            { type: "image", src: "/travel/brasov/brasov-03.webp" },
+            { type: "image", src: "/travel/brasov/brasov-04.webp" },
+            { type: "image", src: "/travel/brasov/brasov-05.webp" },
+            { type: "image", src: "/travel/brasov/brasov-06.webp" },
+            { type: "image", src: "/travel/brasov/brasov-07.webp" },
+            { type: "image", src: "/travel/brasov/brasov-08.webp" },
+            { type: "image", src: "/travel/brasov/brasov-10.webp" },
+            { type: "image", src: "/travel/brasov/brasov-11.webp" },
+            { type: "image", src: "/travel/brasov/brasov-12.webp" },
+        ],
+        status: "visited",
     },
 ];
 
@@ -410,16 +527,23 @@ export const upcomingTravelData = travelData.filter(
     (pin) => pin.status === "upcoming"
 );
 
-export function mergeUpcomingTravelPins(pins: TravelPin[]) {
+export function mergeStaticTravelPins(pins: TravelPin[]) {
     const existingPins = new Set(
         pins.map((pin) => `${pin.label}:${pin.lat}:${pin.lng}`)
     );
 
-    const missingUpcomingPins = upcomingTravelData.filter(
+    // The public API can lag behind newly added local albums. Keep every
+    // missing static pin available so a visited city does not disappear just
+    // because the database has not been reseeded yet.
+    const missingStaticPins = travelData.filter(
         (pin) => !existingPins.has(`${pin.label}:${pin.lat}:${pin.lng}`)
     );
 
-    return [...pins, ...missingUpcomingPins];
+    return [...pins, ...missingStaticPins];
 }
+
+// Keep compatibility with already-loaded development chunks while HMR swaps
+// the renamed helper. New code should use `mergeStaticTravelPins`.
+export const mergeUpcomingTravelPins = mergeStaticTravelPins;
 
 export default travelData;

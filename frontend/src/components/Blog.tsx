@@ -5,7 +5,9 @@ import { FileText, ArrowUpRight, Clock, Tag, X } from "lucide-react";
 import { useState, useEffect, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
-import { blogAPI } from "@/lib/api";
+import { blogAPI, type BlogPost as ApiBlogPost } from "@/lib/api";
+import SectionHeading from "./SectionHeading";
+import { accent } from "@/lib/theme";
 
 interface BlogPost {
     title: string;
@@ -230,34 +232,42 @@ const posts: BlogPost[] = [
     },
 ];
 
-export default function Blog() {
+function mergeApiPosts(apiPosts: ApiBlogPost[]): BlogPost[] {
+    const staticTitles = new Set(posts.map((post) => post.title));
+    const dynamicPosts = apiPosts
+        .filter((post) => !staticTitles.has(post.title))
+        .map((post) => ({
+            title: post.title,
+            excerpt: post.excerpt,
+            date: post.date,
+            category: post.category,
+            readTime: post.readTime,
+            tags: post.tags || [],
+            link: post.link || "#",
+        }));
+
+    return [...posts, ...dynamicPosts];
+}
+
+type BlogProps = { initialBlogs?: ApiBlogPost[] };
+
+export default function Blog({ initialBlogs = [] }: BlogProps) {
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
-    const [allPosts, setAllPosts] = useState<BlogPost[]>(posts);
+    const [allPosts, setAllPosts] = useState<BlogPost[]>(() => mergeApiPosts(initialBlogs));
     const t = useTranslations("Blog");
 
     // Fetch blog posts from API, merge with static posts
     useEffect(() => {
+        if (initialBlogs.length > 0) return;
+
         blogAPI.getAll()
             .then((data) => {
                 if (data && data.length > 0) {
-                    // Static posts (with JSX content) take priority
-                    const staticTitles = new Set(posts.map((p) => p.title));
-                    const apiPosts: BlogPost[] = data
-                        .filter((b: any) => !staticTitles.has(b.title))
-                        .map((b: any) => ({
-                            title: b.title,
-                            excerpt: b.excerpt,
-                            date: b.date,
-                            category: b.category,
-                            readTime: b.readTime,
-                            tags: b.tags || [],
-                            link: b.link || "#",
-                        }));
-                    setAllPosts([...posts, ...apiPosts]);
+                    setAllPosts(mergeApiPosts(data));
                 }
             })
             .catch(() => { });
-    }, []);
+    }, [initialBlogs.length]);
 
     useEffect(() => {
         if (!selectedPost?.content) return;
@@ -298,9 +308,9 @@ export default function Blog() {
 
     const categoryConfig = {
         ctf: { color: "#8b5cf6", label: t("cat_ctf") },
-        security: { color: "#00ff41", label: t("cat_security") },
-        travel: { color: "#f59e0b", label: t("cat_travel") },
-        dev: { color: "#00f3ff", label: t("cat_dev") },
+        security: { color: accent.green, label: t("cat_security") },
+        travel: { color: accent.amber, label: t("cat_travel") },
+        dev: { color: accent.blue, label: t("cat_dev") },
     };
 
     const hasExternalLink = (post: BlogPost) => Boolean(post.link && post.link !== "#");
@@ -326,26 +336,16 @@ export default function Blog() {
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/15 to-transparent" />
 
             <div className="max-w-6xl mx-auto px-6">
-                {/* Section Title */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-14 text-center"
-                >
-                    <span lang="en" className="font-mono text-sm text-purple-400/50 tracking-wider uppercase block mb-3">
-                        {t("tag")}
-                    </span>
-                    <h2 className="section-title">
-                        <span className="text-gray-100">{t("title1")}</span>{" "}
-                        <span className="text-purple-400">{t("title2")}</span>{" "}
-                        <span className="text-gray-100">{t("title3")}</span>
-                    </h2>
-                    <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        {t("desc")}
-                    </p>
-                </motion.div>
+                <SectionHeading
+                    eyebrow={t("tag")}
+                    title={
+                        <>
+                            {t("title1")} <span className="text-gradient-cyber">{t("title2")}</span>{" "}
+                            {t("title3")}
+                        </>
+                    }
+                    description={t("desc")}
+                />
 
                 {/* Posts Grid */}
                 <div className="grid md:grid-cols-2 gap-6">

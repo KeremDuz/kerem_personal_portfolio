@@ -32,7 +32,10 @@ export const createTimeline = async (req: Request, res: Response): Promise<void>
 export const updateTimeline = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const timeline = await Timeline.findByIdAndUpdate(id, req.body, { new: true });
+        const timeline = await Timeline.findByIdAndUpdate(id, req.body, {
+            new: true,
+            runValidators: true,
+        });
         if (!timeline) {
             res.status(404).json({ error: "Timeline bulunamadı" });
             return;

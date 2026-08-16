@@ -4,13 +4,18 @@
         "about": "About",
         "experience": "Experience",
         "projects": "Projects",
+        "travel": "Travel",
         "blog": "Blog"
     },
     "Hero": {
-        "title": "// initializing portfolio...",
         "greeting": "Hello, I'm ",
-        "name": "Kerem.",
+        "name": "Kerem Düz.",
         "subtitle": "Hunting for security vulnerabilities among lines of code, drawing new routes on the world map.",
+        "ctaProjects": "View my work",
+        "ctaTravel": "Explore the globe",
+        "scroll": "Scroll down",
+        "photoAlt": "Kerem Düz with the Baku skyline behind him",
+        "photoLocation": "Baku, Azerbaijan",
         "roles": {
             "0": "Computer Engineering Student",
             "1": "Cyber Security Enthusiast",
@@ -50,40 +55,36 @@
         "education": "Education",
         "work": "Experience",
         "certification": "Certification",
+        "swipeHint": "Swipe sideways for more entries",
         "items": {
             "0": {
-                "title": "Intern",
-                "subtitle": "S4E",
-                "desc": "Internship experience within the company.",
+                "title": "Cybersecurity Intern",
+                "subtitle": "Anex Tour",
+                "desc": "Worked as an intern on the cybersecurity team.",
                 "tags": [
-                    "Internship",
-                    "Cyber Security"
+                    "Cyber Security",
+                    "Internship"
                 ]
             },
             "1": {
+                "title": "Cybersecurity Product Sales",
+                "subtitle": "S4E",
+                "desc": "Worked in the sales processes for cybersecurity products."
+            },
+            "2": {
+                "title": "Cybersecurity Intern",
+                "subtitle": "S4E",
+                "desc": "Worked as an intern in the cybersecurity field."
+            },
+            "3": {
+                "title": "Community President",
+                "subtitle": "Akdeniz Cyber Security Community",
+                "desc": "Served as president of the community for the 2026 term."
+            },
+            "4": {
                 "title": "Computer Engineering",
                 "subtitle": "Akdeniz University",
                 "desc": "Computer Engineering bachelor's program. Focusing on network security, software development, and system administration."
-            },
-            "2": {
-                "title": "12th Grade (2nd Semester)",
-                "subtitle": "Open Education High School",
-                "desc": "Completed the last semester of my high school education at the Open Education High School."
-            },
-            "3": {
-                "title": "12th Grade (1st Semester)",
-                "subtitle": "Gelibolu American Culture College",
-                "desc": "First semester of senior year in high school."
-            },
-            "4": {
-                "title": "10th and 11th Grade",
-                "subtitle": "Hayat College",
-                "desc": "Middle period of my high school education."
-            },
-            "5": {
-                "title": "9th Grade",
-                "subtitle": "Kars Harakani Anatolian High School",
-                "desc": "Started my high school education in Kars."
             }
         }
     },
@@ -98,28 +99,40 @@
         "technologies": "Technologies",
         "items": {
             "0": {
-                "title": "WiFi & Bluetooth Jammer",
-                "desc": "Dual-mode device analyzing 2.4GHz WiFi and Bluetooth frequencies with an ESP32 microcontroller. Developed with Arduino IDE and C++."
+                "title": "PhishCatch — AI-Powered Phishing Detection System",
+                "desc": "A Flutter and FastAPI security application that analyzes suspicious URLs and QR codes, combining machine learning with threat intelligence to produce dynamic risk scores."
             },
             "1": {
-                "title": "WiFi Deauthenticator",
-                "desc": "System testing network security and monitoring WiFi traffic (Packet Monitoring/Deauth) with an ESP8266."
+                "title": "WiFi & Bluetooth Jammer",
+                "desc": "An ESP32-based dual-mode device for controlled wireless security analysis across 2.4 GHz Wi-Fi and Bluetooth frequencies."
             },
             "2": {
-                "title": "E-Commerce Website",
-                "desc": "Comprehensive shopping site based on Angular and Spring Boot. Secure login with JWT, product and cart management features."
+                "title": "WiFi Deauthenticator",
+                "desc": "An ESP8266 system that monitors Wi-Fi traffic and tests network security through deauthentication scenarios in a controlled lab environment."
             },
             "3": {
-                "title": "Book Inventory System",
-                "desc": "Java-based stock tracking automation. Developed using Design Patterns like Observer, Composite, and Strategy."
+                "title": "File Upload Detector",
+                "desc": "A security tool that analyzes file upload fields in static HTML and dynamically generated content, supported by a manually curated dataset."
             },
             "4": {
-                "title": "File Upload Detector",
-                "desc": "A Python tool that detects file upload endpoints on websites and analyzes potential security vulnerabilities."
+                "title": "Personal Website & AI Assistant",
+                "desc": "A Next.js, Express.js, and FastAPI microservices portfolio platform featuring an admin panel, 3D travel visualizations, and an OpenAI-powered assistant."
             },
             "5": {
-                "title": "Portfolio Website",
-                "desc": "This website! A cyber security-themed personal portfolio built with Next.js, Tailwind CSS, and Three.js."
+                "title": "OrduCep — Military Social Facility Management Platform",
+                "desc": "A full-stack Angular, Flutter, and ASP.NET Core platform for discovering military guest houses and managing social facility reservations."
+            },
+            "6": {
+                "title": "Akdeniz Cyber Security Community Web Platform",
+                "desc": "An Angular, RxJS, and Spring Boot corporate platform that centralizes community events, training, projects, applications, and team workflows."
+            },
+            "7": {
+                "title": "E-Commerce Website",
+                "desc": "A comprehensive Angular and Spring Boot shopping site with secure JWT login, product management, and cart features."
+            },
+            "8": {
+                "title": "Book Inventory System",
+                "desc": "Java-based inventory automation developed with design patterns such as Observer, Composite, and Strategy."
             }
         }
     },
@@ -128,6 +141,10 @@
         "title1": "Certificates",
         "title2": "&",
         "title3": "Badges",
+        "desc": "Whichever certificate you point at steps forward. Click to view it full size.",
+        "hint": "← Swipe sideways · click to open →",
+        "prev": "Previous certificates",
+        "next": "Next certificates",
         "items": {
             "0": {
                 "title": "Cyber Heroes 2.0 Czechia",
@@ -183,7 +200,9 @@
         "tag": "// github.activity()",
         "title1": "GitHub",
         "title2": "Activity",
-        "graphLabel": "Contribution Graph",
+        "graphLabel": "Loading contribution graph...",
+        "lastYear": "contributions in the last year",
+        "contributionsOn": "{date} · {count} contributions",
         "less": "Less",
         "more": "More",
         "fallbackDesc1": "Network security scanner written in Python",
@@ -235,7 +254,10 @@
         "Prag": "Prague",
         "Ústí nad Orlicí": "Ústí nad Orlicí",
         "Kopenhag": "Copenhagen",
-        "Stokholm": "Stockholm"
+        "Malmö": "Malmö",
+        "Stokholm": "Stockholm",
+        "Bükreş": "Bucharest",
+        "Braşov": "Brașov"
     },
     "Dates": {
         "Mart 2025": "March 2025",
@@ -251,6 +273,7 @@
         "Azerbaycan": "Azerbaijan",
         "Çek Cumhuriyeti": "Czech Republic",
         "Danimarka": "Denmark",
-        "İsveç": "Sweden"
+        "İsveç": "Sweden",
+        "Romanya": "Romania"
     }
 }

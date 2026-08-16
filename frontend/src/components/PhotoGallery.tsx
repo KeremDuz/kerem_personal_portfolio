@@ -13,57 +13,90 @@ interface GalleryPhoto {
     aspect: "portrait" | "landscape" | "square";
 }
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import travelData from "@/data/travelData";
+import SectionHeading from "./SectionHeading";
 
-function getRandomValue(): number {
-    if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
-        const values = new Uint32Array(1);
-        crypto.getRandomValues(values);
-        return values[0] / 4294967296;
+/** More, smaller tiles keep the gallery varied without turning it into a long
+ * stack. The pool favors original camera files over compressed chat exports. */
+const TILE_COUNT = 20;
+const COMPRESSED_EXPORT_PATTERN = /-WA\d+/i;
+const EXCLUDED_GALLERY_PHOTOS = new Set([
+    "/travel/baku/IMG_20251123_172247.webp",
+]);
+
+function stablePhotoScore(src: string): number {
+    let hash = 2166136261;
+    for (let index = 0; index < src.length; index++) {
+        hash ^= src.charCodeAt(index);
+        hash = Math.imul(hash, 16777619);
     }
+    return hash >>> 0;
+}
 
-    return Math.random();
+function getQualityPhotoGroups(): GalleryPhoto[][] {
+    return travelData.flatMap((pin) => {
+        const images = pin.media.filter(
+            (item) => item.type === "image" && !EXCLUDED_GALLERY_PHOTOS.has(item.src)
+        );
+        if (images.length === 0) return [];
+
+        const originalCameraFiles = images.filter(
+            (item) => !COMPRESSED_EXPORT_PATTERN.test(item.src)
+        );
+        const representative = images.find((item) => item.src === pin.image) ?? images[0];
+        const qualityCandidates = [...originalCameraFiles, representative].filter(
+            (item, index, items) => items.findIndex((candidate) => candidate.src === item.src) === index
+        );
+
+        return [qualityCandidates.map((item) => ({
+            src: item.src,
+            caption: item.caption || pin.description,
+            location: pin.label,
+            aspect: "landscape" as const,
+        }))];
+    });
+}
+
+function getStableGalleryPhotos(): GalleryPhoto[] {
+    return getQualityPhotoGroups()
+        .flat()
+        .sort((left, right) => stablePhotoScore(left.src) - stablePhotoScore(right.src))
+        .slice(0, TILE_COUNT);
 }
 
 function shufflePhotos<T>(items: T[]): T[] {
     const shuffled = [...items];
-
     for (let index = shuffled.length - 1; index > 0; index--) {
-        const swapIndex = Math.floor(getRandomValue() * (index + 1));
+        const swapIndex = Math.floor(Math.random() * (index + 1));
         [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
     }
-
     return shuffled;
+}
+
+function selectRandomGalleryPhotos(): GalleryPhoto[] {
+    const groups = getQualityPhotoGroups();
+    const representativeSelection = shufflePhotos(groups)
+        .map((group) => shufflePhotos(group)[0])
+        .filter(Boolean);
+    const representativeSources = new Set(representativeSelection.map((photo) => photo.src));
+    const remaining = shufflePhotos(
+        groups.flat().filter((photo) => !representativeSources.has(photo.src))
+    );
+
+    return shufflePhotos([...representativeSelection, ...remaining].slice(0, TILE_COUNT));
 }
 
 export default function PhotoGallery() {
     const t = useTranslations("Gallery");
     const tCities = useTranslations("Cities");
-    const tDates = useTranslations("Dates");
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-    const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>([]);
+    const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>(getStableGalleryPhotos);
 
-    // Load random photos on mount
+    // Start with deterministic HTML for hydration, then choose a fresh,
+    // city-balanced order on every full page load.
     useEffect(() => {
-        const allPhotos: GalleryPhoto[] = [];
-
-        travelData.forEach((pin) => {
-            pin.media.forEach((item) => {
-                if (item.type === "image") {
-                    allPhotos.push({
-                        src: item.src,
-                        caption: pin.description, // Use pin description as fallback or generic caption
-                        location: pin.label,
-                        aspect: "landscape", // Defaulting to landscape as we don't know dimensions
-                    });
-                }
-            });
-        });
-
-        const shuffled = shufflePhotos(allPhotos);
-        // Take top 9
-        setGalleryPhotos(shuffled.slice(0, 9));
+        setGalleryPhotos(selectRandomGalleryPhotos());
     }, []);
 
     const openLightbox = (index: number) => setLightboxIndex(index);
@@ -119,8 +152,18 @@ export default function PhotoGallery() {
         preloadIndexes.forEach((index) => {
             const src = galleryPhotos[index]?.src;
             if (!src) return;
+
+            const { props } = getImageProps({
+                src,
+                alt: "",
+                fill: true,
+                sizes: "100vw",
+                quality: 92,
+            });
             const img = new window.Image();
-            img.src = src;
+            img.src = props.src;
+            img.srcset = props.srcSet ?? "";
+            img.sizes = props.sizes ?? "100vw";
         });
     }, [lightboxIndex, galleryPhotos, getAdaptivePreloadCount]);
 
@@ -140,63 +183,56 @@ export default function PhotoGallery() {
         <section id="gallery" className="relative py-24 md:py-32">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-travel-amber/15 to-transparent" />
 
-            <div className="max-w-6xl mx-auto px-6">
-                {/* Section Title */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-14 text-center"
-                >
-                    <span lang="en" className="font-mono text-sm text-travel-amber/50 tracking-wider uppercase block mb-3">
-                        {t("tag")}
-                    </span>
-                    <h2 className="section-title">
-                        <span className="text-gray-100">{t("title1")}</span>{" "}
-                        <span className="text-travel-amber">{t("title2")}</span>
-                    </h2>
-                    <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-                        {t("desc")}
-                    </p>
-                </motion.div>
+            {/* Wider than the text sections so the tiles get more room on a
+                large screen; the heading stays on the normal measure. */}
+            <div className="mx-auto max-w-7xl px-6">
+                <div className="mx-auto max-w-6xl">
+                    <SectionHeading
+                        eyebrow={t("tag")}
+                        title={
+                            <>
+                                {t("title1")} <span className="text-gradient-travel">{t("title2")}</span>
+                            </>
+                        }
+                        description={t("desc")}
+                    />
+                </div>
 
-                {/* Optimized Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Four columns on phones and five on larger screens fit twenty
+                    sharp, varied photos into five/four compact rows. */}
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:grid-cols-5 lg:gap-4">
                     {galleryPhotos.map((photo, index) => (
-                        <motion.div
+                        <button
+                            type="button"
                             key={photo.src}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: index * 0.08 }}
-                            className="cursor-pointer group relative overflow-hidden rounded-xl aspect-[4/3] bg-white/5"
+                            className="group relative aspect-square overflow-hidden rounded-lg bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-travel-amber"
                             onClick={() => openLightbox(index)}
+                            aria-label={`${photo.location} — ${photo.caption}`}
                         >
+                            {/* A real alt, not an empty one: these are the only
+                                photos on the site that image search can index,
+                                and the city plus year is what makes them
+                                findable. */}
                             <Image
                                 src={photo.src}
-                                alt={photo.caption}
+                                alt={`${tCities(photo.location)} — ${photo.caption} · Kerem Düz`}
                                 fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                quality={92}
+                                sizes="(min-width: 1280px) 236px, (min-width: 768px) calc(20vw - 20px), calc(25vw - 12px)"
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                             />
 
-                            {/* Hover overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                                <div className="absolute bottom-0 left-0 right-0 p-4">
-                                    <div className="flex items-center gap-1.5 mb-1">
-                                        <MapPin size={12} className="text-travel-amber" />
-                                        <span className="font-mono text-xs text-travel-amber">
-                                            {tCities(photo.location)}
-                                        </span>
-                                    </div>
-                                    <p className="text-white text-sm line-clamp-1">{tDates(photo.caption)}</p>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                <div className="absolute inset-x-0 bottom-0 p-2">
+                                    <span className="flex items-center gap-1 font-mono text-[10px] text-travel-amber">
+                                        <MapPin size={10} />
+                                        <span className="truncate">{tCities(photo.location)}</span>
+                                    </span>
                                 </div>
                             </div>
 
-                            {/* Neon border on hover */}
-                            <div className="absolute inset-0 border border-transparent group-hover:border-travel-amber/30 rounded-xl transition-all duration-300 pointer-events-none z-20" />
-                        </motion.div>
+                            <div className="pointer-events-none absolute inset-0 rounded-lg border border-transparent transition-colors duration-300 group-hover:border-travel-amber/40" />
+                        </button>
                     ))}
                 </div>
             </div>
@@ -226,7 +262,8 @@ export default function PhotoGallery() {
                                     src={galleryPhotos[lightboxIndex].src}
                                     alt={galleryPhotos[lightboxIndex].caption}
                                     fill
-                                    priority
+                                    preload
+                                    quality={92}
                                     sizes="100vw"
                                     className="object-contain"
                                 />

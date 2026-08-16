@@ -9,17 +9,20 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                "cyber-green": "#00ff41",
-                "cyber-blue": "#00f3ff",
-                "travel-amber": "#f59e0b",
-                "travel-orange": "#f97316",
-                "dark-bg": "#0a0a0a",
-                "dark-surface": "#111827",
-                "dark-card": "#1a1a2e",
+                // Names kept so the existing components keep working; the
+                // values are the softened palette defined in globals.css.
+                "cyber-green": "rgb(var(--c-green) / <alpha-value>)",
+                "cyber-blue": "rgb(var(--c-blue) / <alpha-value>)",
+                "travel-amber": "rgb(var(--c-amber) / <alpha-value>)",
+                "travel-orange": "#fb8c3c",
+                "dark-bg": "rgb(var(--s-bg) / <alpha-value>)",
+                "dark-surface": "rgb(var(--s-raised) / <alpha-value>)",
+                "dark-card": "rgb(var(--s-raised) / <alpha-value>)",
             },
             fontFamily: {
-                mono: ["var(--font-mono)", "Fira Code", "monospace"],
+                mono: ["var(--font-mono)", "ui-monospace", "monospace"],
                 sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+                display: ["var(--font-display)", "var(--font-inter)", "system-ui", "sans-serif"],
             },
             animation: {
                 blink: "blink 1s step-end infinite",

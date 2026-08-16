@@ -1,6 +1,14 @@
 import { Request, Response } from "express";
 import UAParser = require("ua-parser-js");
+import { createHmac } from "crypto";
 import Visitor from "../models/Visitor";
+
+function anonymizeIp(ip: string): string {
+    const salt = process.env.ANALYTICS_HASH_SALT || process.env.JWT_SECRET;
+    if (!salt) return "anonymous";
+
+    return `sha256:${createHmac("sha256", salt).update(ip).digest("hex")}`;
+}
 
 export const trackVisitorEvent = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -8,11 +16,7 @@ export const trackVisitorEvent = async (req: Request, res: Response): Promise<vo
 
         // Ensure we don't spam identical logs from the same IP within a short timeframe
         // (e.g. 5 minutes)
-        const ip =
-            (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
-            (req.headers["x-real-ip"] as string) ||
-            req.socket.remoteAddress ||
-            "unknown";
+        const ip = anonymizeIp(req.ip || req.socket.remoteAddress || "unknown");
 
         const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
 

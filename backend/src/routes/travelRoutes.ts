@@ -10,12 +10,13 @@ import {
 import auth from "../middleware/auth";
 import validate from "../middleware/validate";
 import { createTravelSchema, updateTravelSchema } from "../middleware/schemas";
+import publicCache from "../middleware/publicCache";
 
 const router = Router();
 
 // Public routes
-router.get("/", getAllTravels);
-router.get("/:id", getTravelById);
+router.get("/", publicCache(), getAllTravels);
+router.get("/:id", publicCache(), getTravelById);
 
 // Admin routes (protected)
 router.get("/admin/all", auth, getAllTravelsAdmin);

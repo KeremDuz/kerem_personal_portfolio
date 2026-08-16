@@ -9,11 +9,12 @@ import {
 import auth from "../middleware/auth";
 import validate from "../middleware/validate";
 import { createCertificateSchema, updateCertificateSchema } from "../middleware/schemas";
+import publicCache from "../middleware/publicCache";
 
 const router = Router();
 
 // Public routes
-router.get("/", getAllCertificates);
+router.get("/", publicCache(), getAllCertificates);
 
 // Admin routes (protected)
 router.get("/admin/all", auth, getAllCertificatesAdmin);
