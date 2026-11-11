@@ -5,14 +5,15 @@
         "experience": "Experience",
         "projects": "Projects",
         "travel": "Travel",
-        "blog": "Blog"
+        "blog": "Blog",
+        "gallery": "Gallery"
     },
     "Hero": {
         "greeting": "Hello, I'm ",
         "name": "Kerem Düz.",
         "subtitle": "Hunting for security vulnerabilities among lines of code, drawing new routes on the world map.",
         "ctaProjects": "View my work",
-        "ctaTravel": "Explore the globe",
+        "ctaTravel": "Explore my world",
         "scroll": "Scroll down",
         "photoAlt": "Kerem Düz with the Baku skyline behind him",
         "photoLocation": "Baku, Azerbaijan",
@@ -39,13 +40,6 @@
         "locationValue": "Ankara & Antalya, Turkey",
         "fuelLabel": "Fuel",
         "fuelValue": "Coffee & Curiosity"
-    },
-    "Stats": {
-        "tag": "// stats.render()",
-        "countries": "Countries Visited",
-        "projects": "Projects Completed",
-        "security": "Security Analyses",
-        "memories": "Memories Collected"
     },
     "Timeline": {
         "tag": "// journey.timeline()",
@@ -93,7 +87,7 @@
         "title1": "Cyber Security",
         "title2": "&",
         "title3": "Software",
-        "desc": "Security-focused projects and software development works",
+        "desc": "Security-focused projects and websites I've built for clients",
         "visitProject": "Open project",
         "closeProject": "Close project details",
         "technologies": "Technologies",
@@ -134,7 +128,13 @@
                 "title": "Book Inventory System",
                 "desc": "Java-based inventory automation developed with design patterns such as Observer, Composite, and Strategy."
             }
-        }
+        },
+        "tabsLabel": "Type of work",
+        "tabProjects": "Projects",
+        "tabWebsites": "Websites",
+        "websitesCtaTitle": "I can build a website for you too",
+        "websitesCtaDesc": "Corporate site, personal brand or portfolio — end to end, from design to launch.",
+        "websitesCtaButton": "Get a quote"
     },
     "Certificates": {
         "tag": "// certificates.list()",
@@ -258,13 +258,6 @@
         "Stokholm": "Stockholm",
         "Bükreş": "Bucharest",
         "Braşov": "Brașov"
-    },
-    "Dates": {
-        "Mart 2025": "March 2025",
-        "Ağustos 2024": "August 2024",
-        "Şubat 2025": "February 2025",
-        "Kasım 2025": "November 2025",
-        "Eylül 2025": "September 2025"
     },
     "Countries": {
         "Avusturya": "Austria",

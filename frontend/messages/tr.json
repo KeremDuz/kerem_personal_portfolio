@@ -5,14 +5,15 @@
         "experience": "Deneyim",
         "projects": "Projeler",
         "travel": "Seyahat",
-        "blog": "Blog"
+        "blog": "Blog",
+        "gallery": "Galeri"
     },
     "Hero": {
         "greeting": "Merhaba, Ben ",
         "name": "Kerem Düz.",
         "subtitle": "Kod satırları arasında güvenlik açıkları arıyor, dünya haritasında yeni rotalar çiziyorum.",
         "ctaProjects": "Projelerimi Gör",
-        "ctaTravel": "Dünyayı Keşfet",
+        "ctaTravel": "Dünyamı Keşfet",
         "scroll": "Aşağı kaydır",
         "photoAlt": "Kerem Düz, arkasında Bakü silueti ile",
         "photoLocation": "Bakü, Azerbaycan",
@@ -39,13 +40,6 @@
         "locationValue": "Ankara & Antalya, Türkiye",
         "fuelLabel": "Yakıt",
         "fuelValue": "Kahve & Merak"
-    },
-    "Stats": {
-        "tag": "// stats.render()",
-        "countries": "Ülke Gezildi",
-        "projects": "Proje Tamamlandı",
-        "security": "Güvenlik Analizi",
-        "memories": "Anı Biriktirdi"
     },
     "Timeline": {
         "tag": "// journey.timeline()",
@@ -93,7 +87,7 @@
         "title1": "Siber Güvenlik",
         "title2": "&",
         "title3": "Yazılım",
-        "desc": "Güvenlik odaklı projeler ve yazılım geliştirme çalışmalarım",
+        "desc": "Güvenlik odaklı projelerim ve müşterilerim için geliştirdiğim web siteleri",
         "visitProject": "Projeyi aç",
         "closeProject": "Proje detayını kapat",
         "technologies": "Teknolojiler",
@@ -134,7 +128,13 @@
                 "title": "Kitap Envanter Sistemi",
                 "desc": "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları kullanılarak geliştirildi."
             }
-        }
+        },
+        "tabsLabel": "Çalışma türü",
+        "tabProjects": "Projeler",
+        "tabWebsites": "Web Siteleri",
+        "websitesCtaTitle": "Sizin için de bir web sitesi yapabilirim",
+        "websitesCtaDesc": "Kurumsal site, kişisel marka ya da portföy — tasarımdan yayına kadar uçtan uca.",
+        "websitesCtaButton": "Teklif iste"
     },
     "Certificates": {
         "tag": "// certificates.list()",
@@ -258,13 +258,6 @@
         "Stokholm": "Stokholm",
         "Bükreş": "Bükreş",
         "Braşov": "Braşov"
-    },
-    "Dates": {
-        "Mart 2025": "Mart 2025",
-        "Ağustos 2024": "Ağustos 2024",
-        "Şubat 2025": "Şubat 2025",
-        "Kasım 2025": "Kasım 2025",
-        "Eylül 2025": "Eylül 2025"
     },
     "Countries": {
         "Avusturya": "Avusturya",

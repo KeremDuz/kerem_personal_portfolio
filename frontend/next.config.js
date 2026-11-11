@@ -1,24 +1,20 @@
 /** @type {import('next').NextConfig} */
 const createNextIntlPlugin = require('next-intl/plugin');
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
-const backendApiUrl = (process.env.BACKEND_API_URL || 'http://localhost:5000/api').replace(/\/$/, '');
-const directBrowserApi = process.env.NEXT_PUBLIC_API_URL;
-
-function originOf(value) {
-    try {
-        return new URL(value).origin;
-    } catch {
-        return null;
-    }
-}
+// Target of the same-origin /api gateway. NEXT_PUBLIC_API_URL is still read as
+// a fallback so existing deployments that only set that variable keep working.
+const backendApiUrl = (
+    process.env.BACKEND_API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    'http://localhost:5000/api'
+).replace(/\/$/, '');
 
 const connectSources = [
     "'self'",
     'https://www.google-analytics.com',
     'https://*.google-analytics.com',
     'https://www.googletagmanager.com',
-    originOf(directBrowserApi),
-].filter(Boolean);
+];
 
 const scriptSources = [
     "'self'",

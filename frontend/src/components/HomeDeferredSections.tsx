@@ -30,24 +30,12 @@ export default function HomeDeferredSections({
 }: HomeDeferredSectionsProps) {
     return (
         <>
-            <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
-                <Timeline initialTimelines={initialTimelines} />
-            </div>
-            <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
-                <Projects initialProjects={initialProjects} />
-            </div>
-            <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
-                <Certificates initialCertificates={initialCertificates} />
-            </div>
-            <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
-                <Blog initialBlogs={initialBlogs} />
-            </div>
-            <div style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}>
-                <PhotoGallery />
-            </div>
-            <div style={{ contentVisibility: "auto", containIntrinsicSize: "1200px" }}>
-                <TravelGlobeSection initialTravels={initialTravels} />
-            </div>
+            <Timeline initialTimelines={initialTimelines} />
+            <Projects initialProjects={initialProjects} />
+            <Certificates initialCertificates={initialCertificates} />
+            <Blog initialBlogs={initialBlogs} />
+            <PhotoGallery />
+            <TravelGlobeSection initialTravels={initialTravels} />
             <Footer />
         </>
     );

@@ -11,13 +11,14 @@ const socialLinks = [
     { icon: Instagram, href: "https://www.instagram.com/kerem_plain?igsh=MWs4bzJwYXJoYWc3eg==", label: "Instagram" },
 ];
 
-// Section ids in document order, paired with their Navigation message key.
+// Section ids in page order, paired with their Navigation message key.
 const navLinks = [
     { id: "about", key: "about" },
     { id: "timeline", key: "experience" },
     { id: "projects", key: "projects" },
-    { id: "travel", key: "travel" },
     { id: "blog", key: "blog" },
+    { id: "gallery", key: "gallery" },
+    { id: "travel", key: "travel" },
 ] as const;
 
 export default function Header() {
@@ -39,11 +40,17 @@ export default function Header() {
             // Scroll spy: the active section is the last one whose top has
             // passed the header. Cheaper and steadier than IntersectionObserver
             // here, because the deferred sections mount at different times.
+            // Pick by position rather than list order, so the highlight stays
+            // right even if the menu and page order ever diverge.
             const line = window.innerHeight * 0.35;
             let current = "";
+            let closest = -Infinity;
             for (const link of navLinks) {
-                const el = document.getElementById(link.id);
-                if (el && el.getBoundingClientRect().top <= line) current = link.id;
+                const top = document.getElementById(link.id)?.getBoundingClientRect().top;
+                if (top !== undefined && top <= line && top > closest) {
+                    closest = top;
+                    current = link.id;
+                }
             }
             if (current !== activeRef.current) {
                 activeRef.current = current;

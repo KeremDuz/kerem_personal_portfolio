@@ -36,9 +36,10 @@ Copy `.env.example` to `.env` and replace every placeholder secret. Required
 values are `MONGODB_URI`, `JWT_SECRET`, `ANALYTICS_HASH_SALT`,
 `ADMIN_USERNAME`, and `ADMIN_PASSWORD`.
 
-The browser uses a same-origin `/api` gateway. For deployed environments, set
-the server-only `BACKEND_API_URL` in the Next.js deployment. Avoid setting
-`NEXT_PUBLIC_API_URL` unless a direct cross-origin API is intentional.
+The browser always uses the same-origin `/api` gateway (a Next.js rewrite), so
+no CORS setup is needed for the site itself. In the Next.js deployment set
+`BACKEND_API_URL` to the Express API (e.g. `https://<backend>.onrender.com/api`);
+`NEXT_PUBLIC_API_URL` is still accepted as a fallback for older deployments.
 
 Seed the admin user and initial content:
 

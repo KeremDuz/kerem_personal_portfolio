@@ -11,8 +11,8 @@ import { Request, Response } from "express";
 
 const USERNAME = process.env.GITHUB_USERNAME || "KeremDuz";
 const SOURCE = `https://github.com/users/${USERNAME}/contributions`;
-/** GitHub recomputes this at most daily; six hours is plenty. */
-const TTL_MS = 6 * 60 * 60 * 1000;
+/** Short enough that new commits show up within the hour. */
+const TTL_MS = 60 * 60 * 1000;
 
 export interface ContributionDay {
     date: string;
@@ -94,6 +94,7 @@ function parseCalendar(html: string): ContributionCalendar {
 
 export const getContributions = async (_req: Request, res: Response) => {
     if (cache && Date.now() - cache.at < TTL_MS) {
+        res.set("Cache-Control", "public, max-age=600");
         return res.json(cache.data);
     }
 
@@ -113,7 +114,7 @@ export const getContributions = async (_req: Request, res: Response) => {
 
         const data = parseCalendar(await response.text());
         cache = { at: Date.now(), data };
-        res.set("Cache-Control", "public, max-age=3600");
+        res.set("Cache-Control", "public, max-age=600");
         return res.json(data);
     } catch (error) {
         // Serve stale data rather than nothing — a graph a few hours old beats

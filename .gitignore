@@ -72,3 +72,7 @@ Sertifikalar/
 
 # Local database data
 backend/.mongo-data/
+
+# Package-manager caches and scratch folders
+.pnpm-store/
+tmp/

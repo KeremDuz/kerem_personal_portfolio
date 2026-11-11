@@ -7,18 +7,6 @@ import { fontVariables } from "../fonts";
 import "../globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.keremduz.com";
-const directApiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-function getOrigin(url: string | undefined): string | null {
-    if (!url) return null;
-    try {
-        return new URL(url).origin;
-    } catch {
-        return null;
-    }
-}
-
-const directApiOrigin = getOrigin(directApiUrl);
 
 export function generateStaticParams() {
     return routing.locales.map((locale) => ({ locale }));
@@ -138,8 +126,6 @@ export default async function RootLayout({
             suppressHydrationWarning
         >
             <head>
-                {directApiOrigin && <link rel="preconnect" href={directApiOrigin} crossOrigin="" />}
-                {directApiOrigin && <link rel="dns-prefetch" href={directApiOrigin} />}
                 <link
                     rel="preload"
                     as="image"

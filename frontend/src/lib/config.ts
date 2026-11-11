@@ -3,13 +3,12 @@ function withoutTrailingSlash(value: string): string {
 }
 
 /**
- * Browsers use a same-origin API gateway by default. Keeping the backend URL
- * out of the client bundle avoids CORS/cookie problems and lets deployments
- * move the API without rebuilding every browser-facing URL.
+ * Browsers always call the same-origin `/api` gateway (a Next.js rewrite to
+ * the Express backend, see next.config.js). Calling the backend host directly
+ * from the browser made every request cross-origin, and any mismatch in the
+ * backend's CORS allow-list blocked the whole site's data.
  */
-export const browserApiBase = withoutTrailingSlash(
-    process.env.NEXT_PUBLIC_API_URL || "/api"
-);
+export const browserApiBase = "/api";
 
 /** Server Components can call the backend directly, without an HTTP proxy hop. */
 export const serverApiBase = withoutTrailingSlash(

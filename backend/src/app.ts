@@ -24,15 +24,36 @@ app.disable("x-powered-by");
 app.set("trust proxy", 1);
 app.use(helmet());
 
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
+// The site is normally reached through the frontend's same-origin /api
+// gateway, so CORS only matters for direct calls. The production domains are
+// always allowed, and every configured origin also allows its www/apex twin,
+// so a FRONTEND_URL of "https://keremduz.com" does not lock out "www.".
+const DEFAULT_ORIGINS = ["https://keremduz.com", "https://www.keremduz.com"];
+
+function withWwwTwin(origin: string): string[] {
+    try {
+        const url = new URL(origin);
+        const twin = new URL(origin);
+        twin.hostname = url.hostname.startsWith("www.")
+            ? url.hostname.slice(4)
+            : `www.${url.hostname}`;
+        return url.hostname === "localhost" ? [url.origin] : [url.origin, twin.origin];
+    } catch {
+        return [];
+    }
+}
+
+const allowedOrigins = new Set(
+    [...(process.env.FRONTEND_URL || "http://localhost:3000").split(","), ...DEFAULT_ORIGINS]
+        .map((origin) => origin.trim().replace(/\/$/, ""))
+        .filter(Boolean)
+        .flatMap(withWwwTwin)
+);
 
 app.use(
     cors({
         origin: (origin, callback) => {
-            if (!origin || allowedOrigins.includes(origin)) {
+            if (!origin || allowedOrigins.has(origin)) {
                 callback(null, true);
                 return;
             }

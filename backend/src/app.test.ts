@@ -58,3 +58,19 @@ test("untrusted browser origins are rejected", async () => {
 
     assert.equal(response.status, 403);
 });
+
+test("production origins pass the CORS preflight", async () => {
+    for (const origin of ["https://www.keremduz.com", "https://keremduz.com"]) {
+        const response = await fetch(`${baseUrl}/api/projects`, {
+            method: "OPTIONS",
+            headers: {
+                Origin: origin,
+                "Access-Control-Request-Method": "GET",
+                "Access-Control-Request-Headers": "content-type,x-requested-with",
+            },
+        });
+
+        assert.equal(response.status, 204);
+        assert.equal(response.headers.get("access-control-allow-origin"), origin);
+    }
+});

@@ -8,6 +8,8 @@ import { ArrowUpRight, ExternalLink, Shield, Code, Terminal, Wifi, Lock, Databas
 import { useTranslations } from "next-intl";
 import { projectAPI, analyticsAPI, type Project as ApiProject } from "@/lib/api";
 import SectionHeading from "./SectionHeading";
+import ClientWebsites from "./ClientWebsites";
+import clientWebsites from "@/data/clientWebsites";
 
 const VISIBLE_TAG_COUNT = 6;
 
@@ -131,6 +133,7 @@ export default function Projects({ initialProjects = [] }: ProjectsProps) {
         initialProjects.length > 0 ? initialProjects.map(normalizeProject) : staticProjects
     );
     const [selectedProject, setSelectedProject] = useState<any | null>(null);
+    const [tab, setTab] = useState<"projects" | "websites">("projects");
 
     useEffect(() => {
         projectAPI.getAll()
@@ -199,6 +202,37 @@ export default function Projects({ initialProjects = [] }: ProjectsProps) {
                     description={t("desc")}
                 />
 
+                {/* Two kinds of work: own/academic projects, and websites built
+                    for clients. */}
+                <div role="tablist" aria-label={t("tabsLabel")} className="mb-6 flex justify-center">
+                    <div className="inline-flex gap-1 rounded-full border border-white/5 bg-white/[0.02] p-1">
+                        {([
+                            ["projects", t("tabProjects"), projects.length],
+                            ["websites", t("tabWebsites"), clientWebsites.length],
+                        ] as const).map(([key, label, count]) => (
+                            <button
+                                key={key}
+                                type="button"
+                                role="tab"
+                                id={`projects-tab-${key}`}
+                                aria-selected={tab === key}
+                                aria-controls={`projects-panel-${key}`}
+                                onClick={() => setTab(key)}
+                                className={`relative flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xs transition-colors duration-300 ${tab === key ? "bg-cyber-green text-dark-bg" : "text-gray-400 hover:text-gray-100"}`}
+                            >
+                                {label}
+                                <span className={`text-[10px] ${tab === key ? "text-dark-bg/70" : "text-gray-600"}`}>{count}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {tab === "websites" ? (
+                    <div role="tabpanel" id="projects-panel-websites" aria-labelledby="projects-tab-websites">
+                        <ClientWebsites />
+                    </div>
+                ) : (
+                <div role="tabpanel" id="projects-panel-projects" aria-labelledby="projects-tab-projects">
                 {/* An index, not a card wall. Six 290px-tall cards stacked to
                     well over 2000px on a phone; these rows say the same thing in
                     a fraction of the height, and the detail lives in the modal. */}
@@ -281,6 +315,8 @@ export default function Projects({ initialProjects = [] }: ProjectsProps) {
                         );
                     })}
                 </motion.ul>
+                </div>
+                )}
 
                 {typeof document !== "undefined" && createPortal(
                     <AnimatePresence>
