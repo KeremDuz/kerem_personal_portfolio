@@ -28,5 +28,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.9,
             alternates: { languages },
         },
+        ...(["tr", "en"] as const).map((locale) => ({
+            url: `${siteUrl}/${locale}/projects`,
+            lastModified: now,
+            changeFrequency: "monthly" as const,
+            priority: 0.8,
+            alternates: {
+                languages: {
+                    tr: `${siteUrl}/tr/projects`,
+                    en: `${siteUrl}/en/projects`,
+                    "x-default": `${siteUrl}/tr/projects`,
+                },
+            },
+        })),
     ];
 }

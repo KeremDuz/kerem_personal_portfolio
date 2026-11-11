@@ -10,7 +10,6 @@ export interface ClientWebsite {
     image: string;
     category: { tr: string; en: string };
     description: { tr: string; en: string };
-    tags: { tr: string[]; en: string[] };
 }
 
 const clientWebsites: ClientWebsite[] = [
@@ -23,10 +22,6 @@ const clientWebsites: ClientWebsite[] = [
             tr: "Antalya merkezli iş insanı İshak Kahraman için kişisel marka sitesi. İş hayatı, sivil toplum çalışmaları ve ATSO meslek komitesi adaylığını tek bir yerde anlatan, aday tanıtımına odaklı bir tasarım.",
             en: "Personal brand site for Antalya-based entrepreneur İshak Kahraman, presenting his business career, civil-society work and chamber-of-commerce candidacy in one place.",
         },
-        tags: {
-            tr: ["Kişisel Marka", "Responsive", "SEO", "WhatsApp İletişim"],
-            en: ["Personal Brand", "Responsive", "SEO", "WhatsApp Contact"],
-        },
     },
     {
         name: "Pera Signature Invest",
@@ -36,10 +31,6 @@ const clientWebsites: ClientWebsite[] = [
         description: {
             tr: "Antalya'da lüks gayrimenkul ve yatırım danışmanlığı yapan Pera Signature Invest için kurumsal site. Portföy, hizmetler ve randevu akışı; açık/koyu tema ve yerel SEO ile.",
             en: "Corporate site for Pera Signature Invest, a luxury real-estate and investment consultancy in Antalya. Portfolio, services and appointment flow, with light/dark themes and local SEO.",
-        },
-        tags: {
-            tr: ["Kurumsal Site", "Portföy", "Açık/Koyu Tema", "Yerel SEO"],
-            en: ["Corporate Site", "Portfolio", "Light/Dark Theme", "Local SEO"],
         },
     },
 ];

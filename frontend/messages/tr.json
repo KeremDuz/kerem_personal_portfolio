@@ -87,7 +87,7 @@
         "title1": "Siber Güvenlik",
         "title2": "&",
         "title3": "Yazılım",
-        "desc": "Güvenlik odaklı projelerim ve müşterilerim için geliştirdiğim web siteleri",
+        "desc": "Güvenlik odaklı projeler ve yazılım geliştirme çalışmalarım",
         "visitProject": "Projeyi aç",
         "closeProject": "Proje detayını kapat",
         "technologies": "Teknolojiler",
@@ -129,12 +129,13 @@
                 "desc": "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları kullanılarak geliştirildi."
             }
         },
-        "tabsLabel": "Çalışma türü",
-        "tabProjects": "Projeler",
-        "tabWebsites": "Web Siteleri",
         "websitesCtaTitle": "Sizin için de bir web sitesi yapabilirim",
         "websitesCtaDesc": "Kurumsal site, kişisel marka ya da portföy — tasarımdan yayına kadar uçtan uca.",
-        "websitesCtaButton": "Teklif iste"
+        "websitesCtaButton": "Teklif iste",
+        "websitesTag": "// client.work()",
+        "websitesTitle1": "Yaptığım",
+        "websitesTitle2": "Web Siteleri",
+        "websitesDesc": "Müşterilerim için tasarlayıp yayına aldığım siteler"
     },
     "Certificates": {
         "tag": "// certificates.list()",
@@ -268,5 +269,16 @@
         "Danimarka": "Danimarka",
         "İsveç": "İsveç",
         "Romanya": "Romanya"
+    },
+    "ProjectsPage": {
+        "metaTitle": "Projeler & Web Siteleri | Kerem Düz",
+        "metaDesc": "Kerem Düz'ün siber güvenlik ve yazılım projeleri ile müşterileri için geliştirdiği web siteleri.",
+        "back": "Ana sayfa",
+        "tag": "// work.exec()",
+        "title1": "İşler",
+        "title2": "& Projeler",
+        "desc": "Müşterilerim için geliştirdiğim web siteleri ve kendi güvenlik/yazılım projelerim, tek sayfada.",
+        "jumpWebsites": "Web Siteleri",
+        "jumpProjects": "Projeler"
     }
 }

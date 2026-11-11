@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { ArrowDown, Globe2, MapPin, Terminal } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import CyberGrid from "./CyberGrid";
 import HeroPortrait from "./HeroPortrait";
 import RoleTypewriter from "./RoleTypewriter";
@@ -69,10 +70,10 @@ export default function Hero() {
                     </p>
 
                     <div className="mb-8 flex flex-wrap gap-3">
-                        <a href="#projects" className="btn btn-primary">
+                        <Link href="/projects" className="btn btn-primary">
                             <Terminal size={16} strokeWidth={1.75} />
                             {t("ctaProjects")}
-                        </a>
+                        </Link>
                         <a href="#travel" className="btn btn-ghost">
                             <Globe2 size={16} strokeWidth={1.75} />
                             {t("ctaTravel")}

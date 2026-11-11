@@ -87,7 +87,7 @@
         "title1": "Cyber Security",
         "title2": "&",
         "title3": "Software",
-        "desc": "Security-focused projects and websites I've built for clients",
+        "desc": "Security-focused projects and software development works",
         "visitProject": "Open project",
         "closeProject": "Close project details",
         "technologies": "Technologies",
@@ -129,12 +129,13 @@
                 "desc": "Java-based inventory automation developed with design patterns such as Observer, Composite, and Strategy."
             }
         },
-        "tabsLabel": "Type of work",
-        "tabProjects": "Projects",
-        "tabWebsites": "Websites",
         "websitesCtaTitle": "I can build a website for you too",
         "websitesCtaDesc": "Corporate site, personal brand or portfolio — end to end, from design to launch.",
-        "websitesCtaButton": "Get a quote"
+        "websitesCtaButton": "Get a quote",
+        "websitesTag": "// client.work()",
+        "websitesTitle1": "Websites",
+        "websitesTitle2": "I've Built",
+        "websitesDesc": "Sites I've designed and launched for clients"
     },
     "Certificates": {
         "tag": "// certificates.list()",
@@ -268,5 +269,16 @@
         "Danimarka": "Denmark",
         "İsveç": "Sweden",
         "Romanya": "Romania"
+    },
+    "ProjectsPage": {
+        "metaTitle": "Projects & Websites | Kerem Düz",
+        "metaDesc": "Cyber security and software projects by Kerem Düz, plus the websites he has built for clients.",
+        "back": "Home",
+        "tag": "// work.exec()",
+        "title1": "Work",
+        "title2": "& Projects",
+        "desc": "Websites I've built for clients and my own security and software projects, on one page.",
+        "jumpWebsites": "Websites",
+        "jumpProjects": "Projects"
     }
 }

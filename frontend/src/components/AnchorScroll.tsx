@@ -66,8 +66,18 @@ export default function AnchorScroll() {
         };
 
         document.addEventListener("click", onClick);
+
+        // Arriving from another page with a hash (e.g. /tr#travel from the
+        // projects page): the browser's own jump fires before lazy sections
+        // settle, so aim again once the page has loaded.
+        const initialId = decodeURIComponent(window.location.hash.slice(1));
+        let initialTimer = 0;
+        if (initialId) {
+            initialTimer = window.setTimeout(() => scrollToId(initialId), 300);
+        }
         return () => {
             document.removeEventListener("click", onClick);
+            window.clearTimeout(initialTimer);
             cancelPending?.();
         };
     }, []);
