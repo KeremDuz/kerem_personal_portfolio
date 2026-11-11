@@ -129,9 +129,6 @@
                 "desc": "Java-based inventory automation developed with design patterns such as Observer, Composite, and Strategy."
             }
         },
-        "websitesCtaTitle": "I can build a website for you too",
-        "websitesCtaDesc": "Corporate site, personal brand or portfolio — end to end, from design to launch.",
-        "websitesCtaButton": "Get a quote",
         "websitesTag": "// client.work()",
         "websitesTitle1": "Websites",
         "websitesTitle2": "I've Built",
@@ -271,14 +268,34 @@
         "Romanya": "Romania"
     },
     "ProjectsPage": {
-        "metaTitle": "Projects & Websites | Kerem Düz",
-        "metaDesc": "Cyber security and software projects by Kerem Düz, plus the websites he has built for clients.",
+        "metaTitle": "Websites, SEO & Digital Solutions | Kerem Düz",
+        "metaDesc": "Websites for lawyers, dentists, dietitians, barbers, restaurants and every trade — plus SEO, Google Maps, AI assistants, QR menus and digital invitations. Call for a quote: +90 505 991 37 75.",
         "back": "Home",
-        "tag": "// work.exec()",
-        "title1": "Work",
-        "title2": "& Projects",
-        "desc": "Websites I've built for clients and my own security and software projects, on one page.",
-        "jumpWebsites": "Websites",
-        "jumpProjects": "Projects"
+        "tag": "// hire.me()",
+        "title1": "Let's take your",
+        "title2": "business",
+        "title3": "online",
+        "desc": "From lawyers to dentists, barbers to restaurants — websites that win customers, SEO to rank higher on Google, AI assistants, QR menus and digital invitations.",
+        "highlight1": "Mobile-friendly & fast",
+        "highlight2": "Found on Google (SEO)",
+        "highlight3": "Built with security in mind",
+        "callNow": "Call now",
+        "whatsapp": "Message on WhatsApp",
+        "whatsappMessage": "Hi Kerem, I'd like to get info about a website.",
+        "seeWork": "See my work",
+        "servicesTag": "// services.list()",
+        "servicesTitle1": "What I Can",
+        "servicesTitle2": "Build for You",
+        "servicesDesc": "From a brand-new website to AI, every digital need of your business from one person.",
+        "sectorsTag": "// sectors.all()",
+        "sectorsTitle1": "A Website for",
+        "sectorsTitle2": "Every Trade",
+        "sectorsDesc": "Whatever you do, I'll design a site made for it.",
+        "sectorsMore": "…and any other trade you can think of. Not on the list? Call and let's talk.",
+        "processTag": "// process.run()",
+        "processTitle1": "How We",
+        "processTitle2": "Work Together",
+        "ctaTitle": "Have a project? Give me a call.",
+        "ctaDesc": "Tell me your idea and I'll prepare a quote tailored to your business."
     }
 }

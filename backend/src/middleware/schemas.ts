@@ -141,6 +141,9 @@ export const trackEventSchema = z.object({
         "view_photo",
         "view_project",
         "open_project",
+        "open_website",
+        "contact_call",
+        "contact_whatsapp",
     ]).default("page_view"),
     details: z.string().trim().min(1).max(250).default("Anasayfa"),
 });

@@ -129,9 +129,6 @@
                 "desc": "Java tabanlı stok takip otomasyonu. Observer, Composite ve Strategy gibi Tasarım Kalıpları kullanılarak geliştirildi."
             }
         },
-        "websitesCtaTitle": "Sizin için de bir web sitesi yapabilirim",
-        "websitesCtaDesc": "Kurumsal site, kişisel marka ya da portföy — tasarımdan yayına kadar uçtan uca.",
-        "websitesCtaButton": "Teklif iste",
         "websitesTag": "// client.work()",
         "websitesTitle1": "Yaptığım",
         "websitesTitle2": "Web Siteleri",
@@ -271,14 +268,34 @@
         "Romanya": "Romanya"
     },
     "ProjectsPage": {
-        "metaTitle": "Projeler & Web Siteleri | Kerem Düz",
-        "metaDesc": "Kerem Düz'ün siber güvenlik ve yazılım projeleri ile müşterileri için geliştirdiği web siteleri.",
+        "metaTitle": "Web Sitesi, SEO & Dijital Çözümler | Kerem Düz",
+        "metaDesc": "Avukat, diş hekimi, diyetisyen, berber, restoran ve her meslek için web sitesi, SEO, Google Haritalar, yapay zeka asistanı, QR menü ve dijital davetiye. Teklif için arayın: 0505 991 37 75.",
         "back": "Ana sayfa",
-        "tag": "// work.exec()",
-        "title1": "İşler",
-        "title2": "& Projeler",
-        "desc": "Müşterilerim için geliştirdiğim web siteleri ve kendi güvenlik/yazılım projelerim, tek sayfada.",
-        "jumpWebsites": "Web Siteleri",
-        "jumpProjects": "Projeler"
+        "tag": "// hire.me()",
+        "title1": "İşletmenizi",
+        "title2": "dijitale",
+        "title3": "taşıyalım",
+        "desc": "Avukattan diş hekimine, berberden restorana — her meslek için müşteri kazandıran web siteleri, Google'da üst sıralar için SEO, yapay zeka asistanları, QR menüler ve dijital davetiyeler.",
+        "highlight1": "Mobil uyumlu & hızlı",
+        "highlight2": "Google'da bulunur (SEO)",
+        "highlight3": "Siber güvenlik güvencesi",
+        "callNow": "Hemen Ara",
+        "whatsapp": "WhatsApp'tan yaz",
+        "whatsappMessage": "Merhaba Kerem, web sitesi için bilgi almak istiyorum.",
+        "seeWork": "Örnek işler",
+        "servicesTag": "// services.list()",
+        "servicesTitle1": "Sizin İçin",
+        "servicesTitle2": "Neler Yapabilirim?",
+        "servicesDesc": "Sıfırdan web sitesinden yapay zekaya, işletmenizin dijitaldeki her ihtiyacı tek elden.",
+        "sectorsTag": "// sectors.all()",
+        "sectorsTitle1": "Her Meslek İçin",
+        "sectorsTitle2": "Web Sitesi",
+        "sectorsDesc": "Hangi işi yapıyorsanız, ona özel bir site tasarlarım.",
+        "sectorsMore": "…ve aklınıza gelen her meslek. Sizinki listede yoksa arayın, konuşalım.",
+        "processTag": "// process.run()",
+        "processTitle1": "Nasıl",
+        "processTitle2": "Çalışıyoruz?",
+        "ctaTitle": "Projeniz mi var? Hemen arayın.",
+        "ctaDesc": "Fikrinizi anlatın, işletmenize özel bir teklif hazırlayayım."
     }
 }

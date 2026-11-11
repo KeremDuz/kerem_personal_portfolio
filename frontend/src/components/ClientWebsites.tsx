@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import clientWebsites from "@/data/clientWebsites";
 import { analyticsAPI } from "@/lib/api";
@@ -80,21 +80,6 @@ export default function ClientWebsites() {
                             </div>
                         </motion.a>
                     ))}
-                </div>
-
-                <div className="glass-card mt-5 flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center md:px-7">
-                    <div>
-                        <p className="font-display text-base font-semibold text-gray-100">{t("websitesCtaTitle")}</p>
-                        <p className="mt-1 text-[13px] text-gray-400">{t("websitesCtaDesc")}</p>
-                    </div>
-                    <a
-                        href="mailto:keremduz0304@gmail.com"
-                        onClick={() => analyticsAPI.track("website_inquiry", "mailto")}
-                        className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-cyber-green/30 bg-cyber-green/10 px-4 py-2 font-mono text-sm text-cyber-green transition-colors hover:border-cyber-green/60 hover:bg-cyber-green/15"
-                    >
-                        <Mail size={15} strokeWidth={1.8} />
-                        {t("websitesCtaButton")}
-                    </a>
                 </div>
             </div>
         </section>
