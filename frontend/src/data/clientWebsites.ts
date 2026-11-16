@@ -14,6 +14,16 @@ export interface ClientWebsite {
 
 const clientWebsites: ClientWebsite[] = [
     {
+        name: "KA Emlak",
+        url: "https://kaemlak.com",
+        image: "/websites/kaemlak.jpg",
+        category: { tr: "Gayrimenkul", en: "Real Estate" },
+        description: {
+            tr: "Antalya'da satılık, kiralık ve dönemlik kiralık gayrimenkul sunan KA Emlak için ilan sitesi. Bölge, tür ve fiyata göre ilan arama, ilan detayları ve tek dokunuşla arama; Türkçe/İngilizce.",
+            en: "Listings site for KA Emlak, an Antalya real-estate agency for sales, rentals and short-term lets. Search by area, type and price, detailed listings and one-tap calling, in Turkish and English.",
+        },
+    },
+    {
         name: "İshak Kahraman",
         url: "https://ishakkahraman.com.tr",
         image: "/websites/ishakkahraman.jpg",
